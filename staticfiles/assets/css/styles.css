@@ -1,0 +1,60 @@
+/* General Styles */
+body {
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, darkslateblue 150%) fixed;
+    color: black; /* Default text color */
+}
+
+/* Header Styles */
+.tomas-custom-bg {
+    background-color: darkslateblue;
+}
+
+.navbar-brand, .nav-link {
+    color: black; /* Ensures legibility */
+}
+
+.navbar-brand:hover, .nav-link:hover {
+    color: white; /* Enhanced visibility on hover */
+    text-decoration: none; /* Removes underline effect */
+}
+
+/* Main Content and Footer Styles */
+.footer-small, .footer-large {
+    background-color: darkslateblue;
+}
+
+/* Interactive Elements */
+a, i, .btn {
+    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out; /* Smooth transition for hover effects */
+}
+
+/* Hover effect for links and buttons to have white text with a black outline */
+a:hover, .nav-link:hover, .btn:hover , i:hover {
+    color: white !important; /* Text color */
+    text-shadow:
+        -1px -1px 0 #000,
+         1px -1px 0 #000,
+        -1px  1px 0 #000,
+         1px  1px 0 #000; /* Simulates a black outline */
+}
+
+
+/* Footer Icons */
+.footer-small a, .footer-large a {
+    color: black; /* Consistent with the overall text color */
+}
+
+.footer-small a:hover, .footer-large a:hover {
+    color: white; /* Maintains consistency with hover effects */
+}
+
+/* Change icon color */
+i.fas, .fas {
+    color: black !important; /* Change to your desired color */
+}
+
+/* Change icon color on hover for elements containing icons */
+a:hover i.fas, button:hover i.fas {
+    color: white !important; /* Change to your desired color for hover state */
+}
+
