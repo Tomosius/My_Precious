@@ -1,0 +1,34 @@
+{% extends "base_template.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- User Profile Section -->
+        <div class="col-md-8">
+            <h2>{{ user.username }}'s Profile</h2>
+            <p><strong>Address:</strong> {{ user.profile.address }}</p>
+            <p><strong>Mobile Number:</strong> {{ user.profile.mobile_number }}</p>
+            <p><strong>Biography:</strong> {{ user.profile.biography }}</p>
+            <p><strong>Website:</strong> <a href="{{ user.profile.website }}">{{ user.profile.website }}</a></p>
+            <p><strong>Date of Birth:</strong> {{ user.profile.date_of_birth }}</p>
+            <p><strong>Gender:</strong> {{ user.profile.get_gender_display }}</p>
+            <!-- Social Media Links -->
+            <h4>Social Media</h4>
+            {% for link in user.profile.socialmedialink_set.all %}
+                <p><a href="{{ link.url }}">{{ link.platform }}</a></p>
+            {% endfor %}
+            <!-- Languages -->
+            <h4>Languages</h4>
+            {% for language in user.profile.language_set.all %}
+                <p>{{ language.name }}</p>
+            {% endfor %}
+        </div>
+
+        <!-- User's Posts and Blogs -->
+        <div class="col-md-4">
+            <h4>Posts & Blogs</h4>
+            <!-- Placeholder for posts and blogs -->
+        </div>
+    </div>
+</div>
+{% endblock %}

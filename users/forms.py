@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from .models import UserProfile, SocialMediaLink, Language
 
 
 class UserRegisterForm(UserCreationForm):
@@ -18,3 +19,23 @@ class UserRegisterForm(UserCreationForm):
             user.save()
         return user
 
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['user_photo', 'address', 'mobile_number', 'biography',
+                  'website', 'date_of_birth', 'gender']
+
+
+class SocialMediaLinkForm(forms.ModelForm):
+    class Meta:
+        model = SocialMediaLink
+        fields = ['name', 'url']
+        extra = 1
+
+
+class LanguageForm(forms.ModelForm):
+    class Meta:
+        model = Language
+        fields = ['language']
+        extra = 1
