@@ -62,7 +62,8 @@
                                            href="#">My Posts</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" 
-                                           href="#">Log 
+                                           href="
+{% url 'users:user_logout' %}">Log 
                                         Out</a></li>
                                 </ul>
                             {% else %}
@@ -71,7 +72,7 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li><a class="dropdown-item" 
-                                           href="#">Login</a></li>
+                                           href="{% url 'users:user_login' %}">Login</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" 
                                            href="#">Create an 

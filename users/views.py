@@ -1,5 +1,4 @@
-from django.contrib.auth import authenticate, login, logout as auth_logout
-from django.contrib.auth import authenticate, login, logout as auth_logout
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
 from django.contrib import messages
@@ -23,5 +22,8 @@ def user_login(request):
     return render(request, 'user_login.html')
 
 
-# User Registration
-
+# User Logout
+def user_logout(request):
+    logout(request)
+    messages.info(request, 'You have been logged out.')
+    return redirect('home')
