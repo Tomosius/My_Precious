@@ -37,10 +37,10 @@
                         </li>
                     
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'users:view_all_users' %}">Users</a>
+                            <a class="nav-link" href="#">Users</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link Active" href="{% url 'conversations:view_all_conversations' %}"
+                            <a class="nav-link Active" href="#"
                                >Messages</a>
                         </li>
                         <li class="nav-item dropdown">
@@ -50,18 +50,19 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{% url 'posts:create_post' %}">Create a Post</a>
+                                        <a class="nav-link" href="
+                                        #">Create a Post</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="
-                                    {% url 'users:user_edit_profile' %}">User Profile</a>
+                                    #">User Profile</a>
                                     </li>
                                     
                                     <li><a class="dropdown-item" 
                                            href="#">My Posts</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" 
-                                           href="{% url 'users:user_logout' %}">Log 
+                                           href="#">Log 
                                         Out</a></li>
                                 </ul>
                             {% else %}
@@ -70,10 +71,10 @@
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" 
-                                           href="{% url 'users:user_login' %}">Login</a></li>
+                                           href="#">Login</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" 
-                                           href="{% url 'users:user_register' %}">Create an 
+                                           href="#">Create an 
                                         Account</a></li>
                                 </ul>
                             {% endif %}
