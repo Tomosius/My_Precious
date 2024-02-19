@@ -1,10 +1,11 @@
 from django.db import models
-from django.contrib.auth.models import \
-    User  # Using Django's built-in User model
+from django.contrib.auth.models import User
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from cloudinary.models import CloudinaryField
+from django.contrib.auth.models import User
+
 
 
 class UserProfile(models.Model):
@@ -13,8 +14,7 @@ class UserProfile(models.Model):
                                 related_name='profile')
     # Using CloudinaryField for image uploads
     user_photo = CloudinaryField('image', blank=True,
-                                 null=True)  # Adjust field type to CloudinaryField for direct uploads
-    # Further fields can be added as needed
+                                 null=True)
     address = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
@@ -22,8 +22,6 @@ class UserProfile(models.Model):
 
 
 # Signal to create or update UserProfile whenever a User instance is saved
-
-
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:

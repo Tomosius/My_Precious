@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
 
 </head>
-<body class="d-flex flex-column min-vh-100 col-8">
+<body class="d-flex flex-column min-vh-100">
 
 
     <header class="mb-auto fixed-top">
@@ -62,8 +62,7 @@
                                            href="#">My Posts</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" 
-                                           href="
-{% url 'users:user_logout' %}">Log 
+                                           href="{% url 'users:user_logout' %}">Log 
                                         Out</a></li>
                                 </ul>
                             {% else %}
@@ -75,7 +74,7 @@
                                            href="{% url 'users:user_login' %}">Login</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" 
-                                           href="#">Create an 
+                                           href="{% url 'users:user_register' %}">Create an 
                                         Account</a></li>
                                 </ul>
                             {% endif %}
@@ -104,7 +103,7 @@
     {% endblock %}
     </main>
     
-    <footer class="mt-auto fixed-bottom">
+    <footer class="mt-auto bottom">
         <!-- Footer and all bottom components are here -->
         
         <!-- Footer for small screens-->
@@ -112,24 +111,31 @@
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-2">
-                        <a href="#" class="btn btn-link"><i class="fas 
-                        fa-house" aria-hidden="true"></i></a>
+                        <a href="#" class="btn btn-link"><i class="fas fa-house" aria-hidden="true"></i></a>
                     </div>
                     <div class="col-2">
-                        <a href="#" class="btn btn-link"><i class="fas 
-                        fa-envelope" aria-hidden="true"></i></a>
+                        <a href="#" class="btn btn-link"><i class="fas fa-envelope" aria-hidden="true"></i></a>
                     </div>
-                    <div class="col-2">
-                        <a href="#" class="btn btn-link"><i class="far 
-                        fa-user" aria-hidden="true"></i></a>
+                    <div class="col-2 dropup-center dropup">
+                      <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="far fa-user" aria-hidden="true"></i>
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Action</a></li>
+                        <li><a class="dropdown-item" href="#">Action two</a></li>
+                        <li><a class="dropdown-item" href="{% url 'users:user_logout' %}">Log 
+                            Out</a></li>
+                      </ul>
                     </div>
+                    
+
                     <div class="col-2">
-                        <a href="#" class="btn btn-link"><i class="far 
-                        fa-question-circle" aria-hidden="true"></i></a>
+                        <a href="#" class="btn btn-link"><i class="far fa-question-circle" aria-hidden="true"></i></a>
                     </div>
                 </div>
             </div>
         </div>
+
         
         <!-- Footer for large screens -->
         <div class="d-none d-sm-block">
