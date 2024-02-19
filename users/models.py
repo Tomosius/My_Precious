@@ -17,12 +17,12 @@ class UserProfile(models.Model):
     address = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return self.user
+        return self.user.username
 
 
 # Signal to create or update UserProfile whenever a User instance is saved
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_or_update_user_profile(instance, created):
+def create_or_update_user_profile(instance, created, **kwargs):
     if created:
         # Explicitly create a new UserProfile only if the User instance is new.
         UserProfile.objects.create(user=instance)

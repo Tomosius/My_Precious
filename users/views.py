@@ -40,4 +40,4 @@ def user_register(request):
             return redirect('users:user_login')
     else:
         user_form = UserRegisterForm()
-    return render(request, 'user_register.html', {'user_form': user_form})
+    return render(request, 'user_register.html', {'form': user_form})
