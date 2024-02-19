@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from .forms import UserRegisterForm
 
+
 # User Login
 def user_login(request):
     if request.method == 'POST':
@@ -23,6 +24,7 @@ def user_login(request):
 
 
 # User Logout
+@login_required
 def user_logout(request):
     logout(request)
     messages.info(request, 'You have been logged out.')
@@ -33,7 +35,7 @@ def user_register(request):
     if request.method == 'POST':
         user_form = UserRegisterForm(request.POST)
         if user_form.is_valid():
-            user = user_form.save()  # UserProfile will be created by the signal
+            user_form.save()  # UserProfile will be created by the signal
             messages.success(request, 'Account created successfully.')
             return redirect('users:user_login')
     else:
