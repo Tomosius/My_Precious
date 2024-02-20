@@ -14,6 +14,9 @@ from pathlib import Path
 import os
 import dj_database_url
 import users
+import cloudinary
+import cloudinary_storage
+
 
 if os.path.exists("env.py"):
     import env
@@ -28,7 +31,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+
 ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com']
 
 # Application definition
@@ -41,6 +45,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users',
+    'cloudinary',
+    'cloudinary_storage',
+    'crispy_forms',
+    'crispy_bootstrap5',
 ]
 CSRF_TRUSTED_ORIGINS = ['https://*.herokuapp.com']
 
@@ -129,3 +137,12 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Cloudinary settings for Django
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+}
+
+CRISPY_TEMPLATE_PACK = 'bootstrap5'

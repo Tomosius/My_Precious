@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>My Precious</title>
     <script src="https://kit.fontawesome.com/e8613b1e05.js" crossorigin="anonymous"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 
     {% load static %}
     <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
@@ -59,7 +61,8 @@
                                             Profile</a>
                                     </li>
                                     
-                                    <li><a class="dropdown-item" href="{% url 'users:update_profile' %}">Update Profile</a></li>
+                                    <li><a class="dropdown-item" href="
+{% url 'users:edit_profile' %}">Update Profile</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" 
                                            href="{% url 'users:user_logout' %}">Log 
@@ -163,7 +166,6 @@
             </div>
         </div>
     </div>
-
     <script src="{% static 'assets/js/bootstrap.bundle.min.js' %}"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {

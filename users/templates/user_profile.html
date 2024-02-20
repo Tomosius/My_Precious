@@ -1,34 +1,41 @@
 {% extends "base_template.html" %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row">
-        <!-- User Profile Section -->
-        <div class="col-md-8">
-            <h2>{{ user.username }}'s Profile</h2>
-            <p><strong>Address:</strong> {{ user.profile.address }}</p>
-            <p><strong>Mobile Number:</strong> {{ user.profile.mobile_number }}</p>
-            <p><strong>Biography:</strong> {{ user.profile.biography }}</p>
-            <p><strong>Website:</strong> <a href="{{ user.profile.website }}">{{ user.profile.website }}</a></p>
-            <p><strong>Date of Birth:</strong> {{ user.profile.date_of_birth }}</p>
-            <p><strong>Gender:</strong> {{ user.profile.get_gender_display }}</p>
-            <!-- Social Media Links -->
-            <h4>Social Media</h4>
-            {% for link in user.profile.socialmedialink_set.all %}
-                <p><a href="{{ link.url }}">{{ link.platform }}</a></p>
-            {% endfor %}
-            <!-- Languages -->
-            <h4>Languages</h4>
-            {% for language in user.profile.language_set.all %}
-                <p>{{ language.name }}</p>
-            {% endfor %}
-        </div>
-
-        <!-- User's Posts and Blogs -->
-        <div class="col-md-4">
-            <h4>Posts & Blogs</h4>
-            <!-- Placeholder for posts and blogs -->
+<div class="container mt-4">
+    <div class="profile-header text-center">
+        <h2>User Profile: {{ user.username }}</h2>
+    </div>
+    <div class="profile-info mt-3">
+        <div class="row">
+            <div class="col-12 col-md-4 d-flex justify-content-center align-items-center">
+                <!-- Display the user's profile photo -->
+                {% if user_profile.user_photo %}
+                <img src="{{ user_profile.user_photo.url }}" alt="Profile photo" class="img-fluid rounded-circle" style="width: 150px; height: 150px;">
+                {% else %}
+                <i class="fas fa-user-circle fa-5x"></i>
+                {% endif %}
+            </div>
+            <div class="col-12 col-md-8">
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>First Name:</strong> {{ user.first_name }}</p>
+                <p><strong>Last Name:</strong> {{ user.last_name }}</p>
+                <!-- Display additional profile information -->
+                <p><strong>Address:</strong> {{ user_profile.address|default:"Not provided" }}</p>
+                <p><strong>Mobile Number:</strong> {{ user_profile.mobile_number|default:"Not provided" }}</p>
+                <p><strong>Biography:</strong> {{ user_profile.biography|default:"Not provided" }}</p>
+                <p><strong>Website:</strong> <a href="{{ user_profile.website }}" target="_blank">{{ user_profile.website|default:"Not provided" }}</a></p>
+                <p><strong>Date of Birth:</strong> {{ user_profile.date_of_birth|date:"F d, Y"|default:"Not provided" }}</p>
+                <p><strong>Gender:</strong> {{ user_profile.gender|default:"Not provided" }}</p>
+            </div>
         </div>
     </div>
+
+    {% if request.user.username == user.username %}
+    <!-- This Edit Profile button will only be shown to the user who owns the profile -->
+    <div class="text-center mt-3">
+        <a href="{% url 'users:edit_profile' %}" class="btn btn-primary btn-lg"
+           role="button">Edit Profile</a>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
