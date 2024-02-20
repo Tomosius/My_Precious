@@ -279,3 +279,8 @@ def user_profile(request, username):
     context = {'user': user, 'user_profile': user_profile, 'spoken_languages': spoken_languages,
                'social_media_links': social_media_links}
     return render(request, 'user_profile.html', context)
+
+@login_required
+def list_users(request):
+    users = User.objects.select_related('profile').all()
+    return render(request, 'user_list.html', {'users': users})

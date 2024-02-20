@@ -39,7 +39,7 @@
                         </li>
                     
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Users</a>
+                            <a class="nav-link" href="{% url 'users:list_users' %}">Users</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link Active" href="#"
@@ -124,10 +124,10 @@
                         <i class="far fa-user" aria-hidden="true"></i>
                       </button>
                       <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Action</a></li>
-                        <li><a class="dropdown-item" href="#">Action two</a></li>
-                        <li><a class="dropdown-item" href="{% url 'users:user_logout' %}">Log 
-                            Out</a></li>
+	                      <li><a class="dropdown-item" href="{% url 'users:list_users' %}">User List</a></li>
+	                      <li><a class="dropdown-item" href="{% url 'users:user_profile' username=request.user.username %}">Profile</a></li>
+	                      <li><a class="dropdown-item" href="{% url 'users:edit_profile' %}">Edit Profile</a></li> 
+	                      <li><a class="dropdown-item" href="{% url 'users:user_logout' %}">Log Out</a></li>
                       </ul>
                     </div>
                     

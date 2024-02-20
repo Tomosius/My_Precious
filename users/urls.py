@@ -15,6 +15,9 @@ urlpatterns = [
     path('delete_social_media_link/<int:link_id>/', views.delete_social_media_link, name='delete_social_media_link'),
     path('add_language/', views.add_language, name='add_language'),
     path('add_social_media_link/', views.add_social_media_link, name='add_social_media_link'),
+    path('list_users/', views.list_users, name='list_users'),
+
+
 
 
 

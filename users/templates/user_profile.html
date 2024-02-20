@@ -19,7 +19,7 @@
   }
 </style>
 
-<div class="container-fluid h-100">
+<div class="container-fluid h-100 mt-2">
   <div class="row h-100">
 	  <!-- Mobile View Tabs -->
   <ul class="nav nav-tabs d-sm-none" id="myTab" role="tablist">
@@ -42,7 +42,11 @@
     <div class="col-12 col-sm-6 col-md-4 d-none d-sm-block scrollable-section" id="desktopLeftSection">
       <div class="container">
 	      <div class="row">
-		      <img src="{{ user_profile.user_photo.url }}" alt="{{ user.username }}'s profile image" class="col-4 rounded-2"/>
+		      {% if user_profile.user_photo %}
+			      <img src="{{ user_profile.user_photo.url }}" alt="{{ user.username }}'s profile image" class="col-4 rounded-2"/>
+		      {% else %}
+			      <i class="fas fa-user-circle fa-5x"></i>
+		      {% endif %}
 		      <h1 class="col-8 col-sm-6 col-md-4" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ user_profile.user.username }}</h1>
 	      </div>
 	      <div class="row">

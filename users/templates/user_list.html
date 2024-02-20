@@ -1,0 +1,23 @@
+{% extends 'base_template.html' %}
+{% block content %}
+	<div class="container">
+		<h1>Users</h1>
+
+		{% for user in users %}
+		    <div>
+		        <a href="{% url 'users:user_profile' username=user.username %}">
+		            {% if user.profile.user_photo %}
+			            <img src="{{ user.profile.user_photo.url }}" alt="{{ user.username }}'s profile image" class="col-4 rounded-2"/>
+		            {% else %}
+			            <i class="fas fa-user-circle fa-5x"></i>
+		            {% endif %}
+		            <p>{{ user.username }}</p>
+		        </a>
+		    </div>
+		{% empty %}
+		    <p>No users found.</p>
+		{% endfor %}
+	</div>
+</div>
+
+{% endblock %}
