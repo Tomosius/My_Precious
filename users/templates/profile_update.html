@@ -79,7 +79,6 @@
 			    </fieldset>
 			</form>
 
-
 		</div>
 		<div class="col-12 col-sm-6">
 		<!-- Languages -->
@@ -163,24 +162,42 @@ $(document).ready(function() {
     });
 
     $('#submit-social-media-link').click(function(e) {
-        e.preventDefault();
-        let formData = new FormData($('#add-social-media-link-form')[0]);
+	    e.preventDefault();
+	    let formData = new FormData($('#add-social-media-link-form')[0]);
 
-        $.ajax({
-            url: '{% url 'users:add_social_media_link' %}',
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                alert('Social media link added successfully.');
-                // Optionally, update the UI to show the new link
-            },
-            error: function(xhr, errmsg, err) {
-                alert('An error occurred. Please try again.');
-            }
-        });
-    });
+	    $.ajax({
+	        url: '{% url "users:add_social_media_link" %}', // Ensure this URL matches your Django URL configuration
+	        type: 'POST',
+	        data: formData,
+	        processData: false,
+	        contentType: false,
+	        success: function(response) {
+	            // Assuming 'response' includes 'link_id', 'link_name', and 'link_url'
+	            var newLinkHtml = '<div class="social-network-item" id="social-network-item-' + response.link_id + '">' +
+	                              '<button class="delete-social-network-btn btn btn-danger btn-sm" data-social-network-id="' + response.link_id + '">' +
+	                              '<i class="fas fa-times"></i></button>' +
+	                              '<span>' + response.link_name + '</span>' +
+	                              '</div>';
+
+	            // Insert the new social network item at the end of the existing list
+	            if ($('.social-network-item').length > 0) {
+	                $('.social-network-item').last().after(newLinkHtml);
+	            } else {
+	                // If there are no existing items, insert directly before the form
+	                $('#add-social-media-link-form').before(newLinkHtml);
+	            }
+
+	            // Clear the form fields
+	            $('#add-social-media-link-form')[0].reset();
+	            alert('Social media link added successfully.');
+	        },
+	        error: function(xhr, errmsg, err) {
+	            alert('An error occurred. Please try again.');
+	        }
+	    });
+	});
+
+
 
     $('#submit-language').click(function(e) {
         e.preventDefault();
@@ -193,9 +210,25 @@ $(document).ready(function() {
             processData: false,
             contentType: false,
             success: function(response) {
-                alert('Language added successfully.');
-                // Optionally, update the UI to reflect the addition of the new language
-            },
+			    // Assuming 'response' is the JSON object that includes 'language_id' and 'language_name'
+			    var newLanguageHtml = '<div class="language-item" id="language-item-' + response.language_id + '">' +
+			                          '<button class="delete-language-btn btn btn-danger btn-sm" data-language-id="' + response.language_id + '">' +
+			                          '<i class="fas fa-times"></i></button>' +
+			                          '<span>' + response.language_name + '</span></div>';
+
+			    // Insert the new language item as previously described
+			    if ($('.language-item').length > 0) {
+			        $('.language-item').last().after(newLanguageHtml);
+			    } else {
+			        $('.languages-container').prepend(newLanguageHtml); // Adjust selector as needed
+			    }
+
+			    // Clear the form
+			    $('#add-language-form')[0].reset();
+			},
+
+
+
             error: function(xhr, errmsg, err) {
                 alert('An error occurred. Please try again.');
             }

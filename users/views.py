@@ -128,13 +128,15 @@ def add_language(request):
         form = LanguageForm(request.POST)
         if form.is_valid():
             language = form.save(commit=False)
-            language.user_profile = request.user.profile  # Adjust to your user profile relation
+            language.user_profile = request.user.profile  # Ensure this matches your user profile relation
             language.save()
-            return JsonResponse({'success': True, 'message': 'Language added successfully.'})
+            return JsonResponse({
+                'language_id': language.id,
+                'language_name': language.language  # Make sure 'language' attribute exists in your model
+            })
         else:
             errors = form.errors.as_json()
             return JsonResponse({'success': False, 'errors': errors}, status=400)
-    # For non-POST requests, you might want to handle differently or just prevent them
     return JsonResponse({'success': False, 'message': 'Invalid request'}, status=400)
 
 
@@ -150,14 +152,20 @@ def add_social_media_link(request):
         form = SocialMediaLinkForm(request.POST)
         if form.is_valid():
             social_media_link = form.save(commit=False)
-            social_media_link.user_profile = request.user.profile  # Adjust to your user profile relation
+            social_media_link.user_profile = request.user.profile  # Ensure this matches your user profile relation
             social_media_link.save()
-            return JsonResponse({'success': True, 'message': 'Social media link added successfully.'})
+            # Assuming your model has 'name' and 'url' fields you want to return
+            return JsonResponse({
+                'success': True,
+                'link_id': social_media_link.id,
+                'link_name': social_media_link.name,
+                'link_url': social_media_link.url
+            })
         else:
             errors = form.errors.as_json()
             return JsonResponse({'success': False, 'errors': errors}, status=400)
-    # For non-POST requests, you might want to handle differently or just prevent them
     return JsonResponse({'success': False, 'message': 'Invalid request'}, status=400)
+
 
 
 def delete_language(request, language_id):
