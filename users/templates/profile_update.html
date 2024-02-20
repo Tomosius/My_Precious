@@ -25,7 +25,7 @@
 			        </div>
 			        <!-- Column for Form Fields on Medium Screens and Larger -->
 			        <div class="col-12 col-sm-6 px-3">
-			            <legend class="d-none d-sm-block">Profile Information</legend>
+			            <a class="d-none d-sm-block">Profile Information</a>
 				        <div class="col-8 col-sm-12 mx-auto">{{ profile_form.first_name|as_crispy_field }}</div>
 				        <div class="col-8 col-sm-12 mx-auto">{{ profile_form.last_name|as_crispy_field }}</div>
 			        </div>
@@ -69,15 +69,16 @@
 			{% endfor %}
 
 
-			<form method="post" enctype="multipart/form-data" class="form">
-		        {% csrf_token %}
-		        <fieldset>
-		            <legend>Add Social Media Link</legend>
+			<form id="add-social-media-link-form" method="post" enctype="multipart/form-data" class="form">
+			    {% csrf_token %}
+			    <fieldset>
+			        <legend>Add Social Media Link</legend>
 			        <div class="col-8 col-sm-12 mx-auto">{{ social_media_link_form.name | as_crispy_field }}</div>
-		            <div class="col-8 col-sm-12 mx-auto">{{ social_media_link_form.url | as_crispy_field }}</div>
-		            <button type="submit" name="social_media_link_form" class="btn btn-primary">Add Social Media Link</button>
-		        </fieldset>
-		    </form>
+			        <div class="col-8 col-sm-12 mx-auto">{{ social_media_link_form.url | as_crispy_field }}</div>
+			        <button type="button" id="submit-social-media-link" class="btn btn-primary">Add Social Media Link</button>
+			    </fieldset>
+			</form>
+
 
 		</div>
 		<div class="col-12 col-sm-6">
@@ -95,21 +96,22 @@
 
 
 			<!-- Add Language Form -->
-		    <form method="post" enctype="multipart/form-data" class="form">
-		        {% csrf_token %}
-		        <fieldset>
-		            <div class="col-8 col-sm-12 mx-auto">{{ language_form.as_p }}</div>
-		            <button type="submit" name="language_form" class="btn btn-primary">Add Language</button>
-		        </fieldset>
-		    </form>
+		    <form id="add-language-form" method="post" enctype="multipart/form-data" class="form">
+			    {% csrf_token %}
+			    <fieldset>
+			        <div class="col-8 col-sm-12 mx-auto">{{ language_form.as_p }}</div>
+			        <button type="button" id="submit-language" class="btn btn-primary">Add Language</button>
+			    </fieldset>
+			</form>
+
 
 		</div>
 
 	</div>
 </div>
 
-	<script>
-// Ensure DOM is fully loaded
+
+<script>
 $(document).ready(function() {
     $('.delete-language-btn').click(function() {
         const languageId = $(this).data('language-id');
@@ -159,8 +161,52 @@ $(document).ready(function() {
             }
         });
     });
+
+    $('#submit-social-media-link').click(function(e) {
+        e.preventDefault();
+        let formData = new FormData($('#add-social-media-link-form')[0]);
+
+        $.ajax({
+            url: '{% url 'users:add_social_media_link' %}',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                alert('Social media link added successfully.');
+                // Optionally, update the UI to show the new link
+            },
+            error: function(xhr, errmsg, err) {
+                alert('An error occurred. Please try again.');
+            }
+        });
+    });
+
+    $('#submit-language').click(function(e) {
+        e.preventDefault();
+        let formData = new FormData($('#add-language-form')[0]);
+
+        $.ajax({
+            url: '{% url 'users:add_language' %}',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                alert('Language added successfully.');
+                // Optionally, update the UI to reflect the addition of the new language
+            },
+            error: function(xhr, errmsg, err) {
+                alert('An error occurred. Please try again.');
+            }
+        });
+    });
+
 });
 </script>
+
+
+
 
 
 {% endblock %}

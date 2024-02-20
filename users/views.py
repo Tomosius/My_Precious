@@ -118,23 +118,25 @@ def change_password(request):
     return render(request, 'change_password.html', {'form': form})
 
 
+
 @login_required
 def add_language(request):
     """
-    Allows users to add a language to their profile.
+    Allows users to add a language to their profile via AJAX.
     """
     if request.method == 'POST':
         form = LanguageForm(request.POST)
         if form.is_valid():
             language = form.save(commit=False)
-            language.user_profile = request.user.userprofile  # Adjusted to
-            # correct relation
+            language.user_profile = request.user.profile  # Adjust to your user profile relation
             language.save()
-            messages.success(request, 'Language added successfully.')
-            return redirect('user_profile', username=request.user.username)
-    else:
-        form = LanguageForm()
-    return render(request, 'add_language.html', {'form': form})
+            return JsonResponse({'success': True, 'message': 'Language added successfully.'})
+        else:
+            errors = form.errors.as_json()
+            return JsonResponse({'success': False, 'errors': errors}, status=400)
+    # For non-POST requests, you might want to handle differently or just prevent them
+    return JsonResponse({'success': False, 'message': 'Invalid request'}, status=400)
+
 
 
 
@@ -142,21 +144,20 @@ def add_language(request):
 @login_required
 def add_social_media_link(request):
     """
-    Allows users to add a social media link to their profile.
+    Allows users to add a social media link to their profile via AJAX.
     """
     if request.method == 'POST':
         form = SocialMediaLinkForm(request.POST)
         if form.is_valid():
             social_media_link = form.save(commit=False)
-            social_media_link.user_profile = request.user.userprofile  #
-            # Adjusted to correct relation
+            social_media_link.user_profile = request.user.profile  # Adjust to your user profile relation
             social_media_link.save()
-            messages.success(request, 'Social media link added successfully.')
-            return redirect('user_profile', username=request.user.username)
-    else:
-        form = SocialMediaLinkForm()
-    return redirect('user_profile', username=request.user.username)
-
+            return JsonResponse({'success': True, 'message': 'Social media link added successfully.'})
+        else:
+            errors = form.errors.as_json()
+            return JsonResponse({'success': False, 'errors': errors}, status=400)
+    # For non-POST requests, you might want to handle differently or just prevent them
+    return JsonResponse({'success': False, 'message': 'Invalid request'}, status=400)
 
 
 def delete_language(request, language_id):
