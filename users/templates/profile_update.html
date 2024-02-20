@@ -17,11 +17,11 @@
 			            {% if profile_form.instance.user_photo %}
 			                <!-- Responsive image that takes up the maximum height of the parent -->
 			                <img src="{{ profile_form.instance.user_photo.url }}" alt="Profile photo" class="rounded-3 img-fluid" style="max-height: 40%; width: auto;">
-			                <div class="col-8 col-sm-12 mx-auto">{{ profile_form.user_photo|as_crispy_field }}</div>
 			            {% else %}
 			                <!-- Fallback avatar icon -->
 			                <i class="fas fa-user-circle fa-5x"></i>
 			            {% endif %}
+				        <div class="col-8 col-sm-12 mx-auto">{{ profile_form.user_photo|as_crispy_field }}</div>
 			        </div>
 			        <!-- Column for Form Fields on Medium Screens and Larger -->
 			        <div class="col-12 col-sm-6 px-3">
