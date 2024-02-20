@@ -22,15 +22,15 @@
 <div class="container-fluid h-100">
   <div class="row h-100">
 	  <!-- Mobile View Tabs -->
-  <ul class="nav nav-tabs d-md-none" id="myTab" role="tablist">
-    <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="left-tab" data-bs-toggle="tab" href="#left" role="tab" aria-controls="left" aria-selected="true">Left</button>
+  <ul class="nav nav-tabs d-sm-none" id="myTab" role="tablist">
+    <li class="nav-item col-6" role="presentation">
+      <button class="nav-link active mx-auto" id="left-tab" data-bs-toggle="tab" href="#left" role="tab" aria-controls="left" aria-selected="true">User Profile</button>
     </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="right-tab" data-bs-toggle="tab" href="#right" role="tab" aria-controls="right" aria-selected="false">Right</button>
+    <li class="nav-item col-6" role="presentation">
+      <button class="nav-link mx-auto" id="right-tab" data-bs-toggle="tab" href="#right" role="tab" aria-controls="right" aria-selected="false">Posts</button>
     </li>
   </ul>
-  <div class="tab-content d-md-none" id="myTabContent">
+  <div class="tab-content d-sm-none" id="myTabContent">
     <div class="tab-pane fade show active" id="left" role="tabpanel" aria-labelledby="left-tab">
       <!-- Mobile left-side content will be dynamically loaded here -->
     </div>
@@ -39,37 +39,80 @@
     </div>
   </div>
     <!-- Desktop View -->
-    <div class="col-md-6 d-none d-md-block scrollable-section" id="desktopLeftSection">
-      <!-- Placeholder for left-side content -->
-      <p>Lorem ipsum dolor sit amet...</p>
-	    <p>Lorem ipsum dolor sit amet...</p>
-	    <p>Lorem ipsum dolor sit amet...</p>
-	    <p>Lorem ipsum dolor sit amet...</p>
-	    <p>Lorem ipsum dolor sit amet...</p>
-	    <p>Lorem ipsum dolor sit amet...</p>
-	    <p>Lorem ipsum dolor sit amet...</p>
-	    <p>Lorem ipsum dolor sit amet...</p>
-	    <p>Lorem ipsum dolor sit amet...</p>
-	    <p>Lorem ipsum dolor sit amet...</p>
-	    <p>Lorem ipsum dolor sit amet...</p>
-	    <p>Lorem ipsum dolor sit amet...</p>
-	    <p>Lorem ipsum dolor sit amet...</p>
-	    <p>Lorem ipsum dolor sit amet...</p>
-	    <p>Lorem ipsum dolor sit amet...</p>
-	    <p>Lorem ipsum dolor sit amet...</p>
-	    <p>Lorem ipsum dolor sit amet...</p>
-	    <p>Lorem ipsum dolor sit amet...</p>
-	    <p>Lorem ipsum dolor sit amet...</p>
-	    <p>Lorem ipsum dolor sit amet...</p>
-
-      <!-- Repeat or dynamically load content to demonstrate scrolling -->
+    <div class="col-12 col-sm-6 col-md-4 d-none d-sm-block scrollable-section" id="desktopLeftSection">
+      <div class="container">
+	      <div class="row">
+		      <img src="{{ user_profile.user_photo.url }}" alt="{{ user.username }}'s profile image" class="col-4 rounded-2"/>
+		      <h1 class="col-8 col-sm-6 col-md-4" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ user_profile.user.username }}</h1>
+	      </div>
+	      <div class="row">
+		      <h6 class="col-3 end">First Name:</h6>
+		      <p class="col-9">{% if user_profile.first_name %}{{ user_profile.first_name }}{% else %}Unknown{% endif %}</p>
+	      </div>
+	      <div class="row">
+		      <h6 class="col-3 end">Last Name:</h6>
+		      <p class="col-9 col-sm-6 col-md-4">{% if user_profile.last_name %}{{ user_profile.last_name }}{% else %}Unknown{% endif %}</p>
+	      </div>
+	      <div class="row">
+		      <h6 class="col-3 end">Email:</h6>
+		      <p class="col-9 col-sm-6 col-md-4">{% if user.email %}{{ user.email }}{% else %}Unknown{% endif %}</p>
+	      </div>
+	      <div class="row">
+		      <h6 class="col-3 end">Address</h6>
+		      <p class="col-9 col-sm-6 col-md-4">{% if user_profile.address %}{{ user_profile.address }}{% else %}Unknown{% endif %}</p>
+	      </div>
+	      <div class="row">
+		      <h6 class="col-3 end">Mobile Phone</h6>
+		      <p class="col-9 col-sm-6 col-md-4">{% if user_profile.mobile_number %}{{ user_profile.mobile_number }}{% else %}Unknown{% endif %}</p>
+	      </div>
+	      <div class="row">
+		      <h6 class="col-3 end">"DoB"</h6>
+		      <p class="col-9 col-sm-6 col-md-4">{% if user_profile.date_of_birth %}{{ user_profile.date_of_birth }}{% else %}Unknown{% endif %}</p>
+	      </div>
+          <div class="row">
+		      <h6 class="col-3 end">Website</h6>
+		      <p class="col-9 col-sm-6 col-md-4">{% if user_profile.website %}<a href="{{ user_profile.website }}" target="_blank">{{ user_profile.website }}</a>{% else %}Unknown{% endif %}</p>
+	      </div>
+	      <div class="row">
+		      <h6 class="col-3 end">About</h6>
+		      <p class="col-9 col-sm-6 col-md-4">{% if user_profile.biography %}{{ user_profile.biography }}{% else %}Unknown{% endif %}</p>
+	      </div>
+	      <div class="row border border-dark rounded-2">
+		      <h6>Spoken Languages</h6>
+		      <div style="flex-wrap: nowrap; overflow-x: auto; display: flex; gap: 5px">
+			      {% if spoken_languages %}
+				      {% for language in spoken_languages %}
+					      <span>{{ language.language }}{% if not loop.last %}, {% endif %}</span>
+				      {% endfor %}
+			      {% else %}
+				      <p>Unknown</p>
+		            {% endif %}
+		      </div>
+	      </div>
+	      <div class="row border border-dark rounded-2">
+		      <div class="row"><h6>Social Network Links:</h6></div>
+		      {% if social_media_links %}
+			      {% for link in social_media_links %}
+					<p class="col-9 col-sm-6 col-md-4"><a href="{{ link.url }}" target="_blank">{{ link.name }}</a></p>
+			      {% endfor %}
+		      {% else %}
+			      <p class="col-9 col-sm-6 col-md-4">Unknown</p>
+	            {% endif %}
+	      </div>
+      </div>
     </div>
 
-    <div class="col-md-6 d-none d-md-block scrollable-section" id="desktopRightSection">
+
+
+
+
+
+    <div class="col-12 col-sm-6 col-md-8 d-none d-sm-block scrollable-section" id="desktopRightSection">
       <!-- Placeholder for right-side content -->
       <p>Continuation of content...</p>
 	    <p>Continuation of content...</p>
 	    <p>Continuation of content...</p>
+	    <p>Continuation of conteninuation of conteninuation of conteninuation of content...</p>
 	    <p>Continuation of content...</p>
 	    <p>Continuation of content...</p>
 	    <p>Continuation of content...</p>
@@ -78,8 +121,7 @@
 	    <p>Continuation of content...</p>
 	    <p>Continuation of content...</p>
 	    <p>Continuation of content...</p>
-	    <p>Continuation of content...</p>
-	    <p>Continuation of content...</p>
+	    <p>Continuation of coninuation of conteninuation of conteninuation of contentent...</p>
 	    <p>Continuation of content...</p>
 	    <p>Continuation of content...</p>
 	    <p>Continuation of content...</p>

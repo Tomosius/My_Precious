@@ -274,5 +274,8 @@ def user_profile(request, username):
     """
     user = get_object_or_404(User, username=username)
     user_profile = get_object_or_404(UserProfile, user=user)
-    context = {'user': user, 'user_profile': user_profile}
+    spoken_languages = Language.objects.filter(user_profile=user_profile)
+    social_media_links = SocialMediaLink.objects.filter(user_profile=user_profile)
+    context = {'user': user, 'user_profile': user_profile, 'spoken_languages': spoken_languages,
+               'social_media_links': social_media_links}
     return render(request, 'user_profile.html', context)
