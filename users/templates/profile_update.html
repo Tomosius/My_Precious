@@ -11,7 +11,7 @@
             <div class="container">
 			    <div class="row">
 			        <!-- Column for Photo and Upload on Medium Screens and Larger -->
-			        <div class="col-12 col-sm-6 px-3">
+			        <div class="col-8 col-sm-6 px-3 mx-auto">
 			            <legend class="d-block d-sm-none">Profile Information</legend>
 			            <!-- Profile Photo Section -->
 			            {% if profile_form.instance.user_photo %}
@@ -21,13 +21,13 @@
 			                <!-- Fallback avatar icon -->
 			                <i class="fas fa-user-circle fa-5x"></i>
 			            {% endif %}
-				        <div class="col-8 col-sm-12 mx-auto">{{ profile_form.user_photo|as_crispy_field }}</div>
+				        {{ profile_form.user_photo|as_crispy_field }}
 			        </div>
 			        <!-- Column for Form Fields on Medium Screens and Larger -->
-			        <div class="col-12 col-sm-6 px-3">
+			        <div class="col-8 col-sm-6 px-3 mx-auto">
 			            <a class="d-none d-sm-block">Profile Information</a>
-				        <div class="col-8 col-sm-12 mx-auto">{{ profile_form.first_name|as_crispy_field }}</div>
-				        <div class="col-8 col-sm-12 mx-auto">{{ profile_form.last_name|as_crispy_field }}</div>
+				        {{ profile_form.first_name|as_crispy_field }}
+				        {{ profile_form.last_name|as_crispy_field }}
 			        </div>
 			    </div>
 			</div>
@@ -36,26 +36,26 @@
         <!-- Additional Information -->
         <div class="container">
 	        <div class="row">
-		        <div class="col-12 col-sm-6 px-3">
-			        <div class="col-8 col-sm-12 mx-auto">{{ profile_form.address|as_crispy_field }}</div>
-			        <div class="col-8 col-sm-12 mx-auto">{{ profile_form.mobile_number|as_crispy_field }}</div>
-			        <div class="col-8 col-sm-12 mx-auto">{{ profile_form.website|as_crispy_field }}</div>
-			        <div class="col-8 col-sm-12 mx-auto">{{ profile_form.date_of_birth|as_crispy_field }}</div>
+		        <div class="col-8 col-sm-6 px-3 mx-auto">
+			        {{ profile_form.address|as_crispy_field }}
+			        {{ profile_form.mobile_number|as_crispy_field }}
+			        {{ profile_form.website|as_crispy_field }}
+			        {{ profile_form.date_of_birth|as_crispy_field }}
 		        </div>
-		        <div class="col-12 col-sm-6 px-3">
-			        <div class="col-8 col-sm-12 mx-auto">{{ profile_form.biography|as_crispy_field }}</div>
+		        <div class="col-8 col-sm-6 px-3 mx-auto">
+			        {{ profile_form.biography|as_crispy_field }}
 		        </div>
 	        </div>
         </div>
-            <button type="submit" name="profile_form" class="btn btn-primary">Update Profile</button>
+	        <div class="col-8 col-sm-12 mx-auto"><button type="submit" name="profile_form" class="btn btn-primary">Update Profile</button></div>
         </fieldset>
 	</form>
 </div>
+
 <div class="container">
 	<div class="row">
 	<!-- Add and Delete Language and Social Media Links -->
-
-		<div class="col-12 col-sm-6">
+		<div class="col-8 col-sm-6 px-3 mx-auto">
 			<!-- Soccial links -->
 			<legend>Social Media Links:</legend>
 			{% for link in current_social_media_links %}
@@ -64,7 +64,7 @@
 			        <button class="delete-social-network-btn btn btn-danger btn-sm" data-social-network-id="{{ link.id }}">
 			            <i class="fas fa-times"></i>
 			        </button>
-			        <span>{{ link.name }}</span>
+				    <a href="{{ link.url }}" target="_blank">{{ link.name }}</a>
 			    </div>
 			{% endfor %}
 
@@ -72,15 +72,17 @@
 			<form id="add-social-media-link-form" method="post" enctype="multipart/form-data" class="form">
 			    {% csrf_token %}
 			    <fieldset>
-			        <legend>Add Social Media Link</legend>
-			        <div class="col-8 col-sm-12 mx-auto">{{ social_media_link_form.name | as_crispy_field }}</div>
-			        <div class="col-8 col-sm-12 mx-auto">{{ social_media_link_form.url | as_crispy_field }}</div>
-			        <button type="button" id="submit-social-media-link" class="btn btn-primary">Add Social Media Link</button>
+
+				    <legend>Add Social Media Link</legend>
+				    {{ social_media_link_form.name | as_crispy_field }}
+				    {{ social_media_link_form.url | as_crispy_field }}
+				    <button type="button" id="submit-social-media-link" class="btn btn-primary">Add Social Media Link</button>
+
 			    </fieldset>
 			</form>
-
 		</div>
-		<div class="col-12 col-sm-6">
+
+		<div class="col-8 col-sm-6 px-3 mx-auto">
 		<!-- Languages -->
 			<legend>Languages:</legend>
 				{% for language in current_languages %}
@@ -93,22 +95,48 @@
 					</div>
 				{% endfor %}
 
-
 			<!-- Add Language Form -->
 		    <form id="add-language-form" method="post" enctype="multipart/form-data" class="form">
 			    {% csrf_token %}
 			    <fieldset>
-			        <div class="col-8 col-sm-12 mx-auto">{{ language_form.as_p }}</div>
+			        {{ language_form.language | as_crispy_field }}
 			        <button type="button" id="submit-language" class="btn btn-primary">Add Language</button>
 			    </fieldset>
 			</form>
-
-
 		</div>
-
 	</div>
 </div>
 
+<div>
+	<!-- Credentials and Password Change -->
+    <div class="row">
+        <div class="col-8 col-sm-6 px-3 mx-auto">
+            <!-- Credentials Update Form -->
+            <form method="post">
+                {% csrf_token %}
+                <fieldset>
+                    <legend>Credentials</legend>
+                    {{ user_form.username | as_crispy_field }}
+	                {{ user_form.email | as_crispy_field }}
+                    <button type="submit" name="user_form" class="btn btn-primary">Update Credentials</button>
+                </fieldset>
+            </form>
+        </div>
+        <div class="col-8 col-sm-6 px-3 mx-auto">
+            <!-- Password Change Form -->
+            <form method="post">
+                {% csrf_token %}
+                <fieldset>
+                    <legend>Change Password</legend>
+                    {{ password_form.old_password | as_crispy_field }}
+	                {{ password_form.new_password1 | as_crispy_field }}
+	                {{ password_form.new_password2 | as_crispy_field }}
+	                <button type="submit" name="password_form" class="btn btn-primary">Change Password</button>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
 
 <script>
 $(document).ready(function() {
@@ -176,9 +204,8 @@ $(document).ready(function() {
 	            var newLinkHtml = '<div class="social-network-item" id="social-network-item-' + response.link_id + '">' +
 	                              '<button class="delete-social-network-btn btn btn-danger btn-sm" data-social-network-id="' + response.link_id + '">' +
 	                              '<i class="fas fa-times"></i></button>' +
-	                              '<span>' + response.link_name + '</span>' +
+	                              '<a href="{{ link.url }}" target="_blank">' + response.link_name + '</a>' +
 	                              '</div>';
-
 	            // Insert the new social network item at the end of the existing list
 	            if ($('.social-network-item').length > 0) {
 	                $('.social-network-item').last().after(newLinkHtml);
@@ -237,9 +264,5 @@ $(document).ready(function() {
 
 });
 </script>
-
-
-
-
 
 {% endblock %}

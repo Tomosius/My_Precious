@@ -17,4 +17,5 @@ urlpatterns = [
     path('add_social_media_link/', views.add_social_media_link, name='add_social_media_link'),
 
 
+
 ]
