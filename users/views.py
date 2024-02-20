@@ -58,18 +58,6 @@ def user_register(request):
         user_form = UserRegisterForm()
     return render(request, 'user_register.html', {'form': user_form})
 
-
-@login_required
-def user_profile(request, username):
-    """
-    Displays the user profile for the given username.
-    """
-    user = get_object_or_404(User, username=username)
-    user_profile = get_object_or_404(UserProfile, user=user)
-    context = {'user': user, 'user_profile': user_profile}
-    return render(request, 'user_profile.html', context)
-
-
 @login_required
 def update_profile(request):
     user = request.user
@@ -277,3 +265,14 @@ def combined_update_user_profile(request):
     }
 
     return render(request, 'profile_update.html', context)
+
+
+@login_required
+def user_profile(request, username):
+    """
+    Displays the user profile for the given username.
+    """
+    user = get_object_or_404(User, username=username)
+    user_profile = get_object_or_404(UserProfile, user=user)
+    context = {'user': user, 'user_profile': user_profile}
+    return render(request, 'user_profile.html', context)
