@@ -4,7 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
 from .forms import LostPostForm, FoundPostForm, FileFieldForm
-from .models import LostPhoto, FoundPhoto
+from .models import LostPhoto, FoundPhoto, LostPost, FoundPost
+from django.shortcuts import get_object_or_404
 
 
 @login_required
@@ -46,5 +47,36 @@ def create_post(request):
         'form': form,
         'image_form': image_form,
         'post_type': post_type,
+        'GOOGLE_MAPS_API_KEY': google_api_key
+    })
+
+
+def view_all_posts(request):
+    lost_posts = LostPost.objects.all()
+    found_posts = FoundPost.objects.all()
+    all_posts = list(lost_posts) + list(found_posts)
+
+    lost_photos = LostPhoto.objects.all()
+    found_photos = FoundPhoto.objects.all()
+    context = {
+        'lost_posts': lost_posts,
+        'found_posts': found_posts,
+        'all_posts': all_posts,
+    }
+
+    return render(request, 'view_all_posts.html', context)
+
+
+def post_detail_view(request, slug, post_type):
+    google_api_key = os.environ.get('GOOGLE_MAPS_API_KEY')
+    model = LostPost if post_type == 'lost' else FoundPost
+    post = get_object_or_404(model, slug=slug)
+
+    PhotoModel = LostPhoto if post_type == 'lost' else FoundPhoto
+    photos = PhotoModel.objects.filter(lost_post=post) if post_type == 'lost' else PhotoModel.objects.filter(found_post=post)
+
+    return render(request, 'post_details.html', {
+        'post': post,
+        'photos': photos,
         'GOOGLE_MAPS_API_KEY': google_api_key
     })

@@ -58,21 +58,21 @@ class Post(models.Model):
 
     def get_dynamic_url(self):
         if isinstance(self, LostPost):
-            return reverse('lostpost_detail', kwargs={'slug': self.slug})
+            return reverse('lost_post_details', kwargs={'slug': self.slug})
         elif isinstance(self, FoundPost):
-            return reverse('foundpost_detail', kwargs={'slug': self.slug})
+            return reverse('found_post_details', kwargs={'slug': self.slug})
         else:
             return "#"  # Fallback URL, in case it's neither
 
 
 class LostPost(Post):
     def get_absolute_url(self):
-        return reverse('posts:lostpost_detail', kwargs={'slug': self.slug})
+        return reverse('posts:lost_post_details', kwargs={'slug': self.slug})
 
 
 class FoundPost(Post):
     def get_absolute_url(self):
-        return reverse('posts:foundpost_detail', kwargs={'slug': self.slug})
+        return reverse('posts:found_post_details', kwargs={'slug': self.slug})
 
 
 class LostPhoto(models.Model):

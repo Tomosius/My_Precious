@@ -27,7 +27,7 @@
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" 
-                               href="/">Home</a>
+                               href="{% url 'posts:view_all_posts' %}">Home</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'users:list_users' %}">Users</a>
