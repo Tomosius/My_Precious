@@ -2,108 +2,172 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container mt-4 col-12 col-sd-10 col-md-8 col-xl-6">
-    <div class="row justify-content-center">
-        <div class="col-12 col-sm-8 col-lg-6">
-            <fieldset class="d-flex flex-column flex-sm-row align-items-center justify-content-between mb-3">
-                <legend class="form-label mb-sm-0">Choose Post Type:</legend>
+<div class="container mt-1 col-sd-8 col-md-8">
+    <div class="row">
+	  <div class="row mt-md-4 justify-content-center align-items-center">
+	    <div class="col">
+		    <div class="d-flex align-items-center h-100 text-md-start">
+			    <!-- Use "d-flex align-items-center" to vertically center content in the column -->
+		        <legend class="form-label mb-0">Choose Post Type:</legend>
+		    </div>
+	    </div>
+	    <div class="col">
+	        <div class="row">
+		        <div class="form-check form-check-inline">
+	                <input class="form-check-input" type="radio" name="postType" id="lost" value="lost" onchange="updateSubmitButton()" {% if post_type == 'lost' %}checked{% endif %}>
+			        <label class="form-check-label" for="lost">Lost</label>
+	            </div>
+	            <div class="form-check form-check-inline">
+	                <input class="form-check-input" type="radio" name="postType" id="found" value="found" onchange="updateSubmitButton()" {% if post_type == 'found' %}checked{% endif %}>
+	                <label class="form-check-label" for="found">Found</label>
+	            </div>
+	        </div>
+	    </div>
+	  </div>
+	</div>
 
-                <div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="postType" id="lost" value="lost" onchange="updateSubmitButton()" {% if post_type == 'lost' %}checked{% endif %}>
-                        <label class="form-check-label" for="lost">Lost</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="postType" id="found" value="found" onchange="updateSubmitButton()" {% if post_type == 'found' %}checked{% endif %}>
-                        <label class="form-check-label" for="found">Found</label>
-                    </div>
-                </div>
-            </fieldset>
-        </div>
-    </div>
 
-    <div class="row justify-content-center mt-3">
+    <div class="row justify-content-center mt-1">
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <!-- Hidden input for post type -->
             <input type="hidden" name="post_type" id="hiddenPostType" value="">
             <div class="form-group">
-                {{ form.title|as_crispy_field }}
+                {{ form.title|as_crispy_field}}
             </div>
             <div class="form-group">
                 {{ form.description|as_crispy_field }}
-                {{ form.event_date|as_crispy_field }}
-                {{ form.date_uncertainty_days|as_crispy_field }}
-                {{ form.longitude|as_crispy_field }}
-                {{ form.latitude|as_crispy_field }}
             </div>
-
+	        <div class="row">
+		        <div class="col">
+			        {{ form.event_date|as_crispy_field }}
+		        </div>
+		        <div class="col">
+			        {{ form.date_uncertainty_days|as_crispy_field }}
+		        </div>
+	            </div>
+	            <span class="d-none"> <!-- Hidden fields for latitude and longitude -->
+		            {{ form.longitude|as_crispy_field }}
+                    {{ form.latitude|as_crispy_field }}
+	            </span>
             <div class="form-group">
-                <label for="id_file_field">Upload images:</label>
                 {{ image_form.file_field|as_crispy_field }}
             </div>
 
-            <div id="submit-warning" style="display: none; color: red;">You cannot submit the post, please select a post type.</div>
 
-            <div id="map" style="height: 400px; width: 100%;"></div>
-
+            <div class="d-none d-md-block" id="map" style="height: 400px; width: 100%;"></div>
+	        <button type="button" class="btn btn-primary d-md-none" data-bs-toggle="modal" data-bs-target="#mapModal">
+			  Select Location
+			</button>
+	        <div id="submit-warning" style="display: none; color: red;">You cannot submit the post, please select a post type.</div>
             <button type="submit" class="btn btn-primary mb-5" id="submit-btn" disabled>Submit</button>
         </form>
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="mapModal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="mapModalLabel">Map Location</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="map_modal" style="height: 400px; width: 100%;"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initDefaultMap"></script>
+
 <script>
+// Initializes the map on the main page
+function initDefaultMap() {
+    let initialPosition = {lat: -34.397, lng: 150.644};
+    let map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 8,
+        center: initialPosition
+    });
+    let marker = new google.maps.Marker({
+        position: initialPosition,
+        map: map,
+        draggable: true
+    });
+
+    // Add listener for marker drag end
+    marker.addListener('dragend', function() {
+        updateFormFields(marker.getPosition());
+    });
+
+    // Add listener for map clicks to reposition the marker
+    map.addListener('click', function(e) {
+        marker.setPosition(e.latLng);
+        updateFormFields(e.latLng);
+    });
+}
+
+// Initializes the map inside the modal
+function initModalMap() {
+    let initialPosition = {lat: -34.397, lng: 150.644};
+    let modalMap = new google.maps.Map(document.getElementById('map_modal'), {
+        zoom: 8,
+        center: initialPosition
+    });
+    let modalMarker = new google.maps.Marker({
+        position: initialPosition,
+        map: modalMap,
+        draggable: true
+    });
+
+    modalMarker.addListener('dragend', function() {
+        updateFormFields(modalMarker.getPosition());
+    });
+
+    modalMap.addListener('click', function(e) {
+        modalMarker.setPosition(e.latLng);
+        updateFormFields(e.latLng);
+    });
+}
+
+// Function to update the latitude and longitude form fields
+function updateFormFields(position) {
+    document.getElementById('id_latitude').value = position.lat();
+    document.getElementById('id_longitude').value = position.lng();
+}
+
+// Event listener for modal show, to initialize or reinitialize the modal map
+document.getElementById('mapModal').addEventListener('shown.bs.modal', function () {
+    initModalMap(); // Initialize or reinitialize modal map
+});
+
+// Update submit button state based on post type selection
 function updateSubmitButton() {
     let selectedPostType = document.querySelector('input[name="postType"]:checked');
-    let isPostTypeSelected = selectedPostType !== null;
     let submitBtn = document.getElementById('submit-btn');
     let warningMsg = document.getElementById('submit-warning');
     let hiddenPostTypeInput = document.getElementById('hiddenPostType');
 
-    submitBtn.disabled = !isPostTypeSelected;
-    warningMsg.style.display = isPostTypeSelected ? 'none' : 'block';
-
-    if (isPostTypeSelected) {
+    if (selectedPostType) {
+        submitBtn.disabled = false;
+        warningMsg.style.display = 'none';
         hiddenPostTypeInput.value = selectedPostType.value;
     } else {
-        hiddenPostTypeInput.value = ''; // Clear the value if nothing is selected
+        submitBtn.disabled = true;
+        warningMsg.style.display = 'block';
+        hiddenPostTypeInput.value = '';
     }
 }
 
+// Ensure correct initial state of submit button on page load
 document.addEventListener('DOMContentLoaded', function() {
-    updateSubmitButton(); // Ensure correct initial state
+    updateSubmitButton();
 });
-</script>
-
-<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initMap"></script>
-<script>
-    function initMap() {
-        let initialPosition = {lat: -34.397, lng: 150.644};
-        let map = new google.maps.Map(document.getElementById('map'), {
-            zoom: 8,
-            center: initialPosition
-        });
-        let marker = new google.maps.Marker({
-            position: initialPosition,
-            map: map,
-            draggable: true
-        });
-
-        marker.addListener('dragend', function() {
-            updateFormFields(marker.getPosition());
-        });
-
-        map.addListener('click', function(e) {
-            marker.setPosition(e.latLng);
-            updateFormFields(e.latLng);
-        });
-    }
-
-    // Function to update the latitude and longitude form fields.
-    function updateFormFields(position) {
-        document.getElementById('id_latitude').value = position.lat();
-        document.getElementById('id_longitude').value = position.lng();
-    }
 </script>
 
 {% endblock %}

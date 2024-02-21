@@ -5,24 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>My Precious</title>
     <script src="https://kit.fontawesome.com/e8613b1e05.js" crossorigin="anonymous"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-
     {% load static %}
     <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
-
 </head>
 <body class="d-flex flex-column min-vh-100">
-
-
     <header class="mb-auto fixed-top">
         <nav class="navbar col-12 col-sd-8 navbar-expand-md tomas-custom-bg 
-        navbar-fixed-top">
+        navbar-fixed-top rounded-bottom-2">
             <div class="container-fluid ps-1 pe-1 right">
                 <a class="navbar-brand col-5 col-sm-4 col-md-2 m-0" 
                    href="/">My Precious</a>
-                
                 <form class="d-flex col-7 col-sm-5" role="search">
                     <input class="form-control " type="search" placeholder="Search" aria-label="Search">
                     <button class="btn btn-outline-dark" type="submit"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button>
@@ -30,14 +23,12 @@
                 <button class="navbar-toggler d-none d-md-none d-sm-block" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-    
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" 
                                href="/">Home</a>
                         </li>
-                    
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'users:list_users' %}">Users</a>
                         </li>
@@ -55,13 +46,10 @@
                                         #">Create a Post</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="
-{% url 'users:user_profile' username=request.user.username %}">User 
+                                        <a class="nav-link" href="{% url 'users:user_profile' username=request.user.username %}">User 
                                             Profile</a>
                                     </li>
-                                    
-                                    <li><a class="dropdown-item" href="
-{% url 'users:edit_profile' %}">Update Profile</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'users:edit_profile' %}">Update Profile</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" 
                                            href="{% url 'users:user_logout' %}">Log 
@@ -113,7 +101,7 @@
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-2">
-                        <a href="#" class="btn btn-link"><i class="fas fa-house" aria-hidden="true"></i></a>
+                        <a href="/" class="btn btn-link"><i class="fas fa-house" aria-hidden="true"></i></a>
                     </div>
                     <div class="col-2">
                         <a href="#" class="btn btn-link"><i class="fas fa-envelope" aria-hidden="true"></i></a>
@@ -123,6 +111,7 @@
                         <i class="far fa-user" aria-hidden="true"></i>
                       </button>
                       <ul class="dropdown-menu">
+	                      <li><a class="dropdown-item" href="{% url 'posts:create_post' %}">Create a Post</a></li>
 	                      <li><a class="dropdown-item" href="{% url 'users:list_users' %}">User List</a></li>
 	                      <li><a class="dropdown-item" href="{% url 'users:user_profile' username=request.user.username %}">Profile</a></li>
 	                      <li><a class="dropdown-item" href="{% url 'users:edit_profile' %}">Edit Profile</a></li> 
