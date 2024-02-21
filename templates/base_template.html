@@ -42,8 +42,7 @@
                             <a class="nav-link" href="{% url 'users:list_users' %}">Users</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link Active" href="#"
-                               >Messages</a>
+                            <a class="nav-link Active" href="{% url 'posts:create_post' %}">Create a Post</a>
                         </li>
                         <li class="nav-item dropdown ">
                             {% if user.is_authenticated %}

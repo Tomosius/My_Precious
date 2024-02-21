@@ -16,14 +16,17 @@ DATE_UNCERTAINTY_CHOICES = [
     ('90', '3 months'),
 ]
 
+
 class Post(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    latitude = models.DecimalField(max_digits=20, decimal_places=15, null=True, blank=True)
-    longitude = models.DecimalField(max_digits=20, decimal_places=15, null=True, blank=True)
+    latitude = models.DecimalField(max_digits=20, decimal_places=15, null=True,
+                                   blank=True)
+    longitude = models.DecimalField(max_digits=20, decimal_places=15, null=True,
+                                    blank=True)
     slug = models.SlugField(max_length=255, unique=True)
     event_date = models.DateField(default=datetime.date.today)
     date_uncertainty_days = models.CharField(
@@ -61,26 +64,32 @@ class Post(models.Model):
         else:
             return "#"  # Fallback URL, in case it's neither
 
+
 class LostPost(Post):
     def get_absolute_url(self):
         return reverse('posts:lostpost_detail', kwargs={'slug': self.slug})
+
 
 class FoundPost(Post):
     def get_absolute_url(self):
         return reverse('posts:foundpost_detail', kwargs={'slug': self.slug})
 
+
 class LostPhoto(models.Model):
     image = CloudinaryField('image', blank=True, null=True)
     caption = models.CharField(max_length=255, blank=True)
-    lost_post = models.ForeignKey(LostPost, related_name='photos', on_delete=models.CASCADE)
+    lost_post = models.ForeignKey(LostPost, related_name='photos',
+                                  on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Lost Photo for {self.lost_post.title}"
 
+
 class FoundPhoto(models.Model):
     image = CloudinaryField('image', blank=True, null=True)
     caption = models.CharField(max_length=255, blank=True)
-    found_post = models.ForeignKey(FoundPost, related_name='photos', on_delete=models.CASCADE)
+    found_post = models.ForeignKey(FoundPost, related_name='photos',
+                                   on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Found Photo for {self.found_post.title}"
