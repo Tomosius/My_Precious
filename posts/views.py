@@ -8,6 +8,8 @@ from .models import LostPhoto, FoundPhoto, LostPost, FoundPost
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+ITEMS_PER_PAGE_OPTIONS = [5, 10, 20, 50]
+
 
 @login_required
 def create_post(request):
@@ -85,11 +87,23 @@ def post_detail_view(request, slug, post_type):
     })
 
 
-def paginate_posts(request, posts_list):
-    """Paginate posts for easier navigation."""
-    paginator = Paginator(posts_list, 10)  # Display 10 posts per page
+def paginate_posts(request, posts_list, default_items_per_page=10):
+    """
+    Paginate posts for easier navigation, allowing dynamic items per page.
+    """
+    items_per_page = request.GET.get('items_per_page', default_items_per_page)
+    try:
+        items_per_page = int(items_per_page)
+        if items_per_page <= 0:
+            raise ValueError
+    except ValueError:
+        items_per_page = default_items_per_page
+
+    paginator = Paginator(posts_list, items_per_page)
     page_number = request.GET.get('page')
     return paginator.get_page(page_number)
+
+
 
 def view_all_posts(request):
     """Display all posts, both lost and found."""
@@ -99,8 +113,9 @@ def view_all_posts(request):
     paginated_posts = paginate_posts(request, all_posts)
     is_authenticated = request.user.is_authenticated
     context = {'posts': paginated_posts, 'is_authenticated':
-        is_authenticated, "active_tab": "all"}
+        is_authenticated, "active_tab": "all", "items_per_page_options": ITEMS_PER_PAGE_OPTIONS}
     return render(request, 'view_all_posts.html', context)
+
 
 
 def view_lost_posts(request):
@@ -109,7 +124,7 @@ def view_lost_posts(request):
     paginated_posts = paginate_posts(request, lost_posts)
     is_authenticated = request.user.is_authenticated
     context = {'posts': paginated_posts, 'is_authenticated':
-        is_authenticated, "active_tab": "lost"}
+        is_authenticated, "active_tab": "lost", "items_per_page_options": ITEMS_PER_PAGE_OPTIONS}
     return render(request, 'view_all_posts.html', context)
 
 
@@ -119,5 +134,5 @@ def view_found_posts(request):
     paginated_posts = paginate_posts(request, found_posts)
     is_authenticated = request.user.is_authenticated
     context = {'posts': paginated_posts, 'is_authenticated':
-        is_authenticated, "active_tab": "found"}
+        is_authenticated, "active_tab": "found", "items_per_page_options": ITEMS_PER_PAGE_OPTIONS}
     return render(request, 'view_all_posts.html', context)
