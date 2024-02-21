@@ -16,6 +16,7 @@ import dj_database_url
 import users
 import cloudinary
 import cloudinary_storage
+import posts
 
 
 if os.path.exists("env.py"):
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users',
+    'posts',
     'cloudinary',
     'cloudinary_storage',
     'crispy_forms',
