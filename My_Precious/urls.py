@@ -3,6 +3,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from users.views import user_login
+from posts.views import view_all_posts
 
 urlpatterns = [
     # Including posts app URLS
@@ -12,7 +13,7 @@ urlpatterns = [
     path('users/', include('users.urls')),
 
     # Home page
-    path('', user_login, name='home'),
+    path('', view_all_posts, name='home'),
 
     # Admin URL
     path('admin/', admin.site.urls),
