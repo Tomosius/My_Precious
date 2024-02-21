@@ -113,7 +113,11 @@
                       <ul class="dropdown-menu">
 	                      <li><a class="dropdown-item" href="{% url 'posts:create_post' %}">Create a Post</a></li>
 	                      <li><a class="dropdown-item" href="{% url 'users:list_users' %}">User List</a></li>
-	                      <li><a class="dropdown-item" href="{% url 'users:user_profile' username=request.user.username %}">Profile</a></li>
+	                      {% if request.user.is_authenticated %}
+		                      <li><a class="dropdown-item" href="{% url 'users:user_profile' username=request.user.username %}">Profile</a></li>
+	                      {% else %} <li><a>please login</a></li>
+	                      {% endif %}
+
 	                      <li><a class="dropdown-item" href="{% url 'users:edit_profile' %}">Edit Profile</a></li> 
 	                      <li><a class="dropdown-item" href="{% url 'users:user_logout' %}">Log Out</a></li>
                       </ul>

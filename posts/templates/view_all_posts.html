@@ -5,59 +5,59 @@
 <!-- Nav tabs -->
 <ul class="nav nav-tabs">
     <li class="nav-item">
-        <a class="nav-link active" data-bs-toggle="tab" href="#all-posts">All Posts</a>
+        <a class="nav-link {% if active_tab == 'all' %}active{% endif %}" href="{% url 'posts:view_all_posts' %}">All Posts</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" data-bs-toggle="tab" href="#lost-posts">Lost Posts</a>
+        <a class="nav-link {% if active_tab == 'lost' %}active{% endif %}" href="{% url 'posts:view_lost_posts' %}">Lost Posts</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" data-bs-toggle="tab" href="#found-posts">Found Posts</a>
+        <a class="nav-link {% if active_tab == 'found' %}active{% endif %}" href="{% url 'posts:view_found_posts' %}">Found Posts</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" data-bs-toggle="tab" href="#show-map">Show on Map</a>
+        <a class="nav-link" href="#show-map" data-bs-toggle="tab">Map</a>
     </li>
 </ul>
 
 <!-- Tab panes -->
-<div class="tab-content mb-5">
-    <div class="tab-pane fade show active" id="all-posts">
-        <!-- Display all posts here -->
-
-            {% for post in all_posts %}
-	            <a href="{{ post.get_absolute_url }}" style="text-decoration: none; color: inherit;">
-                <p>
-                <strong>{{ post.title|truncatechars:10 }}</strong><br>
-                {{ post.description|truncatechars:50 }}
-                </p>
-				</a>
-            {% endfor %}
-
-    </div>
-    <div class="tab-pane fade" id="lost-posts">
-        <!-- Display lost posts here -->
-
-            {% for post in lost_posts %}
+<div class="mx-3 tab-content mb-5">
+    <div class="tab-pane fade {% if active_tab == 'all' %}show active{% endif %}" id="all-posts">
+        <!-- Display all posts here if 'all' is the active tab -->
+        {% if active_tab == 'all' %}
+            {% for post in posts %}
                 <a href="{{ post.get_absolute_url }}" style="text-decoration: none; color: inherit;">
-                <p>
-                <strong>{{ post.title|truncatechars:10 }}</strong><br>
-                {{ post.description|truncatechars:50 }}
-                </p>
-				</a>
+                    <p>
+                        <strong>{{ post.title|truncatechars:200 }}</strong><br>
+                        {{ post.description|truncatechars:200 }}
+                    </p>
+                </a>
             {% endfor %}
-
+        {% endif %}
     </div>
-    <div class="tab-pane fade" id="found-posts">
-        <!-- Display found posts here -->
-
-            {% for post in found_posts %}
+    <div class="tab-pane fade {% if active_tab == 'lost' %}show active{% endif %}" id="lost-posts">
+        <!-- Display lost posts here if 'lost' is the active tab -->
+        {% if active_tab == 'lost' %}
+            {% for post in posts %}
                 <a href="{{ post.get_absolute_url }}" style="text-decoration: none; color: inherit;">
-                <p>
-                <strong>{{ post.title|truncatechars:10 }}</strong><br>
-                {{ post.description|truncatechars:50 }}
-                </p>
-				</a>
+                    <p>
+                        <strong>{{ post.title|truncatechars:200 }}</strong><br>
+                        {{ post.description|truncatechars:200 }}
+                    </p>
+                </a>
             {% endfor %}
-
+        {% endif %}
+    </div>
+    <div class="tab-pane fade {% if active_tab == 'found' %}show active{% endif %}" id="found-posts">
+        <!-- Display found posts here if 'found' is the active tab -->
+        {% if active_tab == 'found' %}
+            {% for post in posts %}
+                <a href="{{ post.get_absolute_url }}" style="text-decoration: none; color: inherit;">
+                    <p>
+                        <strong>{{ post.title|truncatechars:200 }}</strong><br>
+                        {{ post.description|truncatechars:200 }}
+                    </p>
+                </a>
+            {% endfor %}
+        {% endif %}
     </div>
     <div class="tab-pane fade" id="show-map">
         <!-- Display map here -->
@@ -65,12 +65,33 @@
     </div>
 </div>
 
-{% endblock %}
 
-{% block javascript %}
+
+	<!-- Pagination controls -->
+<div class="pagination mx-3">
+    <span class="step-links">
+        {% if posts.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ posts.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ posts.number }} of {{ posts.paginator.num_pages }}.
+        </span>
+
+        {% if posts.has_next %}
+            <a href="?page={{ posts.next_page_number }}">next</a>
+            <a href="?page={{ posts.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+
+
+
 <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function () {
-        let isAuthenticated = {{ is_authenticated|yesno:"true,false" }};
+        let isAuthenticated = {{ request.user.is_authenticated|yesno:"true,false" }};
         if (!isAuthenticated) {
             let links = document.querySelectorAll('a[href^="/"]');
             links.forEach(function(link) {

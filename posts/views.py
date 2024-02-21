@@ -6,6 +6,7 @@ from django.shortcuts import redirect, render
 from .forms import LostPostForm, FoundPostForm, FileFieldForm
 from .models import LostPhoto, FoundPhoto, LostPost, FoundPost
 from django.shortcuts import get_object_or_404
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 @login_required
@@ -73,10 +74,50 @@ def post_detail_view(request, slug, post_type):
     post = get_object_or_404(model, slug=slug)
 
     PhotoModel = LostPhoto if post_type == 'lost' else FoundPhoto
-    photos = PhotoModel.objects.filter(lost_post=post) if post_type == 'lost' else PhotoModel.objects.filter(found_post=post)
+    photos = PhotoModel.objects.filter(
+        lost_post=post) if post_type == 'lost' else PhotoModel.objects.filter(
+        found_post=post)
 
     return render(request, 'post_details.html', {
         'post': post,
         'photos': photos,
         'GOOGLE_MAPS_API_KEY': google_api_key
     })
+
+
+def paginate_posts(request, posts_list):
+    """Paginate posts for easier navigation."""
+    paginator = Paginator(posts_list, 10)  # Display 10 posts per page
+    page_number = request.GET.get('page')
+    return paginator.get_page(page_number)
+
+def view_all_posts(request):
+    """Display all posts, both lost and found."""
+    lost_posts = LostPost.objects.all()
+    found_posts = FoundPost.objects.all()
+    all_posts = list(lost_posts) + list(found_posts)
+    paginated_posts = paginate_posts(request, all_posts)
+    is_authenticated = request.user.is_authenticated
+    context = {'posts': paginated_posts, 'is_authenticated':
+        is_authenticated, "active_tab": "all"}
+    return render(request, 'view_all_posts.html', context)
+
+
+def view_lost_posts(request):
+    """Display all lost posts."""
+    lost_posts = LostPost.objects.all()
+    paginated_posts = paginate_posts(request, lost_posts)
+    is_authenticated = request.user.is_authenticated
+    context = {'posts': paginated_posts, 'is_authenticated':
+        is_authenticated, "active_tab": "lost"}
+    return render(request, 'view_all_posts.html', context)
+
+
+def view_found_posts(request):
+    """Display all found posts."""
+    found_posts = FoundPost.objects.all()
+    paginated_posts = paginate_posts(request, found_posts)
+    is_authenticated = request.user.is_authenticated
+    context = {'posts': paginated_posts, 'is_authenticated':
+        is_authenticated, "active_tab": "found"}
+    return render(request, 'view_all_posts.html', context)
