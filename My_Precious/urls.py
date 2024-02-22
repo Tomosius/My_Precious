@@ -2,7 +2,6 @@
 
 from django.contrib import admin
 from django.urls import path, include
-from users.views import user_login
 from posts.views import view_all_posts
 
 urlpatterns = [

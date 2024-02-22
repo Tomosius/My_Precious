@@ -1,12 +1,12 @@
 # posts/models.py
 import datetime
-
 from cloudinary.models import CloudinaryField
 from cloudinary.uploader import destroy
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
+from polymorphic.models import PolymorphicModel
 
 DATE_UNCERTAINTY_CHOICES = [
     ('0', 'exact'),
@@ -19,7 +19,7 @@ DATE_UNCERTAINTY_CHOICES = [
 ]
 
 
-class Post(models.Model):
+class Post(PolymorphicModel):
     title = models.CharField(max_length=255)
     description = models.TextField()
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -37,9 +37,6 @@ class Post(models.Model):
         default='0',
         help_text="Select how much the actual event date could differ."
     )
-
-    class Meta:
-        abstract = True
 
     def __str__(self):
         return self.title

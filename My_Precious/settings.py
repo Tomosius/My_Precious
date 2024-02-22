@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'cloudinary_storage',
     'crispy_forms',
     'crispy_bootstrap5',
+    'polymorphic',
 ]
 CSRF_TRUSTED_ORIGINS = ['https://*.herokuapp.com']
 

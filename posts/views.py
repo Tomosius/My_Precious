@@ -6,8 +6,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .forms import LostPostForm, FoundPostForm, FileFieldForm
 from .models import LostPost, FoundPost, LostPhoto, FoundPhoto
 from django.db.models import Q
-
-ITEMS_PER_PAGE_OPTIONS = [5, 10, 20, 50]
+from django.core.paginator import Paginator
+from django.shortcuts import render
+from .models import LostPost, FoundPost, Post  # Assuming you have a third
+from django.urls import reverse
 
 
 @login_required
@@ -73,64 +75,91 @@ def generic_search(model, search_query):
 
     return results
 
+from django.shortcuts import render
+from .models import Post  # Assuming Post is the polymorphic base model
+from django.core.paginator import Paginator
 
-def paginate_posts(request, posts_list, default_items_per_page=10):
-    """
-    Paginate posts for easier navigation, allowing dynamic items per page.
-    """
-    items_per_page = request.GET.get('items_per_page', default_items_per_page)
-    try:
-        items_per_page = int(items_per_page)
-        if items_per_page <= 0:
-            raise ValueError
-    except ValueError:
-        items_per_page = default_items_per_page
+ITEMS_PER_PAGE_OPTIONS = [5, 10, 20, 50]
 
-    paginator = Paginator(posts_list, items_per_page)
+def paginate_queryset(request, queryset, items_per_page=10):
+    """
+    Paginate a queryset and return the page object for the current request.
+    """
+    paginator = Paginator(queryset, items_per_page)
     page_number = request.GET.get('page')
-    return paginator.get_page(page_number)
-
+    page_obj = paginator.get_page(page_number)
+    return page_obj
 
 def view_all_posts(request):
-    """Display all posts, both lost and found."""
-    lost_posts = LostPost.objects.all()
-    found_posts = FoundPost.objects.all()
-    all_posts = list(lost_posts) + list(found_posts)
-    paginated_posts = paginate_posts(request, all_posts)
-    is_authenticated = request.user.is_authenticated
+    """
+    Display all posts (both LostPost and FoundPost) with optional search functionality and pagination,
+    utilizing Django Polymorphic for combined querying.
+    """
+    search_query = request.GET.get('search_query', '')
+
+    # Utilize polymorphism to fetch combined posts
+    all_posts = Post.objects.all().instance_of(Post)
+
+    if search_query:
+        all_posts = all_posts.filter(title__icontains=search_query)
+
+    # Paginate the combined queryset
+    paginated_posts = paginate_queryset(request, all_posts, items_per_page=10)
+    search_url = reverse('posts:view_all_posts')
+
     context = {
         'posts': paginated_posts,
-        'is_authenticated': is_authenticated,
-        "active_tab": "all",
-        "items_per_page_options": ITEMS_PER_PAGE_OPTIONS}
+        'is_authenticated': request.user.is_authenticated,
+        'active_tab': 'all',
+        'items_per_page_options': ITEMS_PER_PAGE_OPTIONS,
+        'search_query': search_query,
+        'search_url': search_url,
+    }
+
     return render(request, 'view_all_posts.html', context)
 
 
 def view_lost_posts(request):
-    """Display all lost posts."""
-    lost_posts = LostPost.objects.all()
-    paginated_posts = paginate_posts(request, lost_posts)
-    is_authenticated = request.user.is_authenticated
+    """
+    Display all lost posts with optional search functionality and pagination.
+    """
+    search_query = request.GET.get('search_query', '')
+    lost_posts = generic_search(LostPost, search_query)
+    # Correct the argument name to items_per_page
+    paginated_posts = paginate_queryset(request, lost_posts, items_per_page=10)
+    search_url = reverse('posts:view_lost_posts')
+
     context = {
         'posts': paginated_posts,
-        'is_authenticated': is_authenticated,
-        "active_tab": "lost",
-        "items_per_page_options": ITEMS_PER_PAGE_OPTIONS
+        'is_authenticated': request.user.is_authenticated,
+        'active_tab': 'lost',
+        'items_per_page_options': ITEMS_PER_PAGE_OPTIONS,
+        'search_query': search_query,
+        'search_url': search_url,
+    }
+    return render(request, 'view_all_posts.html', context)
+
+def view_found_posts(request):
+    """
+    Display all found posts with optional search functionality and pagination.
+    """
+    search_query = request.GET.get('search_query', '')
+    found_posts = generic_search(FoundPost, search_query)
+    # Correct the argument name to items_per_page
+    paginated_posts = paginate_queryset(request, found_posts, items_per_page=10)
+    search_url = reverse('posts:view_found_posts')
+
+    context = {
+        'posts': paginated_posts,
+        'is_authenticated': request.user.is_authenticated,
+        'active_tab': 'found',
+        'items_per_page_options': ITEMS_PER_PAGE_OPTIONS,
+        'search_query': search_query,
+        'search_url': search_url
     }
     return render(request, 'view_all_posts.html', context)
 
 
-def view_found_posts(request):
-    """Display all found posts."""
-    found_posts = FoundPost.objects.all()
-    paginated_posts = paginate_posts(request, found_posts)
-    is_authenticated = request.user.is_authenticated
-    context = {
-        'posts': paginated_posts,
-        'is_authenticated': is_authenticated,
-        "active_tab": "found",
-        "items_per_page_options": ITEMS_PER_PAGE_OPTIONS}
-    return render(request, 'view_all_posts.html', context)
 
 
 def post_detail_view(request, slug, post_type):
@@ -244,3 +273,38 @@ def delete_photo(request, photo_id, post_type):
         return JsonResponse({'success': True})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
+
+
+from django.shortcuts import render
+from .models import Post  # Assuming Post is the polymorphic base model
+
+def map_all_posts(request):
+    """
+    Display all posts (both LostPost and FoundPost) with optional search functionality and pagination,
+    utilizing Django Polymorphic for combined querying.
+    """
+    search_query = request.GET.get('search_query', '')
+
+    # Utilize polymorphism to fetch combined posts
+    all_posts = Post.objects.all().instance_of(Post)
+
+    if search_query:
+        all_posts = all_posts.filter(title__icontains=search_query)
+
+    # Paginate the combined queryset
+    search_url = reverse('posts:map_all_posts_view')
+    google_api_key = os.environ.get('GOOGLE_MAPS_API_KEY')
+
+
+
+    context = {
+        'posts': all_posts,
+        'is_authenticated': request.user.is_authenticated,
+        'active_tab': 'map',
+        'items_per_page_options': ITEMS_PER_PAGE_OPTIONS,
+        'search_query': search_query,
+        'search_url': search_url,
+        'GOOGLE_MAPS_API_KEY': google_api_key
+    }
+
+    return render(request, 'view_all_posts.html', context)

@@ -53,7 +53,7 @@ def user_register(request):
         if user_form.is_valid():
             user_form.save()  # UserProfile creation is handled via signal
             messages.success(request, 'Account created successfully.')
-            return redirect('user_login')
+            return redirect('users:user_login')
     else:
         user_form = UserRegisterForm()
     return render(request, 'user_register.html', {'form': user_form})
@@ -68,7 +68,7 @@ def update_profile(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Your profile was successfully updated!")
-            return redirect('user_profile', username=user.username)
+            return redirect('users:user_profile', username=user.username)
     else:
         form = UserProfileForm(instance=profile)
     return render(request, 'profile_update.html', {'profile_form': form})
@@ -85,7 +85,7 @@ def update_credentials(request):
             user_form.save()
             messages.success(request, 'Your credentials have been updated '
                                       'successfully.')
-            return redirect('user_profile', username=request.user.username)
+            return redirect('users:user_profile', username=request.user.username)
     else:
         user_form = UserCredentialsForm(instance=request.user)
     return render(request, 'credentials_update.html', {'user_form': user_form})
@@ -102,7 +102,7 @@ def change_password(request):
             user = form.save()
             update_session_auth_hash(request, user)
             messages.success(request, 'Your password was successfully updated!')
-            return redirect('user_profile', username=request.user.username)
+            return redirect('users:user_profile', username=request.user.username)
     else:
         form = CustomPasswordChangeForm(user=request.user)
     return render(request, 'change_password.html', {'form': form})
@@ -275,7 +275,7 @@ from django.shortcuts import render, get_object_or_404
 
 # Assuming you have these imports based on your provided code
 from posts.models import LostPost, FoundPost
-from posts.views import paginate_posts
+from posts.views import paginate_queryset
 
 
 @login_required
@@ -292,6 +292,7 @@ def user_profile(request, username):
     """
     # Retrieve the user based on the passed user_id
     user = get_object_or_404(User, username=username)
+    user_profile = user.profile
 
     # Filter LostPost and FoundPost objects by this user
     user_lost_posts = LostPost.objects.filter(user=user)
@@ -302,11 +303,11 @@ def user_profile(request, username):
     user_posts = list(user_lost_posts) + list(user_found_posts)
 
     # You might want to paginate these posts as well, depending on how many there are
-    paginated_user_posts = paginate_posts(request, user_posts)
 
     context = {
-        'user_profile': user,
-        'user_posts': paginated_user_posts,
+        'user_profile': user_profile,
+        'user': user,
+        'user_posts': user_posts,  # Pass the combined list of posts to the template
         # Or pass 'user_lost_posts' and 'user_found_posts' separately
         'is_owner': request.user == user,
         # Optional: To check if the logged-in user is viewing their own

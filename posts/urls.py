@@ -14,5 +14,6 @@ urlpatterns = [
          name='update_post'),
     path('delete_photo/<int:photo_id>/<str:post_type>/', views.delete_photo,
          name='delete_photo'),
+    path('map/', views.map_all_posts, name='map_all_posts_view'),
 
 ]

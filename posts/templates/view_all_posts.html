@@ -14,7 +14,7 @@
         <a class="nav-link {% if active_tab == 'found' %}active{% endif %}" href="{% url 'posts:view_found_posts' %}">Found Posts</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#show-map" data-bs-toggle="tab">Map</a>
+        <a class="nav-link {% if active_tab == 'map' %}active{% endif %}" href="{% url 'posts:map_all_posts_view' %}">Map</a>
     </li>
 </ul>
 
@@ -38,9 +38,11 @@
             {% include "posts_loop_list.html" %}
         {% endif %}
     </div>
-    <div class="tab-pane fade" id="show-map">
-        <!-- Display map here -->
-        <!-- You can add the code for showing the map here -->
+    <div class="tab-pane fade {% if active_tab == 'map' %}show active{% endif %}" id="all-posts">
+        <!-- Display found posts here if 'found' is the active tab -->
+        {% if active_tab == 'map' %}
+            {% include "map_all_posts.html" %}
+        {% endif %}
     </div>
 </div>
 

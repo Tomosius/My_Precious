@@ -18,10 +18,15 @@
             <div class="container-fluid ps-1 pe-1 right">
                 <a class="navbar-brand col-5 col-sm-4 col-md-2 m-0" 
                    href="/">My Precious</a>
-                <form class="d-flex col-7 col-sm-5" role="search">
-                    <input class="form-control " type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-dark" type="submit"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button>
-                </form>
+                <form class="d-flex col-7 col-sm-5" role="search" method="GET" action="{{ search_url }}">
+				    {% csrf_token %}
+				    <input class="form-control" type="search" name="search_query" placeholder="Search" aria-label="Search">
+				    <button class="btn btn-outline-dark" type="submit">
+				        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+				    </button>
+				</form>
+
+
                 <button class="navbar-toggler d-none d-md-none d-sm-block" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
