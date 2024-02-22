@@ -4,7 +4,7 @@
       <option name="HTML_UNIFORM_INDENT" value="true" />
     </HTMLCodeStyleSettings>
     <codeStyleSettings language="HTML">
-      <option name="RIGHT_MARGIN" value="300" />
+      <option name="RIGHT_MARGIN" value="500" />
       <indentOptions>
         <option name="USE_TAB_CHARACTER" value="true" />
         <option name="SMART_TABS" value="true" />

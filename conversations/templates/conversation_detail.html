@@ -1,0 +1,10 @@
+{% extends 'base_template.html' %}
+{% block content %}
+{% for message in messages %}
+  <div>
+    <h2>{{ message.text }}</h2>
+    </a>
+  </div>
+{% endfor %}
+{% endblock %}
+```

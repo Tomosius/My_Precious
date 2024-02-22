@@ -5,6 +5,9 @@ from django.urls import path, include
 from posts.views import view_all_posts
 
 urlpatterns = [
+    # Including conversations app URLS
+    path('conversations/', include('conversations.urls')),
+
     # Including posts app URLS
     path('posts/', include('posts.urls')),
 

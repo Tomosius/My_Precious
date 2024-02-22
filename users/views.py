@@ -13,6 +13,12 @@ from .forms import UserRegisterForm, LanguageForm, \
     SocialMediaLinkForm
 from .models import Language, SocialMediaLink, UserProfile
 
+from django.contrib.auth.models import User
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+# Ensure you import get_conversation_details correctly from the conversations app
+from conversations.utils import get_conversation_details
+
 
 def user_login(request):
     """
@@ -268,6 +274,13 @@ def combined_update_user_profile(request):
 
 
 
+@login_required
+def list_users(request):
+    users = User.objects.select_related('profile').all()
+    return render(request, 'user_list.html', {'users': users})
+
+
+
 
 
 from django.contrib.auth.models import User
@@ -278,6 +291,9 @@ from posts.models import LostPost, FoundPost
 from posts.views import paginate_queryset
 
 
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 @login_required
 def user_profile(request, username):
     """
@@ -302,7 +318,6 @@ def user_profile(request, username):
     # Combine the posts into a single list if needed or keep them separate depending on your template design
     user_posts = list(user_lost_posts) + list(user_found_posts)
 
-    # You might want to paginate these posts as well, depending on how many there are
 
     context = {
         'user_profile': user_profile,
@@ -312,12 +327,7 @@ def user_profile(request, username):
         'is_owner': request.user == user,
         # Optional: To check if the logged-in user is viewing their own
         'posts': posts,
+
     }
 
     return render(request, 'user_profile.html', context)
-
-
-@login_required
-def list_users(request):
-    users = User.objects.select_related('profile').all()
-    return render(request, 'user_list.html', {'users': users})

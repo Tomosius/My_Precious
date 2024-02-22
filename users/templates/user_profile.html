@@ -30,6 +30,10 @@
       <button class="nav-link mx-auto" id="right-tab" data-bs-toggle="tab" href="#right" role="tab" aria-controls="right" aria-selected="false">Posts</button>
     </li>
   </ul>
+  <div>
+	  <a href="{% url 'conversations:send_message' recipient_username=user.username %}">Send Message</a>
+
+  </div>
   <div class="tab-content d-sm-none" id="myTabContent">
     <div class="tab-pane fade show active" id="left" role="tabpanel" aria-labelledby="left-tab">
       <!-- Mobile left-side content will be dynamically loaded here -->
