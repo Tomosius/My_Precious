@@ -23,19 +23,19 @@
     <div class="tab-pane fade {% if active_tab == 'all' %}show active{% endif %}" id="all-posts">
         <!-- Display all posts here if 'all' is the active tab -->
         {% if active_tab == 'all' %}
-            {% include "all_posts.html" %}
+            {% include "posts_loop_list.html" %}
         {% endif %}
     </div>
     <div class="tab-pane fade {% if active_tab == 'lost' %}show active{% endif %}" id="lost-posts">
         <!-- Display lost posts here if 'lost' is the active tab -->
         {% if active_tab == 'lost' %}
-            {% include "lost_posts.html" %}
+            {% include "posts_loop_list.html" %}
         {% endif %}
     </div>
     <div class="tab-pane fade {% if active_tab == 'found' %}show active{% endif %}" id="found-posts">
         <!-- Display found posts here if 'found' is the active tab -->
         {% if active_tab == 'found' %}
-            {%  include "found_posts.html" %}
+            {% include "posts_loop_list.html" %}
         {% endif %}
     </div>
     <div class="tab-pane fade" id="show-map">
@@ -90,25 +90,4 @@
   </div>
 </div>
 
-
-
-
-
-
-
-<!--
-<script type="text/javascript">
-    document.addEventListener('DOMContentLoaded', function () {
-        let isAuthenticated = {{ request.user.is_authenticated|yesno:"true,false" }};
-        if (!isAuthenticated) {
-            let links = document.querySelectorAll('a[href^="/"]');
-            links.forEach(function(link) {
-                link.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    alert('Please log in to view post details.');
-                });
-            });
-        }
-    });
-</script> -->
 {% endblock %}

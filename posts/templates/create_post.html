@@ -54,97 +54,20 @@
                 {{ image_form.file_field|as_crispy_field }}
             </div>
 
-
-            <div class="d-none d-md-block" id="map" style="height: 400px; width: 100%;"></div>
-	        <button type="button" class="btn btn-primary d-md-none" data-bs-toggle="modal" data-bs-target="#mapModal">
+			{% include "map_selector_big.html" %}
+	        {% include "map_selector_modal.html" %}
+	        <!-- <button type="button" class="btn btn-primary d-md-none" data-bs-toggle="modal" data-bs-target="#mapModal">
 			  Select Location
-			</button>
+			</button> -->
 	        <div id="submit-warning" style="display: none; color: red;">You cannot submit the post, please select a post type.</div>
             <button type="submit" class="btn btn-primary mb-5" id="submit-btn" disabled>Submit</button>
         </form>
     </div>
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="mapModal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="mapModalLabel">Map Location</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div id="map_modal" style="height: 400px; width: 100%;"></div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
 
-
-<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initDefaultMap"></script>
 
 <script>
-// Initializes the map on the main page
-function initDefaultMap() {
-    let initialPosition = {lat: 52.23635026009495, lng: 0.05784246226898956};
-    let map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 7,
-        center: initialPosition
-    });
-    let marker = new google.maps.Marker({
-        position: initialPosition,
-        map: map,
-        draggable: true
-    });
-
-    // Add listener for marker drag end
-    marker.addListener('dragend', function() {
-        updateFormFields(marker.getPosition());
-    });
-
-    // Add listener for map clicks to reposition the marker
-    map.addListener('click', function(e) {
-        marker.setPosition(e.latLng);
-        updateFormFields(e.latLng);
-    });
-}
-// Initializes the map inside the modal
-function initModalMap() {
-    let initialPosition = {lat: 52.23635026009495, lng: 0.05784246226898956};
-    let modalMap = new google.maps.Map(document.getElementById('map_modal'), {
-        zoom: 7,
-        center: initialPosition
-    });
-    let modalMarker = new google.maps.Marker({
-        position: initialPosition,
-        map: modalMap,
-        draggable: true
-    });
-
-    modalMarker.addListener('dragend', function() {
-        updateFormFields(modalMarker.getPosition());
-    });
-
-    modalMap.addListener('click', function(e) {
-        modalMarker.setPosition(e.latLng);
-        updateFormFields(e.latLng);
-    });
-}
-
-// Function to update the latitude and longitude form fields
-function updateFormFields(position) {
-    document.getElementById('id_latitude').value = position.lat();
-    document.getElementById('id_longitude').value = position.lng();
-}
-
-// Event listener for modal show, to initialize or reinitialize the modal map
-document.getElementById('mapModal').addEventListener('shown.bs.modal', function () {
-    initModalMap(); // Initialize or reinitialize modal map
-});
-
 // Update submit button state based on post type selection
 function updateSubmitButton() {
     let selectedPostType = document.querySelector('input[name="postType"]:checked');

@@ -1,15 +1,11 @@
 import os
-
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import JsonResponse
-from django.shortcuts import render
-
+from django.shortcuts import get_object_or_404, redirect, render
 from .forms import LostPostForm, FoundPostForm, FileFieldForm
-from .models import LostPost, FoundPost
-from django.shortcuts import get_object_or_404, redirect
-# Ensure these imports are correct based on your app structure
-from .models import LostPhoto, FoundPhoto
+from .models import LostPost, FoundPost, LostPhoto, FoundPhoto
+from django.db.models import Q
 
 ITEMS_PER_PAGE_OPTIONS = [5, 10, 20, 50]
 
@@ -57,42 +53,25 @@ def create_post(request):
     })
 
 
-def view_all_posts(request):
-    lost_posts = LostPost.objects.all()
-    found_posts = FoundPost.objects.all()
-    all_posts = list(lost_posts) + list(found_posts)
+def generic_search(model, search_query):
+    """
+    Perform a generic search on a given model based on the search query.
 
-    lost_photos = LostPhoto.objects.all()
-    found_photos = FoundPhoto.objects.all()
-    context = {
-        'lost_posts': lost_posts,
-        'found_posts': found_posts,
-        'all_posts': all_posts,
-    }
+    Parameters:
+    - model: The Django model class to search in.
+    - search_query: The search term as a string.
 
-    return render(request, 'view_all_posts.html', context)
+    Returns:
+    - A queryset of the search results.
+    """
+    if search_query:
+        query = Q(title__icontains=search_query) | Q(
+            description__icontains=search_query)
+        results = model.objects.filter(query)
+    else:
+        results = model.objects.all()
 
-
-def post_detail_view(request, slug, post_type):
-    google_api_key = os.environ.get('GOOGLE_MAPS_API_KEY')
-    model = LostPost if post_type == 'lost' else FoundPost
-    post = get_object_or_404(model, slug=slug)
-
-    # Check if the current user is the owner of the post
-    is_owner = request.user == post.user
-
-    PhotoModel = LostPhoto if post_type == 'lost' else FoundPhoto
-    photos = PhotoModel.objects.filter(
-        lost_post=post) if post_type == 'lost' else PhotoModel.objects.filter(
-        found_post=post)
-
-    return render(request, 'post_details.html', {
-        'post_type': post_type,
-        'post': post,
-        'photos': photos,
-        'is_owner': is_owner,  # Add 'is_owner' to the context
-        'GOOGLE_MAPS_API_KEY': google_api_key
-    })
+    return results
 
 
 def paginate_posts(request, posts_list, default_items_per_page=10):
@@ -119,9 +98,11 @@ def view_all_posts(request):
     all_posts = list(lost_posts) + list(found_posts)
     paginated_posts = paginate_posts(request, all_posts)
     is_authenticated = request.user.is_authenticated
-    context = {'posts': paginated_posts, 'is_authenticated':
-        is_authenticated, "active_tab": "all",
-               "items_per_page_options": ITEMS_PER_PAGE_OPTIONS}
+    context = {
+        'posts': paginated_posts,
+        'is_authenticated': is_authenticated,
+        "active_tab": "all",
+        "items_per_page_options": ITEMS_PER_PAGE_OPTIONS}
     return render(request, 'view_all_posts.html', context)
 
 
@@ -130,9 +111,12 @@ def view_lost_posts(request):
     lost_posts = LostPost.objects.all()
     paginated_posts = paginate_posts(request, lost_posts)
     is_authenticated = request.user.is_authenticated
-    context = {'posts': paginated_posts, 'is_authenticated':
-        is_authenticated, "active_tab": "lost",
-               "items_per_page_options": ITEMS_PER_PAGE_OPTIONS}
+    context = {
+        'posts': paginated_posts,
+        'is_authenticated': is_authenticated,
+        "active_tab": "lost",
+        "items_per_page_options": ITEMS_PER_PAGE_OPTIONS
+    }
     return render(request, 'view_all_posts.html', context)
 
 
@@ -141,10 +125,34 @@ def view_found_posts(request):
     found_posts = FoundPost.objects.all()
     paginated_posts = paginate_posts(request, found_posts)
     is_authenticated = request.user.is_authenticated
-    context = {'posts': paginated_posts, 'is_authenticated':
-        is_authenticated, "active_tab": "found",
-               "items_per_page_options": ITEMS_PER_PAGE_OPTIONS}
+    context = {
+        'posts': paginated_posts,
+        'is_authenticated': is_authenticated,
+        "active_tab": "found",
+        "items_per_page_options": ITEMS_PER_PAGE_OPTIONS}
     return render(request, 'view_all_posts.html', context)
+
+
+def post_detail_view(request, slug, post_type):
+    google_api_key = os.environ.get('GOOGLE_MAPS_API_KEY')
+    model = LostPost if post_type == 'lost' else FoundPost
+    post = get_object_or_404(model, slug=slug)
+
+    # Check if the current user is the owner of the post
+    is_owner = request.user == post.user
+
+    photo_model = LostPhoto if post_type == 'lost' else FoundPhoto
+    photos = photo_model.objects.filter(
+        lost_post=post) if post_type == 'lost' else photo_model.objects.filter(
+        found_post=post)
+
+    return render(request, 'post_details.html', {
+        'post_type': post_type,
+        'post': post,
+        'photos': photos,
+        'is_owner': is_owner,  # Add 'is_owner' to the context
+        'GOOGLE_MAPS_API_KEY': google_api_key
+    })
 
 
 @login_required
@@ -203,12 +211,10 @@ def update_post(request, slug, post_type):
     })
 
 
-
-
-
 def delete_photo(request, photo_id, post_type):
     """
-    Deletes a photo based on its ID and associated post type ('lost' or 'found').
+    Deletes a photo based on its ID and associated post type ('lost' or
+    'found').
 
     Args:
     - request: HttpRequest object.
@@ -229,7 +235,8 @@ def delete_photo(request, photo_id, post_type):
         # Redirect to a default or error page if post_type is invalid
         return redirect('/error-page/')  # Adjust this URL as needed
 
-    # Perform the deletion, which includes Cloudinary asset deletion via overridden delete method
+    # Perform the deletion, which includes Cloudinary asset deletion via
+    # overridden delete method
     photo.delete()
 
     try:
