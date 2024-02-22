@@ -63,6 +63,13 @@ class Post(PolymorphicModel):
         else:
             return "#"  # Fallback URL, in case it's neither
 
+    def post_type(self):
+        if isinstance(self, LostPost):
+            return 'LostPost'
+        elif isinstance(self, FoundPost):
+            return 'FoundPost'
+        return 'Unknown'
+
 
 class LostPost(Post):
     def get_absolute_url(self):

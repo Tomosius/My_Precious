@@ -5,6 +5,10 @@
             {{ post.description|truncatechars:200 }}
         </p>
     </a>
+	<script>
+	        console.log("title: {{ post.title }}, post_type: {{ post.post_type }}, lat: {{ post.latitude }}, lng: {{ post.longitude }}");
+
+	</script>
 {% empty %}
     <p>No lost posts to display.</p>
 {% endfor %}

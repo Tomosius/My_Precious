@@ -90,6 +90,7 @@ def paginate_queryset(request, queryset, items_per_page=10):
     page_obj = paginator.get_page(page_number)
     return page_obj
 
+
 def view_all_posts(request):
     """
     Display all posts (both LostPost and FoundPost) with optional search functionality and pagination,
@@ -101,8 +102,10 @@ def view_all_posts(request):
     all_posts = Post.objects.all().instance_of(Post)
 
     if search_query:
-        all_posts = all_posts.filter(title__icontains=search_query)
-
+        all_posts = all_posts.filter(
+            Q(title__icontains=search_query) | Q(
+                description__icontains=search_query)
+        )
     # Paginate the combined queryset
     paginated_posts = paginate_queryset(request, all_posts, items_per_page=10)
     search_url = reverse('posts:view_all_posts')
@@ -275,8 +278,9 @@ def delete_photo(request, photo_id, post_type):
         return JsonResponse({'success': False, 'error': str(e)})
 
 
-from django.shortcuts import render
-from .models import Post  # Assuming Post is the polymorphic base model
+
+
+
 
 def map_all_posts(request):
     """
@@ -289,22 +293,25 @@ def map_all_posts(request):
     all_posts = Post.objects.all().instance_of(Post)
 
     if search_query:
-        all_posts = all_posts.filter(title__icontains=search_query)
-
+        all_posts = all_posts.filter(
+            Q(title__icontains=search_query) | Q(
+                description__icontains=search_query)
+        )
     # Paginate the combined queryset
+    paginated_posts = paginate_queryset(request, all_posts, items_per_page=10)
     search_url = reverse('posts:map_all_posts_view')
     google_api_key = os.environ.get('GOOGLE_MAPS_API_KEY')
 
-
-
     context = {
-        'posts': all_posts,
+        'posts': paginated_posts,
         'is_authenticated': request.user.is_authenticated,
         'active_tab': 'map',
         'items_per_page_options': ITEMS_PER_PAGE_OPTIONS,
         'search_query': search_query,
         'search_url': search_url,
-        'GOOGLE_MAPS_API_KEY': google_api_key
+        'GOOGLE_MAPS_API_KEY': google_api_key,
     }
 
     return render(request, 'view_all_posts.html', context)
+
+
