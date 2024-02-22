@@ -1,11 +1,12 @@
-# models.py
-from django.db import models
-from django.conf import settings
-from django.utils.text import slugify
-from cloudinary.models import CloudinaryField
-from django.urls import reverse
+# posts/models.py
 import datetime
+
+from cloudinary.models import CloudinaryField
 from cloudinary.uploader import destroy
+from django.conf import settings
+from django.db import models
+from django.urls import reverse
+from django.utils.text import slugify
 
 DATE_UNCERTAINTY_CHOICES = [
     ('0', 'exact'),
@@ -104,5 +105,3 @@ class FoundPhoto(models.Model):
         if self.image:
             destroy(self.image.public_id)
         super().delete(*args, **kwargs)
-
-

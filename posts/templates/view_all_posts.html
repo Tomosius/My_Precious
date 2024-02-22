@@ -23,40 +23,19 @@
     <div class="tab-pane fade {% if active_tab == 'all' %}show active{% endif %}" id="all-posts">
         <!-- Display all posts here if 'all' is the active tab -->
         {% if active_tab == 'all' %}
-            {% for post in posts %}
-                <a href="{{ post.get_absolute_url }}" style="text-decoration: none; color: inherit;">
-                    <p>
-                        <strong>{{ post.title|truncatechars:200 }}</strong><br>
-                        {{ post.description|truncatechars:200 }}
-                    </p>
-                </a>
-            {% endfor %}
+            {% include "all_posts.html" %}
         {% endif %}
     </div>
     <div class="tab-pane fade {% if active_tab == 'lost' %}show active{% endif %}" id="lost-posts">
         <!-- Display lost posts here if 'lost' is the active tab -->
         {% if active_tab == 'lost' %}
-            {% for post in posts %}
-                <a href="{{ post.get_absolute_url }}" style="text-decoration: none; color: inherit;">
-                    <p>
-                        <strong>{{ post.title|truncatechars:200 }}</strong><br>
-                        {{ post.description|truncatechars:200 }}
-                    </p>
-                </a>
-            {% endfor %}
+            {% include "lost_posts.html" %}
         {% endif %}
     </div>
     <div class="tab-pane fade {% if active_tab == 'found' %}show active{% endif %}" id="found-posts">
         <!-- Display found posts here if 'found' is the active tab -->
         {% if active_tab == 'found' %}
-            {% for post in posts %}
-                <a href="{{ post.get_absolute_url }}" style="text-decoration: none; color: inherit;">
-                    <p>
-                        <strong>{{ post.title|truncatechars:200 }}</strong><br>
-                        {{ post.description|truncatechars:200 }}
-                    </p>
-                </a>
-            {% endfor %}
+            {%  include "found_posts.html" %}
         {% endif %}
     </div>
     <div class="tab-pane fade" id="show-map">

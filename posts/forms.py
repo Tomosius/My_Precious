@@ -1,7 +1,6 @@
 from django import forms
 from django.forms.widgets import ClearableFileInput
-from .models import LostPost, FoundPost, LostPhoto, FoundPhoto
-from cloudinary.forms import CloudinaryFileField
+from .models import LostPost, FoundPost
 
 
 class MultipleFileInput(ClearableFileInput):
@@ -31,7 +30,6 @@ class BasePostForm(forms.ModelForm):
     title = forms.CharField(label="Title", max_length=255)
     description = forms.CharField(label="Description", widget=forms.Textarea)
 
-
     class Meta:
         fields = ['title', 'description', 'latitude', 'longitude', 'event_date',
                   'date_uncertainty_days']
@@ -39,7 +37,6 @@ class BasePostForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
             'event_date': forms.DateInput(attrs={'type': 'date'}),
         }
-
 
 
 class FoundPostForm(BasePostForm):
@@ -50,5 +47,3 @@ class FoundPostForm(BasePostForm):
 class LostPostForm(BasePostForm):
     class Meta(BasePostForm.Meta):
         model = LostPost
-
-

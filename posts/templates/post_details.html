@@ -17,9 +17,27 @@
 
 
 <div class="container mt-4">
-    <h1>{{ post.title }}</h1>
-    <p>{{ post.description }}</p>
+	<div class="row">
+		<div class="col-12 col-sm-6 col-md-4">
+			<h1>{{ post.title }}</h1>
+            <p>{{ post.description }}</p>
+		</div>
+		<div class="col-12 col-sm-6 col-md-8">
+			<a href="{% url 'users:user_profile' username=user.username %}">
+				{% if user.profile.user_photo %}
+					<img src="{{ user.profile.user_photo.url }}" alt="{{ user.username }}'s profile image" class="col-4 rounded-2"/>
+				{% else %}
+					<i class="fas fa-user-circle fa-5x"></i>
+				{% endif %}
+				<p>{{ user.username }}</p>
+		        </a>
+		</div>
+
+	</div>
+
+
     <p><strong>Date:</strong> {{ post.event_date }}</p>
+
 
     {% if photos %}
 	    <h3>Photos</h3>

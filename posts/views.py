@@ -1,11 +1,15 @@
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from .models import LostPost, FoundPost
-from .forms import LostPostForm, FoundPostForm, FileFieldForm
 import os
+
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
+from django.shortcuts import render
+
+from .forms import LostPostForm, FoundPostForm, FileFieldForm
+from .models import LostPost, FoundPost
+from django.shortcuts import get_object_or_404, redirect
+# Ensure these imports are correct based on your app structure
+from .models import LostPhoto, FoundPhoto
 
 ITEMS_PER_PAGE_OPTIONS = [5, 10, 20, 50]
 
@@ -69,10 +73,7 @@ def view_all_posts(request):
     return render(request, 'view_all_posts.html', context)
 
 
-
-# Assuming your models have a 'user' field that links to the user who created the post
 def post_detail_view(request, slug, post_type):
-
     google_api_key = os.environ.get('GOOGLE_MAPS_API_KEY')
     model = LostPost if post_type == 'lost' else FoundPost
     post = get_object_or_404(model, slug=slug)
@@ -111,7 +112,6 @@ def paginate_posts(request, posts_list, default_items_per_page=10):
     return paginator.get_page(page_number)
 
 
-
 def view_all_posts(request):
     """Display all posts, both lost and found."""
     lost_posts = LostPost.objects.all()
@@ -120,9 +120,9 @@ def view_all_posts(request):
     paginated_posts = paginate_posts(request, all_posts)
     is_authenticated = request.user.is_authenticated
     context = {'posts': paginated_posts, 'is_authenticated':
-        is_authenticated, "active_tab": "all", "items_per_page_options": ITEMS_PER_PAGE_OPTIONS}
+        is_authenticated, "active_tab": "all",
+               "items_per_page_options": ITEMS_PER_PAGE_OPTIONS}
     return render(request, 'view_all_posts.html', context)
-
 
 
 def view_lost_posts(request):
@@ -131,7 +131,8 @@ def view_lost_posts(request):
     paginated_posts = paginate_posts(request, lost_posts)
     is_authenticated = request.user.is_authenticated
     context = {'posts': paginated_posts, 'is_authenticated':
-        is_authenticated, "active_tab": "lost", "items_per_page_options": ITEMS_PER_PAGE_OPTIONS}
+        is_authenticated, "active_tab": "lost",
+               "items_per_page_options": ITEMS_PER_PAGE_OPTIONS}
     return render(request, 'view_all_posts.html', context)
 
 
@@ -141,11 +142,9 @@ def view_found_posts(request):
     paginated_posts = paginate_posts(request, found_posts)
     is_authenticated = request.user.is_authenticated
     context = {'posts': paginated_posts, 'is_authenticated':
-        is_authenticated, "active_tab": "found", "items_per_page_options": ITEMS_PER_PAGE_OPTIONS}
+        is_authenticated, "active_tab": "found",
+               "items_per_page_options": ITEMS_PER_PAGE_OPTIONS}
     return render(request, 'view_all_posts.html', context)
-
-
-
 
 
 @login_required
@@ -169,7 +168,6 @@ def update_post(request, slug, post_type):
     # Check if the current user is the owner of the post
     is_owner = request.user == post.user
 
-
     if request.method == 'POST':
         form = form_class(request.POST, request.FILES, instance=post_instance)
         image_form = FileFieldForm(request.POST, request.FILES)
@@ -178,7 +176,9 @@ def update_post(request, slug, post_type):
             updated_post = form.save()
 
             for file in request.FILES.getlist('file_field'):
-                photo_instance = photo_model_class(image=file, **{'lost_post': updated_post} if post_type == 'lost' else {'found_post': updated_post})
+                photo_instance = photo_model_class(image=file, **{
+                    'lost_post': updated_post} if post_type == 'lost' else {
+                    'found_post': updated_post})
                 photo_instance.save()
 
             return render(request, 'post_details.html', {
@@ -202,14 +202,9 @@ def update_post(request, slug, post_type):
         'GOOGLE_MAPS_API_KEY': google_api_key
     })
 
-from django.shortcuts import redirect, get_object_or_404
-from django.urls import reverse
-from .models import LostPhoto, FoundPhoto
 
-from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse
-# Ensure these imports are correct based on your app structure
-from .models import LostPhoto, FoundPhoto
+
+
 
 def delete_photo(request, photo_id, post_type):
     """
@@ -242,7 +237,3 @@ def delete_photo(request, photo_id, post_type):
         return JsonResponse({'success': True})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
-
-
-
-

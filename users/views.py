@@ -267,18 +267,54 @@ def combined_update_user_profile(request):
     return render(request, 'profile_update.html', context)
 
 
+
+
+
+from django.contrib.auth.models import User
+from django.shortcuts import render, get_object_or_404
+
+# Assuming you have these imports based on your provided code
+from posts.models import LostPost, FoundPost
+from posts.views import paginate_posts
+
+
 @login_required
 def user_profile(request, username):
     """
-    Displays the user profile for the given username.
+    Display the profile of a user, including their lost and found posts.
+
+    Args:
+    - request: HttpRequest object.
+    - user_id: The ID of the user whose profile is to be displayed.
+
+    Returns:
+    - HttpResponse with the user profile template.
     """
+    # Retrieve the user based on the passed user_id
     user = get_object_or_404(User, username=username)
-    user_profile = get_object_or_404(UserProfile, user=user)
-    spoken_languages = Language.objects.filter(user_profile=user_profile)
-    social_media_links = SocialMediaLink.objects.filter(user_profile=user_profile)
-    context = {'user': user, 'user_profile': user_profile, 'spoken_languages': spoken_languages,
-               'social_media_links': social_media_links}
+
+    # Filter LostPost and FoundPost objects by this user
+    user_lost_posts = LostPost.objects.filter(user=user)
+    user_found_posts = FoundPost.objects.filter(user=user)
+    posts = list(user_lost_posts) + list(user_found_posts)
+
+    # Combine the posts into a single list if needed or keep them separate depending on your template design
+    user_posts = list(user_lost_posts) + list(user_found_posts)
+
+    # You might want to paginate these posts as well, depending on how many there are
+    paginated_user_posts = paginate_posts(request, user_posts)
+
+    context = {
+        'user_profile': user,
+        'user_posts': paginated_user_posts,
+        # Or pass 'user_lost_posts' and 'user_found_posts' separately
+        'is_owner': request.user == user,
+        # Optional: To check if the logged-in user is viewing their own
+        'posts': posts,
+    }
+
     return render(request, 'user_profile.html', context)
+
 
 @login_required
 def list_users(request):
