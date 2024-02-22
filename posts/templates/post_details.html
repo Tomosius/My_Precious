@@ -2,127 +2,133 @@
 
 {% block content %}
 	<style>
-.modal-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 80vh; /* Adjust based on your needs */
-}
+        .modal-body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh; /* Adjust based on your needs */
+        }
 
-.modal-img {
-    max-height: 75vh; /* Adjust based on your preference */
-    max-width: 100%; /* Ensures image does not overflow the modal */
-}
-</style>
+        .modal-img {
+            max-height: 75vh; /* Adjust based on your preference */
+            max-width: 100%; /* Ensures image does not overflow the modal */
+        }
+	</style>
 
 
-<div class="container mt-4">
-	<div class="row">
-		<div class="col-12 col-sm-6 col-md-4">
-			<h1>{{ post.title }}</h1>
-            <p>{{ post.description }}</p>
+	<div class="container mt-4">
+		<div class="row">
+			<div class="col-12 col-sm-6 col-md-4">
+				<h1>{{ post.title }}</h1>
+				<p>{{ post.description }}</p>
+			</div>
+			<div class="col-12 col-sm-6 col-md-8">
+				<a href="{% url 'users:user_profile' username=user.username %}">
+					{% if user.profile.user_photo %}
+						<img src="{{ user.profile.user_photo.url }}" alt="{{ user.username }}'s profile image"
+						     class="col-4 rounded-2"/>
+					{% else %}
+						<i class="fas fa-user-circle fa-5x"></i>
+					{% endif %}
+					<p>{{ user.username }}</p>
+				</a>
+			</div>
+
 		</div>
-		<div class="col-12 col-sm-6 col-md-8">
-			<a href="{% url 'users:user_profile' username=user.username %}">
-				{% if user.profile.user_photo %}
-					<img src="{{ user.profile.user_photo.url }}" alt="{{ user.username }}'s profile image" class="col-4 rounded-2"/>
-				{% else %}
-					<i class="fas fa-user-circle fa-5x"></i>
-				{% endif %}
-				<p>{{ user.username }}</p>
-		        </a>
-		</div>
+
+
+		<p><strong>Date:</strong> {{ post.event_date }}</p>
+
+
+		{% if photos %}
+			<h3>Photos</h3>
+			<div class="row">
+				{% for photo in photos %}
+					<!-- Adjust col classes here -->
+					<div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-3">
+						<img src="{{ photo.image.url }}" class="img-thumbnail img-fluid" alt="Photo"
+						     style="cursor:pointer;" data-bs-toggle="modal" data-bs-target="#imageModal"
+						     onclick="openModal({{ forloop.counter0 }});">
+					</div>
+				{% endfor %}
+			</div>
+		{% else %}
+			<p>No photos available for this post.</p>
+		{% endif %}
+
+		<p><strong>Location:</strong></p>
+		<div id="map" style="height: 400px; width: 100%;"></div>
 
 	</div>
 
+	<!-- Image Modal -->
+	<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-xl">
+			<div class="modal-content">
+				<div class="modal-body p-0">
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					<!-- Image will be injected here -->
+				</div>
+				<div class="modal-footer justify-content-between" style="position: absolute; width: 100%;">
+					<button type="button" class="btn btn-outline-secondary" onclick="changePhoto(-1)">← Previous
+					</button>
+					<button type="button" class="btn btn-outline-secondary" onclick="changePhoto(1)">Next →</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% if is_owner %}
+		<a href="{% url 'posts:update_post' slug=post.slug post_type=post_type %}" class="btn btn-primary">Update
+			Post</a>
 
-    <p><strong>Date:</strong> {{ post.event_date }}</p>
-
-
-    {% if photos %}
-	    <h3>Photos</h3>
-	    <div class="row">
-	        {% for photo in photos %}
-	            <!-- Adjust col classes here -->
-	            <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-3">
-	                <img src="{{ photo.image.url }}" class="img-thumbnail img-fluid" alt="Photo" style="cursor:pointer;" data-bs-toggle="modal" data-bs-target="#imageModal" onclick="openModal({{ forloop.counter0 }});">
-	            </div>
-	        {% endfor %}
-	    </div>
-	{% else %}
-	    <p>No photos available for this post.</p>
 	{% endif %}
 
-    <p><strong>Location:</strong></p>
-<div id="map" style="height: 400px; width: 100%;"></div>
-
-</div>
-
-<!-- Image Modal -->
-<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-        <div class="modal-content">
-            <div class="modal-body p-0">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                <!-- Image will be injected here -->
-            </div>
-            <div class="modal-footer justify-content-between" style="position: absolute; width: 100%;">
-                <button type="button" class="btn btn-outline-secondary" onclick="changePhoto(-1)">← Previous</button>
-                <button type="button" class="btn btn-outline-secondary" onclick="changePhoto(1)">Next →</button>
-            </div>
-        </div>
-    </div>
-</div>
-{% if is_owner %}
-	<a href="{% url 'posts:update_post' slug=post.slug post_type=post_type %}" class="btn btn-primary">Update Post</a>
-
-{% endif %}
 
 
 
-
-<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initMap"></script>
-<script>
-    function initMap() {
-        var postLocation = {lat: {{ post.latitude }}, lng: {{ post.longitude }}};
-        var map = new google.maps.Map(document.getElementById('map'), {
-            zoom: 15,
-            center: postLocation
-        });
-        var marker = new google.maps.Marker({
-            position: postLocation,
-            map: map
-        });
-    }
-</script>
+	<script async defer
+	        src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initMap"></script>
+	<script>
+        function initMap() {
+            var postLocation = {lat: {{ post.latitude }}, lng: {{ post.longitude }}};
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 15,
+                center: postLocation
+            });
+            var marker = new google.maps.Marker({
+                position: postLocation,
+                map: map
+            });
+        }
+	</script>
 
 
 
 
 	<script>
-var currentPhotoIndex = -1;
-var photos = [{% for photo in photos %}"{{ photo.image.url }}"{% if not forloop.last %}, {% endif %}{% endfor %}];
+        var currentPhotoIndex = -1;
+        var photos = [{% for photo in photos %}"{{ photo.image.url }}"{% if not forloop.last %}, {% endif %}{% endfor %}];
 
-function openModal(index) {
-    currentPhotoIndex = index;
-    updateModalImage();
-}
+        function openModal(index) {
+            currentPhotoIndex = index;
+            updateModalImage();
+        }
 
-function changePhoto(direction) {
-    currentPhotoIndex += direction;
-    if (currentPhotoIndex >= photos.length) {
-        currentPhotoIndex = 0;
-    } else if (currentPhotoIndex < 0) {
-        currentPhotoIndex = photos.length - 1;
-    }
-    updateModalImage();
-}
+        function changePhoto(direction) {
+            currentPhotoIndex += direction;
+            if (currentPhotoIndex >= photos.length) {
+                currentPhotoIndex = 0;
+            } else if (currentPhotoIndex < 0) {
+                currentPhotoIndex = photos.length - 1;
+            }
+            updateModalImage();
+        }
 
-function updateModalImage() {
-    var imgElement = '<img src="' + photos[currentPhotoIndex] + '" class="img-fluid modal-img" alt="Dynamic Image">';
-    document.querySelector('#imageModal .modal-body').innerHTML = imgElement;
-}
-</script>
+        function updateModalImage() {
+            var imgElement = '<img src="' + photos[currentPhotoIndex] + '" class="img-fluid modal-img" alt="Dynamic Image">';
+            document.querySelector('#imageModal .modal-body').innerHTML = imgElement;
+        }
+	</script>
 
 
 

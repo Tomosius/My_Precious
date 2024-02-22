@@ -1,55 +1,58 @@
-<button type="button" class="btn btn-primary d-md-none" data-bs-toggle="modal" data-bs-target="#mapModal">Select Location</button>
+<button type="button" class="btn btn-primary d-md-none" data-bs-toggle="modal" data-bs-target="#mapModal">Select
+	Location
+</button>
 <!-- Modal -->
 <div class="modal fade" id="mapModal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="mapModalLabel">Map Location</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div id="map_modal" style="height: 400px; width: 100%;"></div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="mapModalLabel">Map Location</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div id="map_modal" style="height: 400px; width: 100%;"></div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
 </div>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initDefaultMap"></script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initDefaultMap"></script>
 
 <script>
-	// Initializes the map inside the modal
-function initModalMap() {
-    let initialPosition = {lat: 52.23635026009495, lng: 0.05784246226898956};
-    let modalMap = new google.maps.Map(document.getElementById('map_modal'), {
-        zoom: 7,
-        center: initialPosition
-    });
-    let modalMarker = new google.maps.Marker({
-        position: initialPosition,
-        map: modalMap,
-        draggable: true
-    });
+    // Initializes the map inside the modal
+    function initModalMap() {
+        let initialPosition = {lat: 52.23635026009495, lng: 0.05784246226898956};
+        let modalMap = new google.maps.Map(document.getElementById('map_modal'), {
+            zoom: 7,
+            center: initialPosition
+        });
+        let modalMarker = new google.maps.Marker({
+            position: initialPosition,
+            map: modalMap,
+            draggable: true
+        });
 
-    modalMarker.addListener('dragend', function() {
-        updateFormFields(modalMarker.getPosition());
+        modalMarker.addListener('dragend', function () {
+            updateFormFields(modalMarker.getPosition());
+        });
+
+        modalMap.addListener('click', function (e) {
+            modalMarker.setPosition(e.latLng);
+            updateFormFields(e.latLng);
+        });
+    }
+
+    // Function to update the latitude and longitude form fields
+    function updateFormFields(position) {
+        document.getElementById('id_latitude').value = position.lat();
+        document.getElementById('id_longitude').value = position.lng();
+    }
+
+    // Event listener for modal show, to initialize or reinitialize the modal map
+    document.getElementById('mapModal').addEventListener('shown.bs.modal', function () {
+        initModalMap(); // Initialize or reinitialize modal map
     });
-
-    modalMap.addListener('click', function(e) {
-        modalMarker.setPosition(e.latLng);
-        updateFormFields(e.latLng);
-    });
-}
-
-// Function to update the latitude and longitude form fields
-function updateFormFields(position) {
-    document.getElementById('id_latitude').value = position.lat();
-    document.getElementById('id_longitude').value = position.lng();
-}
-
-// Event listener for modal show, to initialize or reinitialize the modal map
-document.getElementById('mapModal').addEventListener('shown.bs.modal', function () {
-    initModalMap(); // Initialize or reinitialize modal map
-});
 </script>

@@ -2,137 +2,138 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container mt-1 col-sd-8 col-md-8">
-    <div class="row">
-        <div class="row mt-md-4 justify-content-center align-items-center">
-            <div class="col">
-                <div class="d-flex align-items-center h-100 text-md-start">
-                    <legend class="form-label mb-0">Post tomas  Type: {{ post_type|capfirst }}</legend>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="container mt-1 col-sd-8 col-md-8">
+		<div class="row">
+			<div class="row mt-md-4 justify-content-center align-items-center">
+				<div class="col">
+					<div class="d-flex align-items-center h-100 text-md-start">
+						<legend class="form-label mb-0">Post tomas Type: {{ post_type|capfirst }}</legend>
+					</div>
+				</div>
+			</div>
+		</div>
 
-    <div class="row justify-content-center mt-1">
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="form-group">
-                {{ form.title|as_crispy_field }}
-            </div>
-            <div class="form-group">
-                {{ form.description|as_crispy_field }}
-            </div>
-            <div class="row">
-                <div class="col">
-                    {{ form.event_date|as_crispy_field }}
-                </div>
-                <div class="col">
-                    {{ form.date_uncertainty_days|as_crispy_field }}
-                </div>
-            </div>
-            <span class="d-none"> <!-- Hidden fields for latitude and longitude -->
+		<div class="row justify-content-center mt-1">
+			<form method="post" enctype="multipart/form-data">
+				{% csrf_token %}
+				<div class="form-group">
+					{{ form.title|as_crispy_field }}
+				</div>
+				<div class="form-group">
+					{{ form.description|as_crispy_field }}
+				</div>
+				<div class="row">
+					<div class="col">
+						{{ form.event_date|as_crispy_field }}
+					</div>
+					<div class="col">
+						{{ form.date_uncertainty_days|as_crispy_field }}
+					</div>
+				</div>
+				<span class="d-none"> <!-- Hidden fields for latitude and longitude -->
                 {{ form.longitude|as_crispy_field }}
                 {{ form.latitude|as_crispy_field }}
             </span>
-            <div class="form-group">
-                {{ image_form.file_field|as_crispy_field }}
-            </div>
+				<div class="form-group">
+					{{ image_form.file_field|as_crispy_field }}
+				</div>
 
-            <!-- Display existing photos -->
-            <div>
-                <p>Existing Photos:</p>
-                {% for photo in photos %}
-					<div class="photo-container position-relative" id="photo-container-{{ photo.id }}" style="display: inline-block; margin: 10px;">
-					    <img src="{{ photo.image.url }}" alt="Photo" style="width: 100px; height: 100px;">
-					    <a href="javascript:void(0);"
-					       class="delete-photo-btn-tomas position-absolute top-0 end-0 btn btn-sm btn-danger"
-					       style="border-radius: 50%; padding: 2px 5px; margin: 2px;"
-					       data-photo-id="{{ photo.id }}"
-					       data-post-type="{{ post_type }}"
-					       data-ajax-url="{% url 'posts:delete_photo' photo_id=photo.id post_type=post_type %}">
-					        &times;
-					    </a>
+				<!-- Display existing photos -->
+				<div>
+					<p>Existing Photos:</p>
+					{% for photo in photos %}
+						<div class="photo-container position-relative" id="photo-container-{{ photo.id }}"
+						     style="display: inline-block; margin: 10px;">
+							<img src="{{ photo.image.url }}" alt="Photo" style="width: 100px; height: 100px;">
+							<a href="javascript:void(0);"
+							   class="delete-photo-btn-tomas position-absolute top-0 end-0 btn btn-sm btn-danger"
+							   style="border-radius: 50%; padding: 2px 5px; margin: 2px;"
+							   data-photo-id="{{ photo.id }}"
+							   data-post-type="{{ post_type }}"
+							   data-ajax-url="{% url 'posts:delete_photo' photo_id=photo.id post_type=post_type %}">
+								&times;
+							</a>
+						</div>
+					{% endfor %}
+
+				</div>
+
+				{% include "map_selector_big.html" %}
+				<div class="row">
+					<div class="col mx-auto order-1">
+						{% include "map_selector_modal.html" %}
 					</div>
-                {% endfor %}
+					<div class="col mx-auto order-0">
+						<button type="submit" class="btn btn-primary mb-5">Update Post</button>
 
-            </div>
+					</div>
 
-            {% include "map_selector_big.html" %}
-        <div class="row">
-	        <div class="col mx-auto order-1">
-		        {% include "map_selector_modal.html" %}
-	        </div>
-	        <div class="col mx-auto order-0">
-		                    <button type="submit" class="btn btn-primary mb-5">Update Post</button>
+				</div>
 
-	        </div>
-
-        </div>
-
-        </form>
-    </div>
-</div>
+			</form>
+		</div>
+	</div>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 
 
 
-<script>
-// Update submit button state based on post type selection
-function updateSubmitButton() {
-    let selectedPostType = document.querySelector('input[name="postType"]:checked');
-    let submitBtn = document.getElementById('submit-btn');
-    let warningMsg = document.getElementById('submit-warning');
-    let hiddenPostTypeInput = document.getElementById('hiddenPostType');
+	<script>
+        // Update submit button state based on post type selection
+        function updateSubmitButton() {
+            let selectedPostType = document.querySelector('input[name="postType"]:checked');
+            let submitBtn = document.getElementById('submit-btn');
+            let warningMsg = document.getElementById('submit-warning');
+            let hiddenPostTypeInput = document.getElementById('hiddenPostType');
 
-    if (selectedPostType) {
-        submitBtn.disabled = false;
-        warningMsg.style.display = 'none';
-        hiddenPostTypeInput.value = selectedPostType.value;
-    } else {
-        submitBtn.disabled = true;
-        warningMsg.style.display = 'block';
-        hiddenPostTypeInput.value = '';
-    }
-}
-
-// Ensure correct initial state of submit button on page load
-document.addEventListener('DOMContentLoaded', function() {
-    updateSubmitButton();
-});
-
-$(document).ready(function() {
-    $('.delete-photo-btn-tomas').click(function() {
-        var btn = $(this); // The delete button
-        var photoId = btn.data('photo-id');
-        var ajaxUrl = btn.data('ajax-url'); // Access the AJAX URL
-
-        // Confirm deletion
-        if (!confirm('Are you sure you want to delete this photo?')) {
-            return false;
+            if (selectedPostType) {
+                submitBtn.disabled = false;
+                warningMsg.style.display = 'none';
+                hiddenPostTypeInput.value = selectedPostType.value;
+            } else {
+                submitBtn.disabled = true;
+                warningMsg.style.display = 'block';
+                hiddenPostTypeInput.value = '';
+            }
         }
 
-        // AJAX request to your delete_photo view
-        $.ajax({
-            url: ajaxUrl, // Use the AJAX URL from the data attribute
-            type: 'GET', // Or 'POST', depending on how your Django view is set up
-            dataType: 'json', // Expect a JSON response
-            // Inside your AJAX success callback for photo deletion
-			success: function(response) {
-			    if (response.success) {
-			        // Remove the photo container element from the page
-			        $('#photo-container-' + photoId).remove();
-			        // Optionally reinitialize the map if necessary
-			        initDefaultMap(); // Or initModalMap(), depending on your specific case
-			    } else {
-			        alert('Error: ' + response.error);
-			    }
-			},
-
+        // Ensure correct initial state of submit button on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            updateSubmitButton();
         });
-    });
-});
-</script>
+
+        $(document).ready(function () {
+            $('.delete-photo-btn-tomas').click(function () {
+                var btn = $(this); // The delete button
+                var photoId = btn.data('photo-id');
+                var ajaxUrl = btn.data('ajax-url'); // Access the AJAX URL
+
+                // Confirm deletion
+                if (!confirm('Are you sure you want to delete this photo?')) {
+                    return false;
+                }
+
+                // AJAX request to your delete_photo view
+                $.ajax({
+                    url: ajaxUrl, // Use the AJAX URL from the data attribute
+                    type: 'GET', // Or 'POST', depending on how your Django view is set up
+                    dataType: 'json', // Expect a JSON response
+                    // Inside your AJAX success callback for photo deletion
+                    success: function (response) {
+                        if (response.success) {
+                            // Remove the photo container element from the page
+                            $('#photo-container-' + photoId).remove();
+                            // Optionally reinitialize the map if necessary
+                            initDefaultMap(); // Or initModalMap(), depending on your specific case
+                        } else {
+                            alert('Error: ' + response.error);
+                        }
+                    },
+
+                });
+            });
+        });
+	</script>
 
 {% endblock %}

@@ -1,34 +1,36 @@
 <div class="d-none d-md-block" id="map" style="height: 400px; width: 100%;"></div>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initDefaultMap"></script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initDefaultMap"></script>
 
 <script>
-// Initializes the map on the main page
-function initDefaultMap() {
-    let initialPosition = {lat: 52.23635026009495, lng: 0.05784246226898956};
-    let map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 7,
-        center: initialPosition
-    });
-    let marker = new google.maps.Marker({
-        position: initialPosition,
-        map: map,
-        draggable: true
-    });
+    // Initializes the map on the main page
+    function initDefaultMap() {
+        let initialPosition = {lat: 52.23635026009495, lng: 0.05784246226898956};
+        let map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 7,
+            center: initialPosition
+        });
+        let marker = new google.maps.Marker({
+            position: initialPosition,
+            map: map,
+            draggable: true
+        });
 
-    // Add listener for marker drag end
-    marker.addListener('dragend', function() {
-        updateFormFields(marker.getPosition());
-    });
+        // Add listener for marker drag end
+        marker.addListener('dragend', function () {
+            updateFormFields(marker.getPosition());
+        });
 
-    // Add listener for map clicks to reposition the marker
-    map.addListener('click', function(e) {
-        marker.setPosition(e.latLng);
-        updateFormFields(e.latLng);
-    });
-}
-// Function to update the latitude and longitude form fields
-function updateFormFields(position) {
-    document.getElementById('id_latitude').value = position.lat();
-    document.getElementById('id_longitude').value = position.lng();
-}
+        // Add listener for map clicks to reposition the marker
+        map.addListener('click', function (e) {
+            marker.setPosition(e.latLng);
+            updateFormFields(e.latLng);
+        });
+    }
+
+    // Function to update the latitude and longitude form fields
+    function updateFormFields(position) {
+        document.getElementById('id_latitude').value = position.lat();
+        document.getElementById('id_longitude').value = position.lng();
+    }
 </script>

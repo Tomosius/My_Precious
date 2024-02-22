@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'polymorphic',
+    "conversations"
 ]
 CSRF_TRUSTED_ORIGINS = ['https://*.herokuapp.com']
 

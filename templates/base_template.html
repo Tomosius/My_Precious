@@ -1,191 +1,197 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>My Precious</title>
-    <script src="https://kit.fontawesome.com/e8613b1e05.js" crossorigin="anonymous"></script>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>My Precious</title>
+	<script src="https://kit.fontawesome.com/e8613b1e05.js" crossorigin="anonymous"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
+	{% load static %}
+	<link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+	<link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
 </head>
 <body class="d-flex flex-column min-vh-100">
-    <header class="mb-auto fixed-top">
-        <nav class="navbar col-12 col-sd-8 navbar-expand-md tomas-custom-bg 
+<header class="mb-auto fixed-top">
+	<nav class="navbar col-12 col-sd-8 navbar-expand-md tomas-custom-bg 
         navbar-fixed-top rounded-bottom-2">
-            <div class="container-fluid ps-1 pe-1 right">
-                <a class="navbar-brand col-5 col-sm-4 col-md-2 m-0" 
-                   href="/">My Precious</a>
-                <form class="d-flex col-7 col-sm-5" role="search" method="GET" action="{{ search_url }}">
-				    {% csrf_token %}
-				    <input class="form-control" type="search" name="search_query" placeholder="Search" aria-label="Search">
-				    <button class="btn btn-outline-dark" type="submit">
-				        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-				    </button>
-				</form>
+		<div class="container-fluid ps-1 pe-1 right">
+			<a class="navbar-brand col-5 col-sm-4 col-md-2 m-0"
+			   href="/">My Precious</a>
+			<form class="d-flex col-7 col-sm-5" role="search" method="GET" action="{{ search_url }}">
+				{% csrf_token %}
+				<input class="form-control" type="search" name="search_query" placeholder="Search" aria-label="Search">
+				<button class="btn btn-outline-dark" type="submit">
+					<i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+				</button>
+			</form>
 
 
-                <button class="navbar-toggler d-none d-md-none d-sm-block" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" 
-                               href="{% url 'posts:view_all_posts' %}">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'users:list_users' %}">Users</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link Active" href="{% url 'posts:create_post' %}">Create a Post</a>
-                        </li>
-                        <li class="nav-item dropdown ">
-                            {% if user.is_authenticated %}
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Account
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="
+			<button class="navbar-toggler d-none d-md-none d-sm-block" type="button" data-bs-toggle="collapse"
+			        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+			        aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav ms-auto">
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page"
+						   href="{% url 'posts:view_all_posts' %}">Home</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="{% url 'users:list_users' %}">Users</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link Active" href="{% url 'posts:create_post' %}">Create a Post</a>
+					</li>
+					<li class="nav-item dropdown ">
+						{% if user.is_authenticated %}
+							<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+							   aria-expanded="false">
+								Account
+							</a>
+							<ul class="dropdown-menu dropdown-menu-end">
+								<li class="nav-item">
+									<a class="nav-link" href="
                                         #">Create a Post</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="{% url 'users:user_profile' username=request.user.username %}">User 
-                                            Profile</a>
-                                    </li>
-                                    <li><a class="dropdown-item" href="{% url 'users:edit_profile' %}">Update Profile</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" 
-                                           href="{% url 'users:user_logout' %}">Log 
-                                        Out</a></li>
-                                </ul>
-                            {% else %}
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Login
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" 
-                                           href="{% url 'users:user_login' %}">Login</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" 
-                                           href="{% url 'users:user_register' %}">Create an 
-                                        Account</a></li>
-                                </ul>
-                            {% endif %}
-                            
-                        </li>
-                        
-                    </ul>
-    
-                </div>
-            </div>
-        </nav>
-    </header>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link"
+									   href="{% url 'users:user_profile' username=request.user.username %}">User
+										Profile</a>
+								</li>
+								<li><a class="dropdown-item" href="{% url 'users:edit_profile' %}">Update Profile</a>
+								</li>
+								<li>
+									<hr class="dropdown-divider">
+								</li>
+								<li><a class="dropdown-item"
+								       href="{% url 'users:user_logout' %}">Log
+									Out</a></li>
+							</ul>
+						{% else %}
+							<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+							   aria-expanded="false">
+								Login
+							</a>
+							<ul class="dropdown-menu dropdown-menu-end">
+								<li><a class="dropdown-item"
+								       href="{% url 'users:user_login' %}">Login</a></li>
+								<li>
+									<hr class="dropdown-divider">
+								</li>
+								<li><a class="dropdown-item"
+								       href="{% url 'users:user_register' %}">Create an
+									Account</a></li>
+							</ul>
+						{% endif %}
+
+					</li>
+
+				</ul>
+
+			</div>
+		</div>
+	</nav>
+</header>
 
 
+<main class="flex-grow-1 mt-5 pt-2">
+	{% block content %}
+		<!-- Content goes here -->
+	{% endblock %}
+</main>
+
+<footer class="mt-auto bottom">
+	<!-- Footer and all bottom components are here -->
+
+	<!-- Footer for small screens-->
+	<div class="rounded-top text-center d-sm-none footer-small">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-2">
+					<a href="{% url 'posts:view_all_posts' %}" class="btn btn-link"><i class="fas fa-house"
+					                                                                   aria-hidden="true"></i></a>
+				</div>
+				<div class="col-2">
+					<a href="#" class="btn btn-link"><i class="fas fa-envelope" aria-hidden="true"></i></a>
+				</div>
+				<div class="col-2 dropup-center dropup">
+					<button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+						<i class="far fa-user" aria-hidden="true"></i>
+					</button>
+					<ul class="dropdown-menu">
+						<li><a class="dropdown-item" href="{% url 'posts:create_post' %}">Create a Post</a></li>
+						<li><a class="dropdown-item" href="{% url 'users:list_users' %}">User List</a></li>
+						{% if request.user.is_authenticated %}
+							<li><a class="dropdown-item"
+							       href="{% url 'users:user_profile' username=request.user.username %}">Profile</a></li>
+						{% else %}
+							<li><a>Please Login</a></li>
+						{% endif %}
+
+						<li><a class="dropdown-item" href="{% url 'users:edit_profile' %}">Edit Profile</a></li>
+						<li><a class="dropdown-item" href="{% url 'users:user_logout' %}">Log Out</a></li>
+					</ul>
+				</div>
 
 
+				<div class="col-2">
+					<a href="#" class="btn btn-link"><i class="far fa-question-circle" aria-hidden="true"></i></a>
+				</div>
+			</div>
+		</div>
+	</div>
 
 
+	<!-- Footer for large screens -->
+	<div class="d-none d-sm-block">
+		<div class="container">
+			<!-- loading timezone to get Year in text -->
+			{% load tz %}
+			{% now "Y" as current_year %}
+			<p>© {{ current_year }} My Precious</p>
+		</div>
+	</div>
+</footer>
 
 
-   
-    
-    <main class="flex-grow-1 mt-5 pt-2">
-    {% block content %}
-    <!-- Content goes here -->
-    {% endblock %}
-    </main>
-    
-    <footer class="mt-auto bottom">
-        <!-- Footer and all bottom components are here -->
-        
-        <!-- Footer for small screens-->
-        <div class="rounded-top text-center d-sm-none footer-small">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-2">
-                        <a href="{% url 'posts:view_all_posts' %}" class="btn btn-link"><i class="fas fa-house" aria-hidden="true"></i></a>
-                    </div>
-                    <div class="col-2">
-                        <a href="#" class="btn btn-link"><i class="fas fa-envelope" aria-hidden="true"></i></a>
-                    </div>
-                    <div class="col-2 dropup-center dropup">
-                      <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="far fa-user" aria-hidden="true"></i>
-                      </button>
-                      <ul class="dropdown-menu">
-	                      <li><a class="dropdown-item" href="{% url 'posts:create_post' %}">Create a Post</a></li>
-	                      <li><a class="dropdown-item" href="{% url 'users:list_users' %}">User List</a></li>
-	                      {% if request.user.is_authenticated %}
-		                      <li><a class="dropdown-item" href="{% url 'users:user_profile' username=request.user.username %}">Profile</a></li>
-	                      {% else %} <li><a>please login</a></li>
-	                      {% endif %}
-
-	                      <li><a class="dropdown-item" href="{% url 'users:edit_profile' %}">Edit Profile</a></li> 
-	                      <li><a class="dropdown-item" href="{% url 'users:user_logout' %}">Log Out</a></li>
-                      </ul>
-                    </div>
-                    
-
-                    <div class="col-2">
-                        <a href="#" class="btn btn-link"><i class="far fa-question-circle" aria-hidden="true"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        
-        <!-- Footer for large screens -->
-        <div class="d-none d-sm-block">
-            <div class="container">
-                <!-- loading timezone to get Year in text -->
-                {% load tz %} 
-                {% now "Y" as current_year %}
-                <p>© {{ current_year }} My Precious</p>
-            </div>
-        </div>
-    </footer> 
-        
-        
-    <!-- Reusable Modal for Messages -->
-    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="confirmationModalLabel">Notification</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Dynamic message content will be injected here -->
-                </div>
-            </div>
-        </div>
-    </div>
-    <script src="{% static 'assets/js/bootstrap.bundle.min.js' %}"></script>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
+<!-- Reusable Modal for Messages -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel"
+     aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="confirmationModalLabel">Notification</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<!-- Dynamic message content will be injected here -->
+			</div>
+		</div>
+	</div>
+</div>
+<script src="{% static 'assets/js/bootstrap.bundle.min.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
         {% if messages %}
-        let messagesHtml = '';
-        {% for message in messages %}
-            messagesHtml += `<p class="mb-0">${'{{ message|escapejs }}'.replace(/\\'/g, "'")}</p>`;
-        {% endfor %}
-        const modalBody = document.querySelector('#confirmationModal .modal-body');
-        modalBody.innerHTML = messagesHtml;
-        const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
-        confirmationModal.show();
+            let messagesHtml = '';
+            {% for message in messages %}
+                messagesHtml += `<p class="mb-0">${'{{ message|escapejs }}'.replace(/\\'/g, "'")}</p>`;
+            {% endfor %}
+            const modalBody = document.querySelector('#confirmationModal .modal-body');
+            modalBody.innerHTML = messagesHtml;
+            const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+            confirmationModal.show();
 
-        // Optionally, hide the modal after a delay
-        setTimeout(() => {
-            confirmationModal.hide();
-        }, 5000); // Adjust time as needed
+            // Optionally, hide the modal after a delay
+            setTimeout(() => {
+                confirmationModal.hide();
+            }, 5000); // Adjust time as needed
         {% endif %}
     });
-    </script>
-    
-    </body>
+</script>
+
+</body>
 </html>
 

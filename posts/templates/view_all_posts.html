@@ -2,94 +2,94 @@
 
 {% block content %}
 
-<!-- Nav tabs -->
-<ul class="nav nav-tabs al rounded">
-    <li class="nav-item flex-fill text-center">
-        <a class="nav-link border border-1 border-black {% if active_tab == 'all' %}active{% endif %}" href="{% url 'posts:view_all_posts' %}">All Posts</a>
-    </li>
-    <li class="nav-item flex-fill text-center">
-        <a class="nav-link border border-1 border-black {% if active_tab == 'lost' %}active{% endif %}" href="{% url 'posts:view_lost_posts' %}">Lost</a>
-    </li>
-    <li class="nav-item flex-fill text-center">
-        <a class="nav-link border border-1 border-black {% if active_tab == 'found' %}active{% endif %}" href="{% url 'posts:view_found_posts' %}">Found</a>
-    </li>
-    <li class="nav-item flex-fill text-center">
-        <a class="nav-link border border-1 border-black {% if active_tab == 'map' %}active{% endif %}" href="{% url 'posts:map_all_posts_view' %}">Map</a>
-    </li>
-</ul>
+	<!-- Nav tabs -->
+	<ul class="nav nav-tabs al rounded">
+		<li class="nav-item flex-fill text-center">
+			<a class="nav-link border border-1 border-black {% if active_tab == 'all' %}active{% endif %}" href="{% url 'posts:view_all_posts' %}">All Posts</a>
+		</li>
+		<li class="nav-item flex-fill text-center">
+			<a class="nav-link border border-1 border-black {% if active_tab == 'lost' %}active{% endif %}" href="{% url 'posts:view_lost_posts' %}">Lost</a>
+		</li>
+		<li class="nav-item flex-fill text-center">
+			<a class="nav-link border border-1 border-black {% if active_tab == 'found' %}active{% endif %}" href="{% url 'posts:view_found_posts' %}">Found</a>
+		</li>
+		<li class="nav-item flex-fill text-center">
+			<a class="nav-link border border-1 border-black {% if active_tab == 'map' %}active{% endif %}" href="{% url 'posts:map_all_posts_view' %}">Map</a>
+		</li>
+	</ul>
 
-<!-- Tab panes -->
-<div class="mx-3 tab-content mb-5">
-    <div class="tab-pane fade {% if active_tab == 'all' %}show active{% endif %}" id="all-posts">
-        <!-- Display all posts here if 'all' is the active tab -->
-        {% if active_tab == 'all' %}
-            {% include "posts_loop_list.html" %}
-        {% endif %}
-    </div>
-    <div class="tab-pane fade {% if active_tab == 'lost' %}show active{% endif %}" id="lost-posts">
-        <!-- Display lost posts here if 'lost' is the active tab -->
-        {% if active_tab == 'lost' %}
-            {% include "posts_loop_list.html" %}
-        {% endif %}
-    </div>
-    <div class="tab-pane fade {% if active_tab == 'found' %}show active{% endif %}" id="found-posts">
-        <!-- Display found posts here if 'found' is the active tab -->
-        {% if active_tab == 'found' %}
-            {% include "posts_loop_list.html" %}
-        {% endif %}
-    </div>
-    <div class="tab-pane fade {% if active_tab == 'map' %}show active{% endif %}" id="all-posts">
-        <!-- Display found posts here if 'found' is the active tab -->
-        {% if active_tab == 'map' %}
-            {% include "map_all_posts.html" %}
-        {% endif %}
-    </div>
-</div>
+	<!-- Tab panes -->
+	<div class="mx-3 tab-content mb-5">
+		<div class="tab-pane fade {% if active_tab == 'all' %}show active{% endif %}" id="all-posts">
+			<!-- Display all posts here if 'all' is the active tab -->
+			{% if active_tab == 'all' %}
+				{% include "posts_loop_list.html" %}
+			{% endif %}
+		</div>
+		<div class="tab-pane fade {% if active_tab == 'lost' %}show active{% endif %}" id="lost-posts">
+			<!-- Display lost posts here if 'lost' is the active tab -->
+			{% if active_tab == 'lost' %}
+				{% include "posts_loop_list.html" %}
+			{% endif %}
+		</div>
+		<div class="tab-pane fade {% if active_tab == 'found' %}show active{% endif %}" id="found-posts">
+			<!-- Display found posts here if 'found' is the active tab -->
+			{% if active_tab == 'found' %}
+				{% include "posts_loop_list.html" %}
+			{% endif %}
+		</div>
+		<div class="tab-pane fade {% if active_tab == 'map' %}show active{% endif %}" id="all-posts">
+			<!-- Display found posts here if 'found' is the active tab -->
+			{% if active_tab == 'map' %}
+				{% include "map_all_posts.html" %}
+			{% endif %}
+		</div>
+	</div>
 
 
 	<!-- Outer container to hold the pagination controls and number selector -->
-<div class="container-fluid" {% if active_tab == "map" %}style="display: none;"{% endif %}>
-  <div class="row justify-content-between align-items-center text-center">
-    <!-- Invisible spacer column for the first gap -->
-    <div class="d-none d-sm-block col-sm-1 col-md-2"></div>
+	<div class="container-fluid" {% if active_tab == "map" %}style="display: none;"{% endif %}>
+		<div class="row justify-content-between align-items-center text-center">
+			<!-- Invisible spacer column for the first gap -->
+			<div class="d-none d-sm-block col-sm-1 col-md-2"></div>
 
-    <!-- Pagination controls wrapped in a column, adjusted to take the appropriate space -->
-    <div class="col-6 col-sm-5 col-md-3">
-      <div class="pagination">
+			<!-- Pagination controls wrapped in a column, adjusted to take the appropriate space -->
+			<div class="col-6 col-sm-5 col-md-3">
+				<div class="pagination">
         <span class="step-links">
           {% if posts.has_previous %}
-            <a href="?page=1&items_per_page={{ request.GET.items_per_page|default:'10' }}">&laquo; first</a>
-            <a href="?page={{ posts.previous_page_number }}&items_per_page={{ request.GET.items_per_page|default:'10' }}">previous</a>
+	          <a href="?page=1&items_per_page={{ request.GET.items_per_page|default:'10' }}">&laquo; first</a>
+	          <a href="?page={{ posts.previous_page_number }}&items_per_page={{ request.GET.items_per_page|default:'10' }}">previous</a>
           {% endif %}
-          <span class="current">Page {{ posts.number }} of {{ posts.paginator.num_pages }}.</span>
-          {% if posts.has_next %}
-            <a href="?page={{ posts.next_page_number }}&items_per_page={{ request.GET.items_per_page|default:'10' }}">next</a>
-            <a href="?page={{ posts.paginator.num_pages }}&items_per_page={{ request.GET.items_per_page|default:'10' }}">last &raquo;</a>
-          {% endif %}
+	        <span class="current">Page {{ posts.number }} of {{ posts.paginator.num_pages }}.</span>
+	        {% if posts.has_next %}
+		        <a href="?page={{ posts.next_page_number }}&items_per_page={{ request.GET.items_per_page|default:'10' }}">next</a>
+		        <a href="?page={{ posts.paginator.num_pages }}&items_per_page={{ request.GET.items_per_page|default:'10' }}">last &raquo;</a>
+	        {% endif %}
         </span>
-      </div>
-    </div>
+				</div>
+			</div>
 
-    <!-- Invisible spacer column for the middle gap -->
-    <div class="d-none d-md-block col-md-2"></div>
+			<!-- Invisible spacer column for the middle gap -->
+			<div class="d-none d-md-block col-md-2"></div>
 
-    <!-- Number selector wrapped in a column, adjusted to take the appropriate space -->
-    <div class="col-6 col-sm-5 col-md-3">
-      <form action="" method="get" class="text-center">
-        <label for="items_per_page">Posts per page:</label>
-        <select name="items_per_page" onchange="this.form.submit()">
-          {% for option in items_per_page_options %}
-          <option value="{{ option }}" {% if request.GET.items_per_page|stringformat:"s" == option|stringformat:"s" or not request.GET.items_per_page and option == 10 %}selected{% endif %}>
-            {{ option }}
-          </option>
-          {% endfor %}
-        </select>
-      </form>
-    </div>
+			<!-- Number selector wrapped in a column, adjusted to take the appropriate space -->
+			<div class="col-6 col-sm-5 col-md-3">
+				<form action="" method="get" class="text-center">
+					<label for="items_per_page">Posts per page:</label>
+					<select name="items_per_page" onchange="this.form.submit()">
+						{% for option in items_per_page_options %}
+							<option value="{{ option }}" {% if request.GET.items_per_page|stringformat:"s" == option|stringformat:"s" or not request.GET.items_per_page and option == 10 %}selected{% endif %}>
+								{{ option }}
+							</option>
+						{% endfor %}
+					</select>
+				</form>
+			</div>
 
-    <!-- Invisible spacer column for the last gap -->
-    <div class="d-none d-sm-block col-sm-1 col-md-2"></div>
-  </div>
-</div>
+			<!-- Invisible spacer column for the last gap -->
+			<div class="d-none d-sm-block col-sm-1 col-md-2"></div>
+		</div>
+	</div>
 
 {% endblock %}

@@ -1,14 +1,14 @@
 {% for post in posts %}
-    <a href="{{ post.get_absolute_url }}" style="text-decoration: none; color: inherit;">
-        <p>
-            <strong>{{ post.title|truncatechars:200 }}</strong><br>
-            {{ post.description|truncatechars:200 }}
-        </p>
-    </a>
+	<a href="{{ post.get_absolute_url }}" style="text-decoration: none; color: inherit;">
+		<p>
+			<strong>{{ post.title|truncatechars:200 }}</strong><br>
+			{{ post.description|truncatechars:200 }}
+		</p>
+	</a>
 	<script>
-	        console.log("title: {{ post.title }}, post_type: {{ post.post_type }}, lat: {{ post.latitude }}, lng: {{ post.longitude }}");
+        console.log("title: {{ post.title }}, post_type: {{ post.post_type }}, lat: {{ post.latitude }}, lng: {{ post.longitude }}");
 
 	</script>
 {% empty %}
-    <p>No lost posts to display.</p>
+	<p>No lost posts to display.</p>
 {% endfor %}

@@ -2,94 +2,98 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container mt-1 col-sd-8 col-md-8">
-    <div class="row">
-	  <div class="row mt-md-4 justify-content-center align-items-center">
-	    <div class="col">
-		    <div class="d-flex align-items-center h-100 text-md-start">
-			    <!-- Use "d-flex align-items-center" to vertically center content in the column -->
-		        <legend class="form-label mb-0">Choose Post Type:</legend>
-		    </div>
-	    </div>
-	    <div class="col">
-	        <div class="row">
-		        <div class="form-check form-check-inline">
-	                <input class="form-check-input" type="radio" name="postType" id="lost" value="lost" onchange="updateSubmitButton()" {% if post_type == 'lost' %}checked{% endif %}>
-			        <label class="form-check-label" for="lost">Lost</label>
-	            </div>
-	            <div class="form-check form-check-inline">
-	                <input class="form-check-input" type="radio" name="postType" id="found" value="found" onchange="updateSubmitButton()" {% if post_type == 'found' %}checked{% endif %}>
-	                <label class="form-check-label" for="found">Found</label>
-	            </div>
-	        </div>
-	    </div>
-	  </div>
-	</div>
+	<div class="container mt-1 col-sd-8 col-md-8">
+		<div class="row">
+			<div class="row mt-md-4 justify-content-center align-items-center">
+				<div class="col">
+					<div class="d-flex align-items-center h-100 text-md-start">
+						<!-- Use "d-flex align-items-center" to vertically center content in the column -->
+						<legend class="form-label mb-0">Choose Post Type:</legend>
+					</div>
+				</div>
+				<div class="col">
+					<div class="row">
+						<div class="form-check form-check-inline">
+							<input class="form-check-input" type="radio" name="postType" id="lost" value="lost"
+							       onchange="updateSubmitButton()" {% if post_type == 'lost' %}checked{% endif %}>
+							<label class="form-check-label" for="lost">Lost</label>
+						</div>
+						<div class="form-check form-check-inline">
+							<input class="form-check-input" type="radio" name="postType" id="found" value="found"
+							       onchange="updateSubmitButton()" {% if post_type == 'found' %}checked{% endif %}>
+							<label class="form-check-label" for="found">Found</label>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 
 
-    <div class="row justify-content-center mt-1">
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <!-- Hidden input for post type -->
-            <input type="hidden" name="post_type" id="hiddenPostType" value="">
-            <div class="form-group">
-                {{ form.title|as_crispy_field}}
-            </div>
-            <div class="form-group">
-                {{ form.description|as_crispy_field }}
-            </div>
-	        <div class="row">
-		        <div class="col">
-			        {{ form.event_date|as_crispy_field }}
-		        </div>
-		        <div class="col">
-			        {{ form.date_uncertainty_days|as_crispy_field }}
-		        </div>
-	            </div>
-	            <span class="d-none"> <!-- Hidden fields for latitude and longitude -->
+		<div class="row justify-content-center mt-1">
+			<form method="post" enctype="multipart/form-data">
+				{% csrf_token %}
+				<!-- Hidden input for post type -->
+				<input type="hidden" name="post_type" id="hiddenPostType" value="">
+				<div class="form-group">
+					{{ form.title|as_crispy_field }}
+				</div>
+				<div class="form-group">
+					{{ form.description|as_crispy_field }}
+				</div>
+				<div class="row">
+					<div class="col">
+						{{ form.event_date|as_crispy_field }}
+					</div>
+					<div class="col">
+						{{ form.date_uncertainty_days|as_crispy_field }}
+					</div>
+				</div>
+				<span class="d-none"> <!-- Hidden fields for latitude and longitude -->
 		            {{ form.longitude|as_crispy_field }}
                     {{ form.latitude|as_crispy_field }}
 	            </span>
-            <div class="form-group">
-                {{ image_form.file_field|as_crispy_field }}
-            </div>
+				<div class="form-group">
+					{{ image_form.file_field|as_crispy_field }}
+				</div>
 
-			{% include "map_selector_big.html" %}
-	        {% include "map_selector_modal.html" %}
-	        <!-- <button type="button" class="btn btn-primary d-md-none" data-bs-toggle="modal" data-bs-target="#mapModal">
-			  Select Location
-			</button> -->
-	        <div id="submit-warning" style="display: none; color: red;">You cannot submit the post, please select a post type.</div>
-            <button type="submit" class="btn btn-primary mb-5" id="submit-btn" disabled>Submit</button>
-        </form>
-    </div>
-</div>
+				{% include "map_selector_big.html" %}
+				{% include "map_selector_modal.html" %}
+				<!-- <button type="button" class="btn btn-primary d-md-none" data-bs-toggle="modal" data-bs-target="#mapModal">
+                  Select Location
+                </button> -->
+				<div id="submit-warning" style="display: none; color: red;">You cannot submit the post, please select a
+					post type.
+				</div>
+				<button type="submit" class="btn btn-primary mb-5" id="submit-btn" disabled>Submit</button>
+			</form>
+		</div>
+	</div>
 
 
 
-<script>
-// Update submit button state based on post type selection
-function updateSubmitButton() {
-    let selectedPostType = document.querySelector('input[name="postType"]:checked');
-    let submitBtn = document.getElementById('submit-btn');
-    let warningMsg = document.getElementById('submit-warning');
-    let hiddenPostTypeInput = document.getElementById('hiddenPostType');
+	<script>
+        // Update submit button state based on post type selection
+        function updateSubmitButton() {
+            let selectedPostType = document.querySelector('input[name="postType"]:checked');
+            let submitBtn = document.getElementById('submit-btn');
+            let warningMsg = document.getElementById('submit-warning');
+            let hiddenPostTypeInput = document.getElementById('hiddenPostType');
 
-    if (selectedPostType) {
-        submitBtn.disabled = false;
-        warningMsg.style.display = 'none';
-        hiddenPostTypeInput.value = selectedPostType.value;
-    } else {
-        submitBtn.disabled = true;
-        warningMsg.style.display = 'block';
-        hiddenPostTypeInput.value = '';
-    }
-}
+            if (selectedPostType) {
+                submitBtn.disabled = false;
+                warningMsg.style.display = 'none';
+                hiddenPostTypeInput.value = selectedPostType.value;
+            } else {
+                submitBtn.disabled = true;
+                warningMsg.style.display = 'block';
+                hiddenPostTypeInput.value = '';
+            }
+        }
 
-// Ensure correct initial state of submit button on page load
-document.addEventListener('DOMContentLoaded', function() {
-    updateSubmitButton();
-});
-</script>
+        // Ensure correct initial state of submit button on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            updateSubmitButton();
+        });
+	</script>
 
 {% endblock %}

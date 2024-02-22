@@ -1,15 +1,17 @@
 import os
+
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
-from .forms import LostPostForm, FoundPostForm, FileFieldForm
-from .models import LostPost, FoundPost, LostPhoto, FoundPhoto
 from django.db.models import Q
-from django.core.paginator import Paginator
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect
 from django.shortcuts import render
-from .models import LostPost, FoundPost, Post  # Assuming you have a third
 from django.urls import reverse
+
+from .forms import LostPostForm, FoundPostForm, FileFieldForm
+from .models import LostPhoto, FoundPhoto
+from .models import LostPost, FoundPost
+from .models import Post
 
 
 @login_required
@@ -75,11 +77,9 @@ def generic_search(model, search_query):
 
     return results
 
-from django.shortcuts import render
-from .models import Post  # Assuming Post is the polymorphic base model
-from django.core.paginator import Paginator
 
 ITEMS_PER_PAGE_OPTIONS = [5, 10, 20, 50]
+
 
 def paginate_queryset(request, queryset, items_per_page=10):
     """
@@ -93,8 +93,9 @@ def paginate_queryset(request, queryset, items_per_page=10):
 
 def view_all_posts(request):
     """
-    Display all posts (both LostPost and FoundPost) with optional search functionality and pagination,
-    utilizing Django Polymorphic for combined querying.
+    Display all posts (both LostPost and FoundPost) with optional search
+    functionality and pagination, utilizing Django Polymorphic for combined
+    querying.
     """
     search_query = request.GET.get('search_query', '')
 
@@ -142,6 +143,7 @@ def view_lost_posts(request):
     }
     return render(request, 'view_all_posts.html', context)
 
+
 def view_found_posts(request):
     """
     Display all found posts with optional search functionality and pagination.
@@ -161,8 +163,6 @@ def view_found_posts(request):
         'search_url': search_url
     }
     return render(request, 'view_all_posts.html', context)
-
-
 
 
 def post_detail_view(request, slug, post_type):
@@ -193,9 +193,9 @@ def update_post(request, slug, post_type):
     post = get_object_or_404(model, slug=slug)
     # Check if the current user is the owner of the post
 
-    PhotoModel = LostPhoto if post_type == 'lost' else FoundPhoto
-    photos = PhotoModel.objects.filter(
-        lost_post=post) if post_type == 'lost' else PhotoModel.objects.filter(
+    photo_model = LostPhoto if post_type == 'lost' else FoundPhoto
+    photos = photo_model.objects.filter(
+        lost_post=post) if post_type == 'lost' else photo_model.objects.filter(
         found_post=post)
 
     google_api_key = os.environ.get('GOOGLE_MAPS_API_KEY')
@@ -259,10 +259,8 @@ def delete_photo(request, photo_id, post_type):
     # Determine if it's a LostPhoto or FoundPhoto based on the post_type
     if post_type == 'lost':
         photo = get_object_or_404(LostPhoto, pk=photo_id)
-        post_slug = photo.lost_post.slug
     elif post_type == 'found':
         photo = get_object_or_404(FoundPhoto, pk=photo_id)
-        post_slug = photo.found_post.slug
     else:
         # Redirect to a default or error page if post_type is invalid
         return redirect('/error-page/')  # Adjust this URL as needed
@@ -278,14 +276,11 @@ def delete_photo(request, photo_id, post_type):
         return JsonResponse({'success': False, 'error': str(e)})
 
 
-
-
-
-
 def map_all_posts(request):
     """
-    Display all posts (both LostPost and FoundPost) with optional search functionality and pagination,
-    utilizing Django Polymorphic for combined querying.
+    Display all posts (both LostPost and FoundPost) with optional search
+    functionality and pagination, utilizing Django Polymorphic for combined
+    querying.
     """
     search_query = request.GET.get('search_query', '')
 
@@ -313,5 +308,3 @@ def map_all_posts(request):
     }
 
     return render(request, 'view_all_posts.html', context)
-
-
