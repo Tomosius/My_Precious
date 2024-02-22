@@ -1,12 +1,11 @@
-import os
-
+from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
-
+from .models import LostPost, FoundPost
 from .forms import LostPostForm, FoundPostForm, FileFieldForm
-from .models import LostPhoto, FoundPhoto, LostPost, FoundPost
-from django.shortcuts import get_object_or_404
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+import os
+from django.core.paginator import Paginator
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
 
 ITEMS_PER_PAGE_OPTIONS = [5, 10, 20, 50]
 
@@ -70,10 +69,16 @@ def view_all_posts(request):
     return render(request, 'view_all_posts.html', context)
 
 
+
+# Assuming your models have a 'user' field that links to the user who created the post
 def post_detail_view(request, slug, post_type):
+
     google_api_key = os.environ.get('GOOGLE_MAPS_API_KEY')
     model = LostPost if post_type == 'lost' else FoundPost
     post = get_object_or_404(model, slug=slug)
+
+    # Check if the current user is the owner of the post
+    is_owner = request.user == post.user
 
     PhotoModel = LostPhoto if post_type == 'lost' else FoundPhoto
     photos = PhotoModel.objects.filter(
@@ -81,8 +86,10 @@ def post_detail_view(request, slug, post_type):
         found_post=post)
 
     return render(request, 'post_details.html', {
+        'post_type': post_type,
         'post': post,
         'photos': photos,
+        'is_owner': is_owner,  # Add 'is_owner' to the context
         'GOOGLE_MAPS_API_KEY': google_api_key
     })
 
@@ -136,3 +143,106 @@ def view_found_posts(request):
     context = {'posts': paginated_posts, 'is_authenticated':
         is_authenticated, "active_tab": "found", "items_per_page_options": ITEMS_PER_PAGE_OPTIONS}
     return render(request, 'view_all_posts.html', context)
+
+
+
+
+
+@login_required
+def update_post(request, slug, post_type):
+    model = LostPost if post_type == 'lost' else FoundPost
+    post = get_object_or_404(model, slug=slug)
+    # Check if the current user is the owner of the post
+
+    PhotoModel = LostPhoto if post_type == 'lost' else FoundPhoto
+    photos = PhotoModel.objects.filter(
+        lost_post=post) if post_type == 'lost' else PhotoModel.objects.filter(
+        found_post=post)
+
+    google_api_key = os.environ.get('GOOGLE_MAPS_API_KEY')
+    form_class = LostPostForm if post_type == 'lost' else FoundPostForm
+    model_class = LostPost if post_type == 'lost' else FoundPost
+    photo_model_class = LostPhoto if post_type == 'lost' else FoundPhoto
+
+    post_instance = get_object_or_404(model_class, slug=slug, user=request.user)
+
+    # Check if the current user is the owner of the post
+    is_owner = request.user == post.user
+
+
+    if request.method == 'POST':
+        form = form_class(request.POST, request.FILES, instance=post_instance)
+        image_form = FileFieldForm(request.POST, request.FILES)
+
+        if form.is_valid() and image_form.is_valid():
+            updated_post = form.save()
+
+            for file in request.FILES.getlist('file_field'):
+                photo_instance = photo_model_class(image=file, **{'lost_post': updated_post} if post_type == 'lost' else {'found_post': updated_post})
+                photo_instance.save()
+
+            return render(request, 'post_details.html', {
+                'post_type': post_type,
+                'post': post,
+                'photos': photos,
+                'is_owner': is_owner,  # Add 'is_owner' to the context
+                'GOOGLE_MAPS_API_KEY': google_api_key
+            })
+        else:
+            print(form.errors)
+    else:
+        form = form_class(instance=post_instance)
+        image_form = FileFieldForm()
+
+    return render(request, 'update_post.html', {
+        'photos': photos,
+        'form': form,
+        'image_form': image_form,
+        'post_type': post_type,
+        'GOOGLE_MAPS_API_KEY': google_api_key
+    })
+
+from django.shortcuts import redirect, get_object_or_404
+from django.urls import reverse
+from .models import LostPhoto, FoundPhoto
+
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
+# Ensure these imports are correct based on your app structure
+from .models import LostPhoto, FoundPhoto
+
+def delete_photo(request, photo_id, post_type):
+    """
+    Deletes a photo based on its ID and associated post type ('lost' or 'found').
+
+    Args:
+    - request: HttpRequest object.
+    - photo_id: The ID of the photo to delete.
+    - post_type: A string indicating the type of post ('lost' or 'found').
+
+    Returns:
+    - HttpResponse redirecting to the post detail page after deletion.
+    """
+    # Determine if it's a LostPhoto or FoundPhoto based on the post_type
+    if post_type == 'lost':
+        photo = get_object_or_404(LostPhoto, pk=photo_id)
+        post_slug = photo.lost_post.slug
+    elif post_type == 'found':
+        photo = get_object_or_404(FoundPhoto, pk=photo_id)
+        post_slug = photo.found_post.slug
+    else:
+        # Redirect to a default or error page if post_type is invalid
+        return redirect('/error-page/')  # Adjust this URL as needed
+
+    # Perform the deletion, which includes Cloudinary asset deletion via overridden delete method
+    photo.delete()
+
+    try:
+        # Assuming the deletion code is here
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+
+
+

@@ -1,6 +1,7 @@
 from django import forms
 from django.forms.widgets import ClearableFileInput
-from .models import LostPost, FoundPost
+from .models import LostPost, FoundPost, LostPhoto, FoundPhoto
+from cloudinary.forms import CloudinaryFileField
 
 
 class MultipleFileInput(ClearableFileInput):
@@ -49,3 +50,5 @@ class FoundPostForm(BasePostForm):
 class LostPostForm(BasePostForm):
     class Meta(BasePostForm.Meta):
         model = LostPost
+
+

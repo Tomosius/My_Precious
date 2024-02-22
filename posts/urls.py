@@ -10,4 +10,9 @@ urlpatterns = [
     path('', views.view_all_posts, name='view_all_posts'),
     path('lost/', views.view_lost_posts, name='view_lost_posts'),
     path('found/', views.view_found_posts, name='view_found_posts'),
+    path('posts/update/<post_type>/<slug>/', views.update_post,
+         name='update_post'),
+    path('delete_photo/<int:photo_id>/<str:post_type>/', views.delete_photo,
+         name='delete_photo'),
+
 ]

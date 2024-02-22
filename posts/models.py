@@ -5,6 +5,7 @@ from django.utils.text import slugify
 from cloudinary.models import CloudinaryField
 from django.urls import reverse
 import datetime
+from cloudinary.uploader import destroy
 
 DATE_UNCERTAINTY_CHOICES = [
     ('0', 'exact'),
@@ -23,9 +24,9 @@ class Post(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    latitude = models.DecimalField(max_digits=20, decimal_places=15, null=True,
+    latitude = models.DecimalField(max_digits=64, decimal_places=44, null=True,
                                    blank=True)
-    longitude = models.DecimalField(max_digits=20, decimal_places=15, null=True,
+    longitude = models.DecimalField(max_digits=64, decimal_places=44, null=True,
                                     blank=True)
     slug = models.SlugField(max_length=255, unique=True)
     event_date = models.DateField(default=datetime.date.today)
@@ -84,6 +85,11 @@ class LostPhoto(models.Model):
     def __str__(self):
         return f"Lost Photo for {self.lost_post.title}"
 
+    def delete(self, *args, **kwargs):
+        if self.image:
+            destroy(self.image.public_id)
+        super().delete(*args, **kwargs)
+
 
 class FoundPhoto(models.Model):
     image = CloudinaryField('image', blank=True, null=True)
@@ -93,3 +99,10 @@ class FoundPhoto(models.Model):
 
     def __str__(self):
         return f"Found Photo for {self.found_post.title}"
+
+    def delete(self, *args, **kwargs):
+        if self.image:
+            destroy(self.image.public_id)
+        super().delete(*args, **kwargs)
+
+
