@@ -1,16 +1,16 @@
 {% extends 'base_template.html' %}
 {% block content %}
+<h2>Conversation</h2>
+<!-- Messages display -->
+{% for message in messages %}
+<p><strong>{{ message.sender.username }}:</strong> {{ message.text }}</p>
+{% endfor %}
 
-                <strong>Participants:</strong>
-                <strong>Messages:</strong>
-                <ul>
-                    {% for message in messages %}
-                        <li>
-                            <strong>From:</strong> {{ message.sender.username }}<br>
-                            <strong>Text:</strong> {{ message.text }}<br>
-                            <strong>Created At:</strong> {{ message.created_at }}
-                        </li>
-                    {% endfor %}
-                </ul>
+<!-- Message form -->
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Send</button>
+</form>
+
 {% endblock %}
-```

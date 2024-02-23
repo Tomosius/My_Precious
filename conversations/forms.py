@@ -1,12 +1,13 @@
 from django import forms
-from .models import Message
 
+from .models import Message
 
 
 class MessageForm(forms.ModelForm):
     """
     Form for sending a message to another user.
     """
+
     class Meta:
         model = Message
         fields = ['text']
