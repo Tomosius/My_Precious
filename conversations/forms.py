@@ -4,10 +4,11 @@ from .models import Message
 
 
 class MessageForm(forms.ModelForm):
+    """
+    Form for sending a message to another user.
+    """
     class Meta:
         model = Message
         fields = ['text']
-        widgets = {
-            'text': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Type your message here...'}),
-        }
-
+        labels = {'text': 'Message'}
+        widgets = {'text': forms.Textarea(attrs={'rows': 3})}

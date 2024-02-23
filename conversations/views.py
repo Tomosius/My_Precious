@@ -1,89 +1,100 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
+from django.views.generic.edit import FormView
+from django.shortcuts import get_object_or_404, redirect
+from .forms import MessageForm
 from .models import Conversation, Message
 from django.contrib.auth.models import User
-from django.db.models import Q
-from users.models import UserProfile
 
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import Conversation, Message
-from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.views.generic.detail import DetailView
+from django.views.generic.list import ListView
 
 
-@login_required
-def send_message(request, recipient_username):
+class SendMessageView(LoginRequiredMixin, FormView):
     """
-    Handles the sending of a message to another user, checking for an existing conversation or starting a new one.
+    Class-based view to handle sending of messages between users.
 
-    Args:
-    - request: HttpRequest object.
-    - recipient_username: The username of the message recipient.
-
-    Returns:
-    - HttpResponse object redirecting to the conversation view.
+    Inherits from LoginRequiredMixin to ensure the user is authenticated and
+    FormView for handling the message form submission.
     """
-    sender = request.user
-    recipient = get_object_or_404(User, username=recipient_username)
+    form_class = MessageForm
+    template_name = 'message_form.html'
 
-    # Attempt to retrieve an existing conversation between the sender and recipient
-    conversation = Conversation.objects.filter(
-        participants=sender
-    ).filter(
-        participants=recipient
-    ).first()
+    def form_valid(self, form):
+        """
+        Processes the valid form. Creates or updates the conversation and sends the message.
 
-    # If no existing conversation, create a new one and add both participants
-    if not conversation:
-        conversation = Conversation.objects.create()
-        conversation.participants.add(sender, recipient)
+        Args:
+        - form: The validated form instance.
 
-    if request.method == 'POST':
-        message_text = request.POST.get('message')
-        if message_text:
-            Message.objects.create(conversation=conversation, sender=sender, text=message_text)
-            # Redirect to the specific conversation view using the conversation ID
-            return redirect('conversations:conversation_detail', conversation_id=conversation.id)
+        Returns:
+        - HttpResponse: Redirects to the conversation detail view on success.
+        """
+        recipient_username = self.kwargs['recipient_username']
+        sender = self.request.user
+        recipient = get_object_or_404(User, username=recipient_username)
 
-    # For GET requests or if the message text is empty, show the form again
-    return render(request, 'message_form.html', {'recipient': recipient})
+        conversation = Conversation.objects.filter(participants=sender).filter(
+            participants=recipient).first()
+        if not conversation:
+            conversation = Conversation.objects.create()
+            conversation.participants.add(sender, recipient)
 
-# Assume 'conversation_detail' is a view that you will define,
-# which shows the messages in a specific conversation
+        message_text = form.cleaned_data['text']
+        Message.objects.create(conversation=conversation, sender=sender,
+                               text=message_text)
 
-# Assume 'conversation_detail' is a view that you will define,
-# which shows the messages in a specific conversation
-def conversation_detail(request, conversation_id):
+        return redirect('conversations:conversation_detail',
+                        pk=conversation.id)
+
+
+
+
+class ConversationDetailView(LoginRequiredMixin, DetailView):
     """
-    Fetches and displays the messages in a specific conversation.
+    Class-based view for displaying messages in a specific conversation.
 
-    Args:
-    - request: HttpRequest object.
-    - conversation_id: The ID of the conversation to display.
-
-    Returns:
-    - HttpResponse object rendering the conversation detail template.
+    Inherits from LoginRequiredMixin to ensure user authentication and
+    DetailView for rendering a single object.
     """
-    conversation = get_object_or_404(Conversation, id=conversation_id)
-    messages = Message.objects.filter(conversation=conversation).order_by('created_at')
-    context = {
-        'messages': messages
-    }
+    model = Conversation
+    context_object_name = 'conversation'
+    template_name = 'conversation_detail.html'
 
-    return render(request, 'conversation_detail.html', context)
+    def get_context_data(self, **kwargs):
+        """
+        Adds additional context to the template, specifically the messages in the conversation.
+
+        Returns:
+        - context: The context data for the template.
+        """
+        context = super().get_context_data(**kwargs)
+        context['messages'] = Message.objects.filter(
+            conversation=self.object).order_by('created_at')
+        return context
 
 
-def conversation_list(request):
+class ConversationListView(LoginRequiredMixin, ListView):
     """
-    Fetches and displays the list of conversations for the current user.
+    Class-based view for displaying a list of conversations for the current user.
 
-    Args:
-    - request: HttpRequest object.
-
-    Returns:
-    - HttpResponse object rendering the conversations list template.
+    Inherits from LoginRequiredMixin to ensure user authentication and
+    ListView for rendering a list of objects.
     """
-    user = request.user
-    conversations = Conversation.objects.filter(participants=user).order_by('-updated_at')
+    model = Conversation
+    context_object_name = 'conversations'
+    template_name = 'conversations_list.html'
+
+    def get_queryset(self):
+        """
+        Overrides the default queryset to return conversations for the current user only.
+
+        Returns:
+        - QuerySet: The filtered queryset of conversations for the logged-in user.
+        """
+        return Conversation.objects.filter(
+            participants=self.request.user).order_by('-updated_at')
 
 
-    return render(request, 'conversations_list.html', {'conversations': conversations})
+
+
