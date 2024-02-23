@@ -4,31 +4,46 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 
 from .forms import LostPostForm, FoundPostForm, FileFieldForm
-from .models import LostPhoto, FoundPhoto
-from .models import LostPost, FoundPost
+from .models import LostPost, FoundPost, LostPhoto, FoundPhoto
 from .models import Post
 
 
 @login_required
 def create_post(request):
+    """
+    Handle the creation of a new post, either 'lost' or 'found', including
+    saving of related photos.
+
+    Args:
+    - request: HttpRequest object containing post data and files.
+
+    Returns:
+    - HttpResponse object redirecting to the homepage upon successful creation
+      or renders the 'create_post.html' template with forms for creation.
+    """
+    # Retrieve the Google Maps API key from environment variables
     google_api_key = os.environ.get('GOOGLE_MAPS_API_KEY')
+    # Determine the post type ('lost' or 'found') from POST data
     post_type = request.POST.get('post_type')
+    # Choose the appropriate form class based on the post type
     form_class = LostPostForm if post_type == 'lost' else FoundPostForm
 
     if request.method == 'POST':
+        # Instantiate the forms with POST data and files
         form = form_class(request.POST)
         image_form = FileFieldForm(request.POST, request.FILES)
 
         if form.is_valid() and image_form.is_valid():
+            # Save the post instance without committing to the database
             post_instance = form.save(commit=False)
-            post_instance.user = request.user
-            post_instance.save()
+            post_instance.user = request.user  # Set the post's user
+            post_instance.save()  # Save the post instance to the database
 
+            # Determine the photo model class and kwargs based on post type
             if post_type == 'lost':
                 photo_model_class = LostPhoto
                 photo_kwargs = {'lost_post': post_instance}
@@ -36,6 +51,7 @@ def create_post(request):
                 photo_model_class = FoundPhoto
                 photo_kwargs = {'found_post': post_instance}
 
+            # Save each uploaded photo instance
             for file in request.FILES.getlist('file_field'):
                 photo_instance = photo_model_class(image=file, caption='',
                                                    **photo_kwargs)
@@ -43,9 +59,9 @@ def create_post(request):
 
             return redirect('/')
         else:
-            print(form.errors)
-
+            print(form.errors)  # Print form errors to the console
     else:
+        # Instantiate the forms without data if request method is not POST
         form = form_class()
         image_form = FileFieldForm()
 
@@ -100,7 +116,8 @@ def view_all_posts(request):
     search_query = request.GET.get('search_query', '')
 
     # Utilize polymorphism to fetch combined posts
-    all_posts = Post.objects.all().instance_of(Post)
+    all_posts = Post.objects.all().instance_of(Post).order_by(
+        '-created_at')  # Here we order the posts
 
     if search_query:
         all_posts = all_posts.filter(
@@ -166,47 +183,94 @@ def view_found_posts(request):
 
 
 def post_detail_view(request, slug, post_type):
+    """
+    Renders the details page for a specific post, identified by its slug and
+    type. It also determines whether the current user is the owner of the
+    post to conditionally display edit and delete options.
+
+    Args:
+    - request: HttpRequest object containing metadata about the request.
+    - slug: A string representing the unique slug of the post.
+    - post_type: A string indicating the type of the post ('lost' or 'found').
+
+    The function fetches the specified post using the slug and type to
+    differentiate between lost and found posts. It then queries for
+    associated photos and checks if the currently logged-in user is the owner
+    of the post. This information, along with the Google Maps API key for
+    rendering location maps, is passed to the template.
+
+    Returns: - HttpResponse object rendering the 'post_details.html' template
+    with the post details, associated photos, owner status, and Google Maps
+    API key.
+    """
+    # Fetch the Google Maps API key from environment variables
     google_api_key = os.environ.get('GOOGLE_MAPS_API_KEY')
+
+    # Determine the correct model based on the post type
     model = LostPost if post_type == 'lost' else FoundPost
+    # Retrieve the specific post by slug, ensuring it exists
     post = get_object_or_404(model, slug=slug)
 
     # Check if the current user is the owner of the post
     is_owner = request.user == post.user
 
+    # Determine the correct photo model and fetch associated photos
     photo_model = LostPhoto if post_type == 'lost' else FoundPhoto
     photos = photo_model.objects.filter(
         lost_post=post) if post_type == 'lost' else photo_model.objects.filter(
         found_post=post)
 
+    # Render the post details template with the relevant context
     return render(request, 'post_details.html', {
         'post_type': post_type,
-        'post': post,
-        'photos': photos,
-        'is_owner': is_owner,  # Add 'is_owner' to the context
+        # Indicates whether it's a 'lost' or 'found' post
+        'post': post,  # The post object containing its details
+        'photos': photos,  # List of associated photo objects
+        'is_owner': is_owner,
+        # Boolean indicating if the current user is the post owner
         'GOOGLE_MAPS_API_KEY': google_api_key
+        # API key for Google Maps integration
     })
 
 
 @login_required
 def update_post(request, slug, post_type):
-    model = LostPost if post_type == 'lost' else FoundPost
-    post = get_object_or_404(model, slug=slug)
-    # Check if the current user is the owner of the post
+    """
+    Allows authenticated users to update their posts. It supports updating
+    the post's details and associated images. Only the owner of the post can
+    make updates.
 
-    photo_model = LostPhoto if post_type == 'lost' else FoundPhoto
-    photos = photo_model.objects.filter(
-        lost_post=post) if post_type == 'lost' else photo_model.objects.filter(
-        found_post=post)
+    Args:
+    - request: HttpRequest object containing metadata about the request.
+    - slug: A string representing the unique slug of the post.
+    - post_type: A string indicating the type of the post ('lost' or 'found').
 
-    google_api_key = os.environ.get('GOOGLE_MAPS_API_KEY')
-    form_class = LostPostForm if post_type == 'lost' else FoundPostForm
+    The function first checks if the current user is the owner of the post.
+    If not, it redirects to a different page or shows an error message. It
+    then processes the form submission for both the post details and the
+    associated images. If the form submission is valid, it updates the post
+    and associated images.
+
+    Returns: - HttpResponse object rendering the 'update_post.html' template
+    for GET requests or the 'post_details.html' template for successful POST
+    requests, with the necessary context. - Redirects to a different page or
+    shows an error if the user is not the post owner.
+    """
+    # Define model and form classes based on the post type
     model_class = LostPost if post_type == 'lost' else FoundPost
     photo_model_class = LostPhoto if post_type == 'lost' else FoundPhoto
+    form_class = LostPostForm if post_type == 'lost' else FoundPostForm
 
+    # Fetch the Google Maps API key from environment variables
+    google_api_key = os.environ.get('GOOGLE_MAPS_API_KEY')
+
+    # Ensure the post exists and belongs to the current user
     post_instance = get_object_or_404(model_class, slug=slug, user=request.user)
 
-    # Check if the current user is the owner of the post
-    is_owner = request.user == post.user
+    # Fetch associated photos for display
+    photos = photo_model_class.objects.filter(
+        **{'lost_post': post_instance} if post_type == 'lost' else {
+            'found_post': post_instance})
 
     if request.method == 'POST':
         form = form_class(request.POST, request.FILES, instance=post_instance)
@@ -215,29 +279,27 @@ def update_post(request, slug, post_type):
         if form.is_valid() and image_form.is_valid():
             updated_post = form.save()
 
+            # Save uploaded images
             for file in request.FILES.getlist('file_field'):
-                photo_instance = photo_model_class(image=file, **{
+                photo_model_class.objects.create(image=file, **{
                     'lost_post': updated_post} if post_type == 'lost' else {
                     'found_post': updated_post})
-                photo_instance.save()
 
-            return render(request, 'post_details.html', {
-                'post_type': post_type,
-                'post': post,
-                'photos': photos,
-                'is_owner': is_owner,  # Add 'is_owner' to the context
-                'GOOGLE_MAPS_API_KEY': google_api_key
-            })
+            # Redirect to the updated post's detail view
+            return redirect('post_detail_url_name', slug=updated_post.slug,
+                            post_type=post_type)
         else:
+            # Handle form errors
             print(form.errors)
     else:
+        # Initialize forms for GET request
         form = form_class(instance=post_instance)
         image_form = FileFieldForm()
 
     return render(request, 'update_post.html', {
-        'photos': photos,
         'form': form,
         'image_form': image_form,
+        'photos': photos,
         'post_type': post_type,
         'GOOGLE_MAPS_API_KEY': google_api_key
     })

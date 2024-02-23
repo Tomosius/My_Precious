@@ -330,3 +330,11 @@ def user_profile(request, username):
     }
 
     return render(request, 'user_profile.html', context)
+
+
+
+
+
+
+
+
