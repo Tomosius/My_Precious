@@ -1,0 +1,32 @@
+
+<!-- Reusable Modal for Messages -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="confirmationModalLabel">Notification</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<!-- Dynamic message content will be injected here -->
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        {% if messages %}
+            let messagesHtml = '';
+            {% for message in messages %}
+                messagesHtml += `<p class="mb-0">${'{{ message|escapejs }}'.replace(/\\'/g, "'")}</p>`;
+            {% endfor %}
+            const modalBody = document.querySelector('#confirmationModal .modal-body');
+            modalBody.innerHTML = messagesHtml;
+            const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+            confirmationModal.show();
+
+            // Optionally, hide the modal after a delay
+            setTimeout(() => {confirmationModal.hide();}, 5000); // Adjust time as needed
+        {% endif %}
+    });
+</script>

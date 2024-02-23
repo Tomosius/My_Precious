@@ -1,7 +1,5 @@
 from django import forms
-
 from .models import Message
-
 
 class MessageForm(forms.ModelForm):
     """
@@ -12,4 +10,6 @@ class MessageForm(forms.ModelForm):
         model = Message
         fields = ['text']
         labels = {'text': 'Message'}
-        widgets = {'text': forms.Textarea(attrs={'rows': 3})}
+        widgets = {
+            'text': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+        }

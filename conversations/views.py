@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect
@@ -7,6 +9,11 @@ from django.views.generic.list import ListView
 
 from .forms import MessageForm
 from .models import Conversation, Message
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from .models import Conversation, Message
+from django.views.decorators.csrf import csrf_exempt
 
 
 class SendMessageView(LoginRequiredMixin, FormView):
@@ -59,7 +66,7 @@ class ConversationDetailView(LoginRequiredMixin, DetailView, FormView):
     """
     model = Conversation
     form_class = MessageForm  # Use the existing MessageForm
-    template_name = 'conversation_detail.html'
+    template_name = 'conversation_detail_page.html'
     context_object_name = 'conversation'
 
     def get_success_url(self):

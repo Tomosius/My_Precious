@@ -2,7 +2,6 @@
 
 from django.urls import path
 from . import views
-from django.contrib.auth.views import LogoutView
 
 
 app_name = 'users'
@@ -18,7 +17,7 @@ urlpatterns = [
     path('add_language/', views.add_language, name='add_language'),
     path('add_social_media_link/', views.add_social_media_link, name='add_social_media_link'),
     path('list_users/', views.list_users, name='list_users'),
-    path('logout/', LogoutView.as_view(), name='user_logout')
+    path('logout/', views.user_logout, name='user_logout')
 
 
 

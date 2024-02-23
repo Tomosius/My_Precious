@@ -1,7 +1,9 @@
 # Description: This file contains the URL patterns for the messaging app.
 
 from django.urls import path
-from .views import SendMessageView, ConversationDetailView, ConversationListView
+from .views import (SendMessageView, ConversationDetailView,
+                    ConversationListView)
+
 
 app_name = 'conversations'
 
