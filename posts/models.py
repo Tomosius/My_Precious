@@ -21,6 +21,16 @@ DATE_UNCERTAINTY_CHOICES = [
 
 
 class Post(PolymorphicModel):
+    """
+    Represents a general post, either lost or found, with common attributes.
+
+    Attributes:
+        title (models.CharField): The title of the post.
+        description (models.TextField): A detailed description of the post.
+        user (models.ForeignKey): The user who created the post.
+        ...
+    """
+
     title = models.CharField(max_length=255)
     description = models.TextField()
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

@@ -5,33 +5,64 @@ from .models import LostPost, FoundPost
 
 
 class MultipleFileInput(ClearableFileInput):
+    """
+    A custom widget to allow multiple file selections in file input fields.
+    Inherits from Django's ClearableFileInput to add support for multiple
+    file selection.
+    """
     allow_multiple_selected = True
 
 
 class MultipleFileField(forms.FileField):
+    """
+    A custom form field for handling multiple file uploads.
+    Overrides the default FileField to use the MultipleFileInput widget.
+    """
     widget = MultipleFileInput
 
     def clean(self, data, initial=None):
+        """
+        Cleans the data for this field and returns a list of cleaned files.
+
+        Args:
+            data: The uploaded file(s).
+            initial: Initial data for field.
+
+        Returns:
+            List of cleaned files.
+        """
         if data:
-            return [super(MultipleFileField, self).clean(file, initial) for file
-                    in data]
+            return [super().clean(file, initial) for file in data]
         else:
-            return super(MultipleFileField, self).clean(data, initial)
+            return super().clean(data, initial)
 
 
 class FileFieldForm(forms.Form):
-    file_field = MultipleFileField(required=False, widget=MultipleFileInput(
-        attrs={'multiple': True}), label="Upload photo(s)")
+    """
+    A form for handling multiple file uploads.
+    """
+    file_field = MultipleFileField(
+        required=False,
+        widget=MultipleFileInput(attrs={'multiple': True}),
+        label="Upload photo(s)"
+    )
 
 
 class BasePostForm(forms.ModelForm):
-    event_date = forms.DateField(label="Event Date",
-                                 widget=forms.DateInput(attrs={'type': 'date'}),
-                                 help_text="Select the date of the event.")
+    """
+    An abstract base form for creating and updating 'Post' instances.
+    Defines common fields and widgets used across different types of posts.
+    """
+    event_date = forms.DateField(
+        label="Event Date",
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        help_text="Select the date of the event."
+    )
     title = forms.CharField(label="Title", max_length=255)
     description = forms.CharField(label="Description", widget=forms.Textarea)
 
     class Meta:
+        abstract = True
         fields = ['title', 'description', 'latitude', 'longitude', 'event_date',
                   'date_uncertainty_days']
         widgets = {
@@ -41,10 +72,20 @@ class BasePostForm(forms.ModelForm):
 
 
 class FoundPostForm(BasePostForm):
+    """
+    A form for creating or updating 'FoundPost' instances.
+    Inherits from BasePostForm and sets the specific model to FoundPost.
+    """
+
     class Meta(BasePostForm.Meta):
         model = FoundPost
 
 
 class LostPostForm(BasePostForm):
+    """
+    A form for creating or updating 'LostPost' instances.
+    Inherits from BasePostForm and sets the specific model to LostPost.
+    """
+
     class Meta(BasePostForm.Meta):
         model = LostPost
