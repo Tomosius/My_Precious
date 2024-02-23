@@ -153,3 +153,20 @@ CLOUDINARY_STORAGE = {
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
 GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY')
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        '': {  # This means all loggers
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    },
+}

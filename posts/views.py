@@ -1,15 +1,18 @@
+import logging
 import os
 
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 
 from .forms import LostPostForm, FoundPostForm, FileFieldForm
 from .models import LostPost, FoundPost, LostPhoto, FoundPhoto
 from .models import Post
+from django.core.exceptions import ObjectDoesNotExist
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -209,7 +212,29 @@ def post_detail_view(request, slug, post_type):
     # Determine the correct model based on the post type
     model = LostPost if post_type == 'lost' else FoundPost
     # Retrieve the specific post by slug, ensuring it exists
-    post = get_object_or_404(model, slug=slug)
+
+    try:
+        if model == LostPost:
+            post = get_object_or_404(LostPost, slug=slug)
+        else:
+            post = get_object_or_404(FoundPost, slug=slug)
+    except ObjectDoesNotExist:   # we know it is post as it redirected her, so by knowing
+    # slug lets try to get out post ID and then pull it from database
+        match_chars = ""
+        reversed_slug = slug[::-1]
+        reversed_slug_skip_second = reversed_slug[2:]
+        for char in reversed_slug_skip_second:
+            if char == '-':
+                break
+            match_chars = match_chars + str(char)
+        match = match_chars[::-1]
+        try:
+            if post_type == 'lost':
+                post = get_object_or_404(LostPost, pk=match)
+            elif post_type == 'found':
+                post = get_object_or_404(FoundPost, pk=match)
+        except ObjectDoesNotExist:
+            return render(request, '404.html')
 
     # Check if the current user is the owner of the post
     is_owner = request.user == post.user
@@ -370,3 +395,5 @@ def map_all_posts(request):
     }
 
     return render(request, 'view_all_posts_list.html', context)
+
+

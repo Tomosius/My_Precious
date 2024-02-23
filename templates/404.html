@@ -1,0 +1,16 @@
+{% extends 'base_template.html' %}
+{% block title %} Access denied {% endblock %}
+
+{% block content %}
+<!-- Error 404 -->
+<div class="container mt-5">
+    <div class="container text-center mt-5">
+        <h1 class="display-1 fw-bold text-danger">404</h1>
+        <p class="fs-3"> <span class="text-muted">Whoops! We've hit a black hole.</span></p>
+        <p class="lead">
+            This <b>POST</b> is a mystery even to us. Maybe it's out exploring the universe! Let's navigate back to familiar stars or <a href="/" class="text-decoration-none">return home</a>.
+        </p>
+        <a href="/" class="btn btn-primary"> Happy travels!</a>
+    </div>
+</div>
+{% endblock content%}

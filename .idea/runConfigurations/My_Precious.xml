@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="My_Precious" type="Python.DjangoServer" factoryName="Django server">
+  <configuration default="false" name="My_Precious" type="Python.DjangoServer" factoryName="Django server" show_console_on_std_err="true" show_console_on_std_out="true">
     <module name="My_Precious" />
     <option name="ENV_FILES" value="" />
     <option name="INTERPRETER_OPTIONS" value="" />
