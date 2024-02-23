@@ -1,8 +1,12 @@
-<div id="content-to-load" class="d-none">
-	<a> Sample Content Here </a>
-	<button id="message-button-big-screen-restore" type=button class=" btn btn-primary">
-		Test Button
+<div>
+	<button id="message-button-big-screen" type=button class=" d-none d-sm-block btn btn-primary">
+		<i class="fa-regular fa-envelope"></i>
 	</button>
+	<button id="" type="button" class="btn btn-primary d-block d-sm-none"
+	        data-bs-toggle="modal" data-bs-target="#message-modal">
+		<i class="fa-regular fa-envelope"></i>
+	</button>
+
 </div>
 
 
@@ -11,54 +15,54 @@
 	<!-- Modal content -->
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<!-- Messages display -->
-			{% for conversation in conversations %}
-				<div id="conversation-{{ conversation.id }}" class="mb-4">
-					<h3 class="bg-secondary text-white p-2">Conversation with {{ conversation.id }}</h3>
-					<div class="p-2">
-						{% for message in conversation.messages.all %}
-							<div class="mb-2">
-								<strong>{{ message.sender.username }}:</strong>
-								<span>{{ message.text }}</span>
-								<em class="text-muted" style="font-size: small;">{{ message.created_at }}</em>
+			<div id="content-to-load">
+				<button id="message-button-big-screen-restore" type="button" class="btn btn-dark d-none d-sm-block">
+					Close Chat
+				</button>
+				<!-- Messages display -->
+				{% for conversation in conversations %}
+					<div id="conversation-{{ conversation.id }}" class="mb-4">
+						<h3 class="bg-secondary text-white p-2">Conversation with {{ conversation.id }}</h3>
+						<div class="p-2">
+							{% for message in conversation.messages.all %}
+								<div class="mb-2">
+									<strong>{{ message.sender.username }}:</strong>
+									<span>{{ message.text }}</span>
+									<em class="text-muted" style="font-size: small;">{{ message.created_at }}</em>
+								</div>
+							{% endfor %}
+						</div>
+						<!-- Adjusted form to include conversationId dynamically and Bootstrap classes -->
+						<form method="post" class="p-2">
+							{% csrf_token %}
+							<div class="mb-3">
+								{{ messages_form.text }}
 							</div>
-						{% endfor %}
+							<button type="submit" class="btn btn-primary">Send</button>
+						</form>
 					</div>
-					<!-- Adjusted form to include conversationId dynamically and Bootstrap classes -->
-					<form method="post" class="p-2">
-						{% csrf_token %}
-						<div class="mb-3">
-							{{ messages_form.text}}
-						</div>
-						<button type="submit" class="btn btn-primary">Send</button>
-					</form>
-				</div>
-			{% endfor %}
-			{% if not conversations or user.username == 'beta' %}
-				<div class="mt-4">
-					<form method="post" action="{% url 'conversations:send_message' recipient_username=user.username %}"
-					      class="p-2">
-						{% csrf_token %}
-						<div class="mb-3">
-							<textarea name="text" placeholder="Write your message here..."
-							          class="form-control"></textarea>
-						</div>
-						<button type="submit" class="btn btn-success">Send New Message</button>
-					</form>
-				</div>
-			{% endif %}
-
-
+				{% endfor %}
+				{% if not conversations or user.username == 'beta' %}
+					<div class="mt-4">
+						<form method="post" action="{% url 'conversations:send_message' recipient_username=user.username %}" class="p-2">
+							{% csrf_token %}
+							<div class="mb-3">
+								<label>
+									<textarea name="text" placeholder="Write your message here..." class="form-control"></textarea>
+								</label>
+							</div>
+							<button type="submit" class="btn btn-success">Send New Message</button>
+						</form>
+					</div>
+				{% endif %}
+				<button id="message-button-big-screen-restore" type="button" class="btn btn-dark d-none">
+					Close Chat
+				</button>
+			</div>
 		</div>
 	</div>
 </div>
 
-<div id="content-to-load" class="d-none">
-	<a> Sample Content Here </a>
-	<button id="message-button-big-screen-restore" type=button class=" btn btn-primary">
-		Test Button
-	</button>
-</div>
 
 <script>
     // Initialize a variable to store the original content
@@ -68,7 +72,6 @@
         // Store current content in the variable
         originalContent = $('#desktopRightSection').html();
         // Make the content-to-load visible and load it into `#desktopRightSection`
-        $('#content-to-load').removeClass('d-none');
         $('#desktopRightSection').html($('#content-to-load').html());
     });
 

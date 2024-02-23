@@ -43,11 +43,6 @@
     <div class="col-12 col-sm-6 col-md-4 d-none d-sm-block scrollable-section" id="desktopLeftSection">
       <div class="container">
 	      <div class="row">
-	      <div>
-	  <a href="{% url 'conversations:send_message' recipient_username=user.username %}"><i class="fa-regular fa-envelope"></i></a>
-
-
-  </div>
 	        <div>
 		        {% if user_profile.user_photo %}
 			      <img src="{{ user_profile.user_photo.url }}" alt="{{ user.username }}'s profile image" class="col-4 rounded- mt-3"/>
