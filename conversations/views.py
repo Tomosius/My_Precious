@@ -65,8 +65,11 @@ def conversation_detail(request, conversation_id):
     """
     conversation = get_object_or_404(Conversation, id=conversation_id)
     messages = Message.objects.filter(conversation=conversation).order_by('created_at')
+    context = {
+        'messages': messages
+    }
 
-    return render(request, 'conversation_detail.html', {'conversation': conversation, 'messages': messages})
+    return render(request, 'conversation_detail.html', context)
 
 
 def conversation_list(request):
@@ -81,5 +84,6 @@ def conversation_list(request):
     """
     user = request.user
     conversations = Conversation.objects.filter(participants=user).order_by('-updated_at')
+
 
     return render(request, 'conversations_list.html', {'conversations': conversations})

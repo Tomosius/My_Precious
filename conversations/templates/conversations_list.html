@@ -1,6 +1,6 @@
 {% extends 'base_template.html' %}
 {% block content %}
 	{%  for conversation in conversations %}
-		<a href="{% url 'chat:chat' conversation.id %}">{{ conversation.user.username }}</a>
+		<a href="{% url 'conversations:conversation_detail' conversation.id %}">{{ conversation.user.username }} tomas</a>
 	{% endfor %}
 {% endblock %}
