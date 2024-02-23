@@ -76,7 +76,7 @@
 			<!-- Number selector wrapped in a column, adjusted to take the appropriate space -->
 			<div class="col-6 col-sm-5 col-md-3">
 				<form action="" method="get" class="text-center">
-					<label for="items_per_page">Posts per page:</label>
+					<a for="items_per_page">Posts per page:</a>
 					<select name="items_per_page" onchange="this.form.submit()">
 						{% for option in items_per_page_options %}
 							<option value="{{ option }}" {% if request.GET.items_per_page|stringformat:"s" == option|stringformat:"s" or not request.GET.items_per_page and option == 10 %}selected{% endif %}>

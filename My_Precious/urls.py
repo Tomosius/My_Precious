@@ -2,7 +2,7 @@
 
 from django.contrib import admin
 from django.urls import path, include
-from posts.views import view_all_posts
+from posts.views import view_all_posts_list
 
 urlpatterns = [
     # Including conversations app URLS
@@ -15,7 +15,7 @@ urlpatterns = [
     path('users/', include('users.urls')),
 
     # Home page
-    path('', view_all_posts, name='home'),
+    path('', view_all_posts_list, name='home'),
 
     # Admin URL
     path('admin/', admin.site.urls),

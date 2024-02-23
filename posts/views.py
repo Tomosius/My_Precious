@@ -107,7 +107,7 @@ def paginate_queryset(request, queryset, items_per_page=10):
     return page_obj
 
 
-def view_all_posts(request):
+def view_all_posts_list(request):
     """
     Display all posts (both LostPost and FoundPost) with optional search
     functionality and pagination, utilizing Django Polymorphic for combined
@@ -137,7 +137,7 @@ def view_all_posts(request):
         'search_url': search_url,
     }
 
-    return render(request, 'view_all_posts.html', context)
+    return render(request, 'view_all_posts_list.html', context)
 
 
 def view_lost_posts(request):
@@ -158,7 +158,7 @@ def view_lost_posts(request):
         'search_query': search_query,
         'search_url': search_url,
     }
-    return render(request, 'view_all_posts.html', context)
+    return render(request, 'view_all_posts_list.html', context)
 
 
 def view_found_posts(request):
@@ -179,7 +179,7 @@ def view_found_posts(request):
         'search_query': search_query,
         'search_url': search_url
     }
-    return render(request, 'view_all_posts.html', context)
+    return render(request, 'view_all_posts_list.html', context)
 
 
 def post_detail_view(request, slug, post_type):
@@ -369,4 +369,4 @@ def map_all_posts(request):
         'GOOGLE_MAPS_API_KEY': google_api_key,
     }
 
-    return render(request, 'view_all_posts.html', context)
+    return render(request, 'view_all_posts_list.html', context)

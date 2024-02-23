@@ -1,9 +1,15 @@
 {% for post in posts %}
 	<a href="{{ post.get_absolute_url }}" style="text-decoration: none; color: inherit;">
-		<p>
-			<strong>{{ post.title|truncatechars:200 }}</strong><br>
+	<div class="row">
+		<div class="col-3 col-md-2 col-xl-1">
+			<img src="{{ post.user.profile.user_photo.url }}" alt="{{ post.user.username }}'s profile image" class="col-4 rounded-2"/>
+		</div>
+		<div class="col-9 col-md-10 col-xl-11">
+			<h5>{{ post.user.username }} : </h5> <h6>{{ post.title|truncatechars:200 }}</h6><br>
 			{{ post.description|truncatechars:200 }}
-		</p>
+		</div>
+	</div>
+
 	</a>
 	<script>
         console.log("title: {{ post.title }}, post_type: {{ post.post_type }}, lat: {{ post.latitude }}, lng: {{ post.longitude }}");

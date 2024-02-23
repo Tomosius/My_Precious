@@ -12,7 +12,7 @@ urlpatterns = [
     path('found/<slug:slug>/', views.post_detail_view, {'post_type': 'found'}, name='found_post_details'),
 
     # URL for viewing all posts
-    path('', views.view_all_posts, name='view_all_posts'),
+    path('', views.view_all_posts_list, name='view_all_posts'),
 
     # URLs for viewing all lost or found posts
     path('lost/', views.view_lost_posts, name='view_lost_posts'),
