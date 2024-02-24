@@ -18,23 +18,24 @@ from .models import Language, SocialMediaLink
 from .models import UserProfile
 
 
-def user_login(request):
-    """
-    View for handling user login.
-    Authenticates user and redirects to home page on success.
-    """
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user:
-            login(request, user)
-            messages.success(request, 'You have successfully logged in.')
-            return redirect('home')
-        else:
-            messages.error(request,
-                           'Invalid login credentials. Please try again.')
-    return render(request, 'user_login.html')
+from django.contrib.auth.views import LoginView
+from django.urls import reverse_lazy
+from django.views.generic.edit import FormView
+from .forms import UserRegisterForm
+
+class UserLoginView(LoginView):
+    template_name = 'user_login.html'
+    next_page = reverse_lazy('home')  # Assuming 'home' is the name of your homepage URL
+
+class UserRegisterView(FormView):
+    template_name = 'user_register.html'
+    form_class = UserRegisterForm
+    success_url = reverse_lazy('users:user_login')
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
 
 
 @login_required
@@ -46,20 +47,6 @@ def user_logout(request):
     return redirect('home')
 
 
-def user_register(request):
-    """
-    Handles new user registration.
-    On POST, validates form and creates a new user on success.
-    """
-    if request.method == 'POST':
-        user_form = UserRegisterForm(request.POST)
-        if user_form.is_valid():
-            user_form.save()  # UserProfile creation is handled via signal
-            messages.success(request, 'Account created successfully.')
-            return redirect('users:user_login')
-    else:
-        user_form = UserRegisterForm()
-    return render(request, 'user_register.html', {'form': user_form})
 
 
 @login_required

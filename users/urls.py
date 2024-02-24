@@ -7,9 +7,9 @@ from . import views
 app_name = 'users'
 
 urlpatterns = [
-    path('user_login/', views.user_login, name='user_login'),
-    path('user_logout/', views.user_logout, name='user_logout'),
-    path('user_register/', views.user_register, name='user_register'),
+    path('user_login/', views.UserLoginView.as_view(), name='user_login'),
+    path('user_register/', views.UserRegisterView.as_view(),
+         name='user_register'),
     path('profile/<str:username>/', views.user_profile, name='user_profile'),
     path('edit_profile/', views.combined_update_user_profile, name='edit_profile'),
     path('delete_language/<int:language_id>/', views.delete_language, name='delete_language'),
