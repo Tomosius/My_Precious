@@ -2,7 +2,7 @@ import json
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
 from django.views.generic.list import ListView
@@ -14,6 +14,7 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from .models import Conversation, Message
 from django.views.decorators.csrf import csrf_exempt
+
 
 
 class SendMessageView(LoginRequiredMixin, FormView):
@@ -107,14 +108,16 @@ class ConversationDetailView(LoginRequiredMixin, DetailView, FormView):
         message.save()
         return HttpResponseRedirect(self.get_success_url())
 
-
+from django.db.models import Max, Subquery, OuterRef
+from django.views.generic import ListView
+from django.contrib.auth.decorators import login_required
+from .models import Conversation, Message
 
 class ConversationListView(LoginRequiredMixin, ListView):
     """
     Class-based view for displaying a list of conversations for the current
     user.
 
-    Inherits from LoginRequiredMixin to ensure user authentication and
     ListView for rendering a list of objects.
     """
     model = Conversation
@@ -124,11 +127,24 @@ class ConversationListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         """
         Overrides the default queryset to return conversations for the
-        current user only.
+        current user only, ordered by the most recent message sent time.
 
-        Returns: - QuerySet: The filtered queryset of conversations for the
-        logged-in user.
+        Returns:
+        - QuerySet: The filtered queryset of conversations for the
+        logged-in user, ordered by the most recent message update time.
         """
+        # Subquery to get the most recent message update time for each conversation
+        latest_message_times = Message.objects.filter(
+            conversation=OuterRef('pk')
+        ).order_by('-created_at').values('created_at')[:1]
+
+        # Query to retrieve conversations for the current user, ordered by the most recent message update time
         return Conversation.objects.filter(
-            participants=self.request.user).order_by('-updated_at')
+            participants=self.request.user
+        ).annotate(
+            latest_message_time=Subquery(latest_message_times)
+        ).order_by('-latest_message_time')
+
+
+
 
