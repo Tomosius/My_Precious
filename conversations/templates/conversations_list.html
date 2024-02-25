@@ -2,68 +2,80 @@
 {% block content %}
 	{% for conversation in conversations %}
 		<div class="row mx-1">
-			<div class="col-12">
-				<div class="dropdown col-sm-10 col-md-8 col-xl-6">
-					<!-- Main button for showing conversation participant -->
-					<button id="drop-down-3-messages-button-{{ conversation.id }}"
-					        class="w-100 text-break text-wrap btn border border-black dropdown-toggle" type="button"
-					        data-bs-toggle="dropdown" data-target="#message-preview-{{ conversation.id }}"
-					        aria-expanded="false">
-						Conversation with:
-						{% for participant in conversation.participants.all %}
-							{% if participant != request.user %}{{ participant.username }}{% endif %}
+
+			<div class="dropdown mx-auto col-12 col-sm-10 col-md-8 col-xl-6">
+				<!-- Main button for showing conversation participant -->
+				<button id="drop-down-3-messages-button-{{ conversation.id }}"
+				        class="w-100 text-break text-wrap btn border border-black dropdown-toggle" type="button"
+				        data-bs-toggle="dropdown" data-target="#message-preview-{{ conversation.id }}"
+				        aria-expanded="false">
+					Conversation with:
+					{% for participant in conversation.participants.all %}
+						{% if participant != request.user %}{{ participant.username }}{% endif %}
+					{% endfor %}
+					<!-- Div for message preview, placed outside the button but within the dropdown -->
+					<div id="message-preview-{{ conversation.id }}" class="message-preview">
+						{% for message in conversation.last_three_messages %}
+
+							{% if message.sender == request.user %}
+								<div class="text-end">
+									<p class="mb-0">{{ message.text }}</p>
+									<p class="mt-0 d-inline-block bg-success-subtle rounded w-auto">Sent
+										on " {{ message.created_at|date:"Y-m-d H:i" }}</p>
+								</div>
+							{% else %}
+								<div class="text-start">
+									<p class="mb-0">{{ message.text }}</p>
+									<p class="mt-0 d-inline-block bg-dark-subtle rounded w-auto">
+										<strong>{{ message.sender }} </strong>
+										on : {{ message.created_at|date:"Y-m-d H:i" }}
+									</p>
+								</div>
+							{% endif %}
 						{% endfor %}
-						<!-- Div for message preview, placed outside the button but within the dropdown -->
-						<div id="message-preview-{{ conversation.id }}" class="message-preview">
-							{% for message in conversation.last_three_messages %}
-								<a {% if message.sender == request.user %}class="text-end"
-								   {% else %}class="text-start"{% endif %}>
-									{{ message.text }}
-								</a>
-							{% endfor %}
-						</div>
-					</button>
+					</div>
+				</button>
 
-					<!-- Dropdown to display all messages -->
-					<ul class="dropdown-menu">
-						<div class="w-100 overflow-y-scroll inline d-inline-block" style="max-height: 70vh;">
-							{% for message in conversation.messages.all %}
+				<!-- Dropdown to display all messages -->
+				<ul class="dropdown-menu">
+					<div class="w-100 overflow-y-scroll inline d-inline-block" style="max-height: 70vh;">
+						{% for message in conversation.messages.all %}
 
-								{% if message.sender == request.user %}
-									<div class="text-end">
-										<p class="mb-0">{{ message.text }}</p>
-										<p class="mt-0 d-inline-block bg-success-subtle rounded w-auto">Sent
-											on " {{ message.created_at|date:"Y-m-d H:i" }}</p>
-									</div>
-								{% else %}
-									<div class="text-start">
-										<p class="mb-0">{{ message.text }}</p>
-										<p class="mt-0 d-inline-block bg-dark-subtle rounded w-auto">
-											<strong>{{ message.sender }} </strong>
-											on : {{ message.created_at|date:"Y-m-d H:i" }}
-										</p>
-									</div>
-								{% endif %}
-							{% endfor %}
-							<div class="mt-2">
-								<form method="post"
-								      action="{% url 'conversations:send_message' recipient_username=user.username %}"
-								      class="p-2">
-									{% csrf_token %}
-									<div class="mb-3">
-										<label>
+							{% if message.sender == request.user %}
+								<div class="text-end">
+									<p class="mb-0">{{ message.text }}</p>
+									<p class="mt-0 d-inline-block bg-success-subtle rounded w-auto">Sent
+										on " {{ message.created_at|date:"Y-m-d H:i" }}</p>
+								</div>
+							{% else %}
+								<div class="text-start">
+									<p class="mb-0">{{ message.text }}</p>
+									<p class="mt-0 d-inline-block bg-dark-subtle rounded w-auto">
+										<strong>{{ message.sender }} </strong>
+										on : {{ message.created_at|date:"Y-m-d H:i" }}
+									</p>
+								</div>
+							{% endif %}
+						{% endfor %}
+						<div class="mt-2">
+							<form method="post"
+							      action="{% url 'conversations:send_message' recipient_username=user.username %}"
+							      class="p-2">
+								{% csrf_token %}
+								<div class="mb-3">
+									<label>
 										<textarea name="text" placeholder="Write your message here..."
 										          class="form-control"></textarea>
-										</label>
-									</div>
-									<button type="submit" class="btn btn-primary">Send New Message</button>
-								</form>
-							</div>
+									</label>
+								</div>
+								<button type="submit" class="btn btn-primary">Send New Message</button>
+							</form>
 						</div>
+					</div>
 
-					</ul>
-				</div>
+				</ul>
 			</div>
+
 		</div>
 	{% endfor %}
 	<script>
