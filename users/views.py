@@ -47,22 +47,34 @@ def user_logout(request):
     return redirect('home')
 
 
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views import View
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import UserProfile
+from .forms import UserProfileForm
 
+class UpdateProfileView(LoginRequiredMixin, View):
+    def get_object(self):
+        user = self.request.user
+        profile, created = UserProfile.objects.get_or_create(user=user)
+        return profile
 
-@login_required
-def update_profile(request):
-    user = request.user
-    profile, created = UserProfile.objects.get_or_create(
-        user=user)
-    if request.method == 'POST':
-        form = UserProfileForm(request.POST, request.FILES, instance=profile)
+    def get(self, request, *args, **kwargs):
+        form = UserProfileForm(instance=self.get_object())
+        return render(request, 'profile_update.html', {'profile_form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = UserProfileForm(request.POST, request.FILES, instance=self.get_object())
         if form.is_valid():
             form.save()
             messages.success(request, "Your profile was successfully updated!")
-            return redirect('users:user_profile', username=user.username)
-    else:
-        form = UserProfileForm(instance=profile)
-    return render(request, 'profile_update.html', {'profile_form': form})
+            return redirect('users:user_profile', username=request.user.username)
+        else:
+            return render(request, 'profile_update.html', {'profile_form': form})
+
+
+
 
 
 @login_required

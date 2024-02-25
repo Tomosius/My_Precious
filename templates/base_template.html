@@ -19,9 +19,9 @@
 			<a class="navbar-brand col-5 col-sm-4 col-md-2 m-0" href="{% url 'home' %}">My Precious</a>
 			<form class="d-flex col-7 col-sm-5" role="search" method="GET" action="{{ search_url }}">
 				{% csrf_token %}
-				<input class="form-control" type="search" name="search_query" placeholder="Search" aria-label="Search">
+				<input class="form-control" type="search" name="search_query" placeholder="Search" aria-label="Search input">
 				<button class="btn btn-outline-dark" type="submit">
-					<i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+					<i class="fa-solid fa-magnifying-glass" aria-label="search button"></i>
 				</button>
 			</form>
 
@@ -32,7 +32,7 @@
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav ms-auto">
 					<li class="nav-item">
-						<a class="nav-link active" aria-current="page" href="{% url 'posts:view_all_posts' %}">Home</a>
+						<a class="nav-link active" aria-current="Home page" href="{% url 'posts:view_all_posts' %}">Home</a>
 					</li>
 					<li class="nav-item">
 						<a class="nav-link" href="{% url 'users:list_users' %}">Users</a>
@@ -110,13 +110,13 @@
 				<div class="col-2">
 					<a href="{% url 'conversations:conversations_list'%}" class="btn btn-link"><i class="fas fa-envelope" aria-hidden="true"></i></a>
 				</div>
-
+			
 				<div class="col-2 dropup-center dropup">
 					<button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
 						<i class="far fa-user" aria-hidden="true"></i>
 					</button>
 					<ul class="dropdown-menu">
-
+					
 						<li>
 							<a class="dropdown-item" href="{% url 'posts:create_post' %}">Create a Post</a>
 						</li>
@@ -141,11 +141,25 @@
 						</li>
 					</ul>
 				</div>
+			<div class="col-2 dropup-center dropup">
+					<button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+						<i class="far fa-question-circle" aria-label="Source Code Link"></i>
+					</button>
+					<ul class="dropdown-menu">
+						<li>
+							<a class="dropdown-item text-center" href="https://github.com/Tomosius/My_Precious"><i class="fa-brands fa-github"></i> Source Code</a>
+						</li>
+						<li>
+							<a class="dropdown-item text-center" href="https://www.linkedin.com/in/tomas-pecukevicius-a9837652/">
+								<i class="fa-brands fa-linkedin" aria-label="LinkedIn Link"></i> Linked In
+							</a>
+						</li>
+						
+					</ul>
+			</div>
 
 
-				<div class="col-2">
-					<a href="#" class="btn btn-link"><i class="far fa-question-circle" aria-hidden="true"></i></a>
-				</div>
+				
 			</div>
 		</div>
 	</div>

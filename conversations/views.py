@@ -145,6 +145,21 @@ class ConversationListView(LoginRequiredMixin, ListView):
             latest_message_time=Subquery(latest_message_times)
         ).order_by('-latest_message_time')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        conversations = context['conversations']
+
+        for conversation in conversations:
+            # Prefetch the last three messages for each conversation
+            last_three_messages = Message.objects.filter(
+                conversation=conversation
+            ).order_by('-created_at')[:3]
+
+            # Attaching the last three messages directly to each conversation object
+            conversation.last_three_messages = last_three_messages
+
+        return context
+
 
 
 
