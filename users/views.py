@@ -1,31 +1,31 @@
-from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import logout
+from django.contrib.auth import logout
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.contrib.auth.views import LoginView
+from django.core.checks import messages
 from django.http import JsonResponse
-from django.shortcuts import redirect
-from django.shortcuts import render, get_object_or_404
-
+from django.shortcuts import get_object_or_404, render, redirect
+from django.urls import reverse_lazy
+from django.views import View
+from django.views.generic.edit import FormView
 from conversations.forms import MessageForm
 from conversations.models import Conversation, Message
 from posts.models import LostPost, FoundPost
-from .forms import UserCredentialsForm, CustomPasswordChangeForm, \
-    UserProfileForm
-from .forms import UserRegisterForm, LanguageForm, \
+from .forms import LanguageForm, \
     SocialMediaLinkForm
-from .models import Language, SocialMediaLink
-from .models import UserProfile
+from .forms import (UserCredentialsForm, CustomPasswordChangeForm,
+                    UserProfileForm, UserRegisterForm)
+from .models import Language, SocialMediaLink, UserProfile
 
-
-from django.contrib.auth.views import LoginView
-from django.urls import reverse_lazy
-from django.views.generic.edit import FormView
-from .forms import UserRegisterForm
 
 class UserLoginView(LoginView):
     template_name = 'user_login.html'
-    next_page = reverse_lazy('home')  # Assuming 'home' is the name of your homepage URL
+    next_page = reverse_lazy(
+        'home')  # Assuming 'home' is the name of your homepage URL
+
 
 class UserRegisterView(FormView):
     template_name = 'user_register.html'
@@ -37,7 +37,6 @@ class UserRegisterView(FormView):
         return super().form_valid(form)
 
 
-
 @login_required
 def user_logout(request):
     """
@@ -46,13 +45,6 @@ def user_logout(request):
     logout(request)
     return redirect('home')
 
-
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views import View
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import UserProfile
-from .forms import UserProfileForm
 
 class UpdateProfileView(LoginRequiredMixin, View):
     def get_object(self):
@@ -65,16 +57,16 @@ class UpdateProfileView(LoginRequiredMixin, View):
         return render(request, 'profile_update.html', {'profile_form': form})
 
     def post(self, request, *args, **kwargs):
-        form = UserProfileForm(request.POST, request.FILES, instance=self.get_object())
+        form = UserProfileForm(request.POST, request.FILES,
+                               instance=self.get_object())
         if form.is_valid():
             form.save()
             messages.success(request, "Your profile was successfully updated!")
-            return redirect('users:user_profile', username=request.user.username)
+            return redirect('users:user_profile',
+                            username=request.user.username)
         else:
-            return render(request, 'profile_update.html', {'profile_form': form})
-
-
-
+            return render(request, 'profile_update.html',
+                          {'profile_form': form})
 
 
 @login_required
@@ -278,8 +270,6 @@ def list_users(request):
     return render(request, 'user_list.html', {'users': users})
 
 
-
-
 @login_required
 def user_profile(request, username):
     user = get_object_or_404(User, username=username)
@@ -305,7 +295,8 @@ def user_profile(request, username):
             Message.objects.create(conversation=conversation,
                                    sender=request.user, text=message_text)
             return redirect('users:user_profile',
-                            username=username)  # Redirect back to the same profile page
+                            username=username)  # Redirect back to the same
+            # profile page
         else:
             # Log form errors if the form is not valid
             print(messages_form.errors)
@@ -328,13 +319,3 @@ def user_profile(request, username):
     }
 
     return render(request, 'user_profile.html', context)
-
-
-
-
-
-
-
-
-
-

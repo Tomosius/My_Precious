@@ -4,14 +4,14 @@
 
 <script>
     function initMap() {
-        var map = new google.maps.Map(document.getElementById('map'), {
+        const map = new google.maps.Map(document.getElementById('map'), {
             zoom: 5,
             center: {lat: 52.23635026009495, lng: 0.05784246226898956}  // Default center
         });
 
         {% for post in posts %}
-            var postType = "{{ post.post_type }}";  // Use the new method
-            var markerIcon;
+            const postType = "{{ post.post_type }}";  // Use the new method
+            let markerIcon;
             if (postType === "LostPost") {
                 markerIcon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
             } else if (postType === "FoundPost") {
@@ -20,10 +20,10 @@
                 markerIcon = 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';  // Default marker for any other type
             }
 
-            var lat = {{ post.latitude|default_if_none:"null" }};
-            var lng = {{ post.longitude|default_if_none:"null" }};
+            const lat = {{ post.latitude|default_if_none:"null" }};
+            const lng = {{ post.longitude|default_if_none:"null" }};
             if (lat != null && lng != null) {
-                var marker = new google.maps.Marker({
+                const marker = new google.maps.Marker({
                     position: {lat: lat, lng: lng},
                     map: map,
                     title: "{{ post.title|escapejs }}",

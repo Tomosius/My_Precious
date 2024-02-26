@@ -1,11 +1,16 @@
+from cloudinary.forms import CloudinaryFileField
 from django import forms
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import UserProfile, SocialMediaLink, Language
-from django.contrib.auth.forms import PasswordChangeForm
+
+from .models import SocialMediaLink, Language
+from .models import UserProfile
+
 
 class UserRegisterForm(UserCreationForm):
-    email = forms.EmailField(required=False, help_text="Required. Add a valid email address.")
+    email = forms.EmailField(required=False,
+                             help_text="Required. Add a valid email address.")
 
     class Meta:
         model = User
@@ -24,16 +29,13 @@ class UserRegisterForm(UserCreationForm):
         return user
 
 
-from django import forms
-from cloudinary.forms import CloudinaryFileField
-from .models import UserProfile
-
 class UserProfileForm(forms.ModelForm):
     user_photo = CloudinaryFileField(required=False)
 
     class Meta:
         model = UserProfile
-        fields = ['first_name', 'last_name', 'user_photo', 'address', 'mobile_number', 'biography', 'website', 'date_of_birth']
+        fields = ['first_name', 'last_name', 'user_photo', 'address',
+                  'mobile_number', 'biography', 'website', 'date_of_birth']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -49,9 +51,12 @@ class UserCredentialsForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['username'].help_text = 'Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'
+        self.fields[
+            'username'].help_text = ('Required. 150 characters or fewer. '
+                                     'Letters, digits and @/./+/-/_ only.')
         for field_name in ['username', 'email']:
-            self.fields[field_name].widget.attrs.update({'class': 'form-control'})
+            self.fields[field_name].widget.attrs.update(
+                {'class': 'form-control'})
 
 
 class CustomPasswordChangeForm(PasswordChangeForm):
@@ -70,7 +75,8 @@ class SocialMediaLinkForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field_name in self.fields:
-            self.fields[field_name].widget.attrs.update({'class': 'form-control'})
+            self.fields[field_name].widget.attrs.update(
+                {'class': 'form-control'})
 
 
 class LanguageForm(forms.ModelForm):

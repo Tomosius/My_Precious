@@ -2085,7 +2085,7 @@ fixed.replace = function (search, replacement) {
         } else {
           // Change the `args[0]` string primitive to a `String` object that can store
           // properties. This really does need to use `String` as a constructor
-          args[0] = new String(args[0]);
+          args[0] = String(args[0]);
           groupsObject = args[0];
         } // Store named backreferences
 

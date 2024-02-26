@@ -37,8 +37,8 @@
 				</button>
 
 				<!-- Dropdown to display all messages -->
-				<ul class="dropdown-menu">
-					<div class="w-100 overflow-y-scroll inline d-inline-block" style="max-height: 70vh;">
+				<ul class="dropdown-menu mx-auto col-12 col-sm-10 col-md-8 col-xl-6">
+					<li class="w-100 overflow-y-scroll inline d-inline-block" style="max-height: 70vh;">
 						{% for message in conversation.messages.all %}
 
 							{% if message.sender == request.user %}
@@ -71,7 +71,7 @@
 								<button type="submit" class="btn btn-primary">Send New Message</button>
 							</form>
 						</div>
-					</div>
+					</li>
 
 				</ul>
 			</div>
@@ -80,13 +80,13 @@
 	{% endfor %}
 	<script>
         document.addEventListener("DOMContentLoaded", function () {
-            var dropdownButtons = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+            const dropdownButtons = document.querySelectorAll('[data-bs-toggle="dropdown"]');
 
             dropdownButtons.forEach(function (button) {
                 // Listen for the dropdown opening
                 button.addEventListener('show.bs.dropdown', function () {
-                    var targetId = button.getAttribute('data-target');
-                    var messagePreview = document.querySelector(targetId);
+                    const targetId = button.getAttribute('data-target');
+                    const messagePreview = document.querySelector(targetId);
                     if (messagePreview) {
                         messagePreview.classList.remove('d-block');
                         messagePreview.classList.add('d-none');
@@ -95,10 +95,10 @@
 
                 // Listen for the dropdown closing
                 button.addEventListener('hide.bs.dropdown', function () {
-                    var targetId = button.getAttribute('data-target');
-                    var messagePreview = document.querySelector(targetId);
+                    const targetId = button.getAttribute('data-target');
+                    const messagePreview = document.querySelector(targetId);
                     if (messagePreview) {
-                        // Optionally, delay hiding the preview to ensure it's visible while dropdown is closing
+                        // Optionally, delay hiding the preview to ensure its visible while dropdown is closing
                         setTimeout(() => {
                             messagePreview.classList.add('d-block');
                         }, 300);

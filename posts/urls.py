@@ -31,7 +31,7 @@ urlpatterns = [
     # URL for viewing a map of all posts
     path('map/', views.map_all_posts, name='map_all_posts_view'),
 
-
-
+    # URL path to delete post
+    path('delete_post/<slug:slug>/', views.delete_post, name='delete_post'),
 
 ]

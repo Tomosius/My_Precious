@@ -7,7 +7,7 @@
 			<div class="row mt-md-4 justify-content-center align-items-center">
 				<div class="col">
 					<div class="d-flex align-items-center h-100 text-md-start">
-						<legend class="form-label mb-0">Post tomas Type: {{ post_type|capfirst }}</legend>
+						<a class="form-label mb-0">Post tomas Type: {{ post_type|capfirst }}</a>
 					</div>
 				</div>
 			</div>
@@ -105,9 +105,9 @@
 
         $(document).ready(function () {
             $('.delete-photo-btn-tomas').click(function () {
-                var btn = $(this); // The delete button
-                var photoId = btn.data('photo-id');
-                var ajaxUrl = btn.data('ajax-url'); // Access the AJAX URL
+                const btn = $(this); // The delete button
+                const photoId = btn.data('photo-id');
+                const ajaxUrl = btn.data('ajax-url'); // Access the AJAX URL
 
                 // Confirm deletion
                 if (!confirm('Are you sure you want to delete this photo?')) {

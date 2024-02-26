@@ -8,8 +8,11 @@ from .views import (SendMessageView, ConversationDetailView,
 app_name = 'conversations'
 
 urlpatterns = [
-    path('send_message/<str:recipient_username>/', SendMessageView.as_view(), name='send_message'),
-    path('conversation/<int:pk>/', ConversationDetailView.as_view(), name='conversation_detail'),
-    path('conversations/', ConversationListView.as_view(), name='conversations_list'),
+    path('send_message/<str:recipient_username>/', SendMessageView.as_view(),
+         name='send_message'),
+    path('conversation/<int:pk>/', ConversationDetailView.as_view(),
+         name='conversation_detail'),
+    path('conversations/', ConversationListView.as_view(),
+         name='conversations_list'),
 
 ]

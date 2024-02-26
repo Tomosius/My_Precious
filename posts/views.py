@@ -1,17 +1,19 @@
 import logging
 import os
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.http import JsonResponse, HttpResponseRedirect, Http404
+from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 
 from .forms import LostPostForm, FoundPostForm, FileFieldForm
 from .models import LostPost, FoundPost, LostPhoto, FoundPhoto
 from .models import Post
-from django.core.exceptions import ObjectDoesNotExist
+
 logger = logging.getLogger(__name__)
 
 
@@ -147,6 +149,7 @@ def view_lost_posts(request):
     """
     Display all lost posts with optional search functionality and pagination.
     """
+
     search_query = request.GET.get('search_query', '')
     lost_posts = generic_search(LostPost, search_query)
     # Correct the argument name to items_per_page
@@ -218,8 +221,9 @@ def post_detail_view(request, slug, post_type):
             post = get_object_or_404(LostPost, slug=slug)
         else:
             post = get_object_or_404(FoundPost, slug=slug)
-    except ObjectDoesNotExist:   # we know it is post as it redirected her, so by knowing
-    # slug lets try to get out post ID and then pull it from database
+    except ObjectDoesNotExist:  # we know it is post as it redirected her,
+        # so by knowing
+        # slug lets try to get out post ID and then pull it from database
         match_chars = ""
         reversed_slug = slug[::-1]
         reversed_slug_skip_second = reversed_slug[2:]
@@ -397,3 +401,19 @@ def map_all_posts(request):
     return render(request, 'view_all_posts_list.html', context)
 
 
+@login_required
+def delete_post(request, slug):
+    post = get_object_or_404(Post, slug=slug)
+
+    if request.user != post.user:
+        messages.error(request,
+                       "You do not have permission to delete this post.")
+        return redirect('some_view_name')
+
+    try:
+        post.delete()
+        messages.success(request, "Post deleted successfully.")
+    except Exception as e:
+        messages.error(request, f"Error deleting post: {e}")
+
+    return HttpResponseRedirect(reverse('posts:view_all_posts'))

@@ -4,7 +4,9 @@
     {% csrf_token %}
     <!-- Use Bootstrap's form-control class for the textarea -->
     <div class="mb-3">
-        <textarea name="text" class="form-control" rows="3" placeholder="Write your message here"></textarea>
+	    <label>
+		    <textarea name="text" class="form-control" rows="3" placeholder="Write your message here"></textarea>
+	    </label>
     </div>
     <!-- Use Bootstrap's btn and btn-primary classes for the submit button -->
     <div class="mb-3">

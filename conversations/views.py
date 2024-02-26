@@ -1,20 +1,15 @@
-import json
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404, redirect, render
+from django.db.models import Subquery, OuterRef
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
+from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
-from django.views.generic.list import ListView
 
 from .forms import MessageForm
 from .models import Conversation, Message
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-from django.contrib.auth.decorators import login_required
-from .models import Conversation, Message
-from django.views.decorators.csrf import csrf_exempt
-
 
 
 class SendMessageView(LoginRequiredMixin, FormView):
@@ -56,10 +51,6 @@ class SendMessageView(LoginRequiredMixin, FormView):
                         pk=conversation.id)
 
 
-from django.views.generic import View
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-
 class ConversationDetailView(LoginRequiredMixin, DetailView, FormView):
     """
     Updated class-based view for displaying messages in a specific conversation
@@ -70,16 +61,22 @@ class ConversationDetailView(LoginRequiredMixin, DetailView, FormView):
     template_name = 'conversation_detail_page.html'
     context_object_name = 'conversation'
 
+    def __init__(self, **kwargs):
+        super().__init__(kwargs)
+        self.object = None
+
     def get_success_url(self):
         """
-        Redirects back to the same conversation detail view on successful message submission.
+        Redirects back to the same conversation detail view on successful
+        message submission.
         """
-        return reverse('conversations:conversation_detail', kwargs={'pk': self.object.pk})
+        return reverse('conversations:conversation_detail',
+                       kwargs={'pk': self.object.pk})
 
     def get_context_data(self, **kwargs):
         """
-        Adds additional context to the template, specifically the messages in the conversation
-        and the message form.
+        Adds additional context to the template, specifically the messages in
+        the conversation and the message form.
         """
         context = super().get_context_data(**kwargs)
         context['messages'] = self.object.messages.order_by('created_at')
@@ -89,7 +86,8 @@ class ConversationDetailView(LoginRequiredMixin, DetailView, FormView):
 
     def post(self, request, *args, **kwargs):
         """
-        Handles POST requests, allowing users to send messages from the conversation detail view.
+        Handles POST requests, allowing users to send messages from the
+        conversation detail view.
         """
         self.object = self.get_object()  # Get the current conversation object
         form = self.get_form()
@@ -100,7 +98,8 @@ class ConversationDetailView(LoginRequiredMixin, DetailView, FormView):
 
     def form_valid(self, form):
         """
-        Processes the valid form submission, creating a new message within the conversation.
+        Processes the valid form submission, creating a new message within
+        the conversation.
         """
         message = form.save(commit=False)
         message.sender = self.request.user
@@ -108,10 +107,6 @@ class ConversationDetailView(LoginRequiredMixin, DetailView, FormView):
         message.save()
         return HttpResponseRedirect(self.get_success_url())
 
-from django.db.models import Max, Subquery, OuterRef
-from django.views.generic import ListView
-from django.contrib.auth.decorators import login_required
-from .models import Conversation, Message
 
 class ConversationListView(LoginRequiredMixin, ListView):
     """
@@ -133,12 +128,14 @@ class ConversationListView(LoginRequiredMixin, ListView):
         - QuerySet: The filtered queryset of conversations for the
         logged-in user, ordered by the most recent message update time.
         """
-        # Subquery to get the most recent message update time for each conversation
+        # Subquery to get the most recent message update time for each
+        # conversation
         latest_message_times = Message.objects.filter(
             conversation=OuterRef('pk')
         ).order_by('-created_at').values('created_at')[:1]
 
-        # Query to retrieve conversations for the current user, ordered by the most recent message update time
+        # Query to retrieve conversations for the current user, ordered by
+        # the most recent message update time
         return Conversation.objects.filter(
             participants=self.request.user
         ).annotate(
@@ -155,11 +152,8 @@ class ConversationListView(LoginRequiredMixin, ListView):
                 conversation=conversation
             ).order_by('-created_at')[:3]
 
-            # Attaching the last three messages directly to each conversation object
+            # Attaching the last three messages directly to each conversation
+            # object
             conversation.last_three_messages = last_three_messages
 
         return context
-
-
-
-
