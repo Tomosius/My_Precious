@@ -8,7 +8,8 @@
 				<button id="drop-down-3-messages-button-{{ conversation.id }}"
 				        class="w-100 text-break text-wrap btn border border-black dropdown-toggle" type="button"
 				        data-bs-toggle="dropdown" data-target="#message-preview-{{ conversation.id }}"
-				        aria-expanded="false">
+				        aria-expanded="false" aria-label="Drop Down button
+				        with Username and 3 messages preview">
 					Conversation with:
 					{% for participant in conversation.participants.all %}
 						{% if participant != request.user %}{{ participant.username }}{% endif %}
@@ -68,7 +69,9 @@
 										          class="form-control"></textarea>
 									</label>
 								</div>
-								<button type="submit" class="btn btn-primary">Send New Message</button>
+								<button type="submit" class="btn btn-primary"
+								aria-label="Send Message Button">Send New
+									Message</button>
 							</form>
 						</div>
 					</li>

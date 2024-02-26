@@ -1,28 +1,29 @@
 <!doctype html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>My Precious</title>
-	<script src="https://kit.fontawesome.com/e8613b1e05.js" crossorigin="anonymous"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Precious</title>
+    <script src="https://kit.fontawesome.com/e8613b1e05.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-	{% load static %}
-	<link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
-	<link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
 </head>
+
 <body class="d-flex flex-column min-vh-100">
 <header class="mb-auto fixed-top">
 	<nav class="navbar col-12 col-sd-8 navbar-expand-md tomas-custom-bg 
         navbar-fixed-top rounded-bottom-2">
 		<div class="container-fluid ps-1 pe-1 right">
-			<a class="navbar-brand col-5 col-sm-4 col-md-2 m-0" href="{% url 'home' %}">My Precious</a>
+			<h1 class="navbar-brand col-5 col-sm-4 col-md-2 m-0" href="{% url 'home' %}">My Precious</h1>
 			<form class="d-flex col-7 col-sm-5" role="search" method="GET" action="{{ search_url }}">
 				{% csrf_token %}
 				<input class="form-control" type="search" name="search_query" placeholder="Search"
 				       aria-label="Search input">
-				<button class="btn btn-outline-dark" type="submit">
-					<i class="fa-solid fa-magnifying-glass" aria-label="search button"></i>
+				<button class="btn btn-outline-dark" type="submit" aria-label="Search button">
+					<i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
 				</button>
 			</form>
 
@@ -46,7 +47,7 @@
 					</li>
 					<li class="nav-item dropdown ">
 						{% if user.is_authenticated %}
-							<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+							<a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-label="User Account"
 							   aria-expanded="false">Account</a>
 							<ul class="dropdown-menu dropdown-menu-end">
 								<li>
@@ -74,8 +75,8 @@
 								</li>
 							</ul>
 						{% else %}
-							<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-							   aria-expanded="false">Login</a>
+							<a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
+							   aria-expanded="false" aria-label="User Login">Login</a>
 							<ul class="dropdown-menu dropdown-menu-end">
 								<li>
 									<a class="dropdown-item" href="{% url 'users:user_login' %}">Login</a>
@@ -123,7 +124,7 @@
 				</div>
 
 				<div class="col-2 dropup-center dropup">
-					<button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+					<button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Drop Up button">
 						<i class="far fa-user" aria-hidden="true"></i>
 					</button>
 					<ul class="dropdown-menu">
@@ -154,7 +155,7 @@
 					</ul>
 				</div>
 				<div class="col-2 dropup-center dropup">
-					<button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+					<button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Link To GitHub">
 						<i class="far fa-question-circle" aria-label="Source Code Link"></i>
 					</button>
 					<ul class="dropdown-menu">
@@ -193,7 +194,7 @@
 			</div>
 			<div class="col-4">
 				<a class="text-center" href="https://www.linkedin.com/in/tomas-pecukevicius-a9837652/">
-					<i class="fa-brands fa-linkedin" aria-label="LinkedIn Link"></i> Linked In
+					<i class="fa-brands fa-linkedin"></i> Linked In
 				</a>
 			</div>
 			</div>

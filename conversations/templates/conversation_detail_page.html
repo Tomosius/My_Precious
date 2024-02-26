@@ -10,6 +10,6 @@
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Send</button>
+    <button type="submit" aria-label="Send Button">Send</button>
 </form>
 {% endblock %}
