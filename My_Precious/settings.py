@@ -65,6 +65,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'My_Precious.middleware.middleware.AuthRequiredMiddleware',
+
 ]
 
 ROOT_URLCONF = 'My_Precious.urls'
@@ -170,3 +172,11 @@ LOGGING = {
         },
     },
 }
+
+AUTH_EXEMPT_URLS = [
+    '/users/user_login/',
+    '/users/user_logout/',
+    '/users/user_register/',
+]
+
+LOGIN_URL = '/users/user_login/'

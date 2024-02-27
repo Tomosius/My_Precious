@@ -17,7 +17,7 @@
 	<nav class="navbar col-12 col-sd-8 navbar-expand-md tomas-custom-bg 
         navbar-fixed-top rounded-bottom-2">
 		<div class="container-fluid ps-1 pe-1 right">
-			<a class="navbar-brand col-5 col-sm-4 col-md-2 m-0">My Precious</a>
+			<a class="navbar-brand col-5 col-sm-4 col-md-2 m-0" href="{% url 'posts:view_all_posts' %}">My Precious</a>
 			<form class="d-flex col-7 col-sm-5" role="search" method="GET" action="{% if search_url %}{{ search_url }}{% else %}{% url 'posts:view_all_posts' %}{% endif %}">
 
 				{% csrf_token %}

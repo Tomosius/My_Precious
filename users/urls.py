@@ -22,3 +22,9 @@ urlpatterns = [
     path('list_users/', views.list_users, name='list_users'),
 
 ]
+
+AUTH_EXEMPT_URLS = [
+    "user_login/",
+    "user_logout/",
+    "user_register/",
+]
