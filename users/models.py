@@ -45,8 +45,10 @@ class Language(models.Model):
 
 
 # Signal to create or update UserProfile whenever a User instance is saved
+# noinspection PyUnusedLocal
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_or_update_user_profile(instance, created, **kwargs):
+    # **kwargs value is needed for creating profile
     if created:
         UserProfile.objects.create(user=instance)
     else:

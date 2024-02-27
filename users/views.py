@@ -2,10 +2,14 @@ from django.contrib import messages
 from django.contrib.auth import (authenticate, login, logout)
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
+
+from django.contrib.auth.models import User
+from django.shortcuts import render, get_object_or_404
+
+# Assuming you have these imports based on your provided code
+from posts.models import LostPost, FoundPost
 
 from .forms import UserCredentialsForm, CustomPasswordChangeForm, \
     UserProfileForm
@@ -58,6 +62,7 @@ def user_register(request):
         user_form = UserRegisterForm()
     return render(request, 'user_register.html', {'form': user_form})
 
+
 @login_required
 def update_profile(request):
     user = request.user
@@ -85,7 +90,8 @@ def update_credentials(request):
             user_form.save()
             messages.success(request, 'Your credentials have been updated '
                                       'successfully.')
-            return redirect('users:user_profile', username=request.user.username)
+            return redirect('users:user_profile',
+                            username=request.user.username)
     else:
         user_form = UserCredentialsForm(instance=request.user)
     return render(request, 'credentials_update.html', {'user_form': user_form})
@@ -102,7 +108,8 @@ def change_password(request):
             user = form.save()
             update_session_auth_hash(request, user)
             messages.success(request, 'Your password was successfully updated!')
-            return redirect('users:user_profile', username=request.user.username)
+            return redirect('users:user_profile',
+                            username=request.user.username)
     else:
         form = CustomPasswordChangeForm(user=request.user)
     return render(request, 'change_password.html', {'form': form})
@@ -267,17 +274,6 @@ def combined_update_user_profile(request):
     return render(request, 'profile_update.html', context)
 
 
-
-
-
-from django.contrib.auth.models import User
-from django.shortcuts import render, get_object_or_404
-
-# Assuming you have these imports based on your provided code
-from posts.models import LostPost, FoundPost
-from posts.views import paginate_queryset
-
-
 @login_required
 def user_profile(request, username):
     """
@@ -299,15 +295,18 @@ def user_profile(request, username):
     user_found_posts = FoundPost.objects.filter(user=user)
     posts = list(user_lost_posts) + list(user_found_posts)
 
-    # Combine the posts into a single list if needed or keep them separate depending on your template design
+    # Combine the posts into a single list if needed or keep them separate
+    # depending on your template design
     user_posts = list(user_lost_posts) + list(user_found_posts)
 
-    # You might want to paginate these posts as well, depending on how many there are
+    # You might want to paginate these posts as well, depending on how many
+    # there are
 
     context = {
         'user_profile': user_profile,
         'user': user,
-        'user_posts': user_posts,  # Pass the combined list of posts to the template
+        'user_posts': user_posts,
+        # Pass the combined list of posts to the template
         # Or pass 'user_lost_posts' and 'user_found_posts' separately
         'is_owner': request.user == user,
         # Optional: To check if the logged-in user is viewing their own

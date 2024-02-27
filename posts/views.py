@@ -1,4 +1,3 @@
-import logging
 import os
 
 from django.contrib import messages
@@ -14,7 +13,6 @@ from .forms import LostPostForm, FoundPostForm, FileFieldForm
 from .models import LostPost, FoundPost, LostPhoto, FoundPhoto
 from .models import Post
 
-logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -119,6 +117,8 @@ def view_all_posts_list(request):
     querying.
     """
     search_query = request.GET.get('search_query', '')
+    google_api_key = os.environ.get('GOOGLE_MAPS_API_KEY')
+
 
     # Utilize polymorphism to fetch combined posts
     all_posts = Post.objects.all().instance_of(Post).order_by(
@@ -134,6 +134,7 @@ def view_all_posts_list(request):
     search_url = reverse('posts:view_all_posts')
 
     context = {
+        'GOOGLE_API_KEY': google_api_key,
         'posts': paginated_posts,
         'is_authenticated': request.user.is_authenticated,
         'active_tab': 'all',
@@ -211,6 +212,7 @@ def post_detail_view(request, slug, post_type):
     """
     # Fetch the Google Maps API key from environment variables
     google_api_key = os.environ.get('GOOGLE_MAPS_API_KEY')
+    post = None
 
     # Determine the correct model based on the post type
     model = LostPost if post_type == 'lost' else FoundPost
