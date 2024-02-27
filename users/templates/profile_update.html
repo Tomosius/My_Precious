@@ -7,44 +7,31 @@
 	<form method="post" enctype="multipart/form-data" class="form">
 		{% csrf_token %}
         <fieldset class="mt-1 mt-sm-2">
-        <div class="container">
-    <!-- Profile Update Form -->
-    <form method="post" enctype="multipart/form-data" class="form">
-        {% csrf_token %}
-        <fieldset class="mt-1 mt-sm-2">
-            <!-- Main Profile Information -->
+        <!-- Main Profile Information -->
             <div class="container">
-                <div class="row">
-                    <!-- Column for Photo and Upload on Medium Screens and Larger -->
-                    <div class="col-12 col-md-6">
-                        {% if profile_form.instance.user_photo %}
-                            <img src="{{ profile_form.instance.user_photo.url }}" alt="Profile photo" class="rounded-3 img-fluid" style="max-height: 40%; width: auto;">
-                        {% else %}
-                            <i class="fas fa-user-circle fa-5x"></i> <!-- Ensure you have FontAwesome loaded for this icon -->
-                        {% endif %}
-                        {{ profile_form.user_photo|as_crispy_field }}
-                    </div>
-                    <!-- Column for Form Fields on Medium Screens and Larger -->
-                    <div class="col-12 col-md-6">
-                        {{ profile_form.first_name|as_crispy_field }}
-                        {{ profile_form.last_name|as_crispy_field }}
-                        {{ profile_form.address|as_crispy_field }}
-                        {{ profile_form.mobile_number|as_crispy_field }}
-                        {{ profile_form.website|as_crispy_field }}
-                        {{ profile_form.date_of_birth|as_crispy_field }}
-                        {{ profile_form.biography|as_crispy_field }}
-                    </div>
-                </div>
-            </div>
-            <!-- Submit Button -->
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary"
-                        aria-label="Upfate Button">Update
-	                Profile</button>
-            </div>
-        </fieldset>
-    </form>
-</div>
+			    <div class="row">
+			        <!-- Column for Photo and Upload on Medium Screens and Larger -->
+			        <div class="col-8 col-sm-6 px-3 mx-auto">
+			            <legend class="d-block d-sm-none">Profile Information</legend>
+			            <!-- Profile Photo Section -->
+			            {% if profile_form.instance.user_photo %}
+			                <!-- Responsive image that takes up the maximum height of the parent -->
+			                <img src="{{ profile_form.instance.user_photo.url }}" alt="Profile photo" class="rounded-3 img-fluid" style="max-height: 40%; width: auto;">
+			            {% else %}
+			                <!-- Fallback avatar icon -->
+			                <i class="fas fa-user-circle fa-5x"></i>
+			            {% endif %}
+				        {{ profile_form.user_photo|as_crispy_field }}
+			        </div>
+			        <!-- Column for Form Fields on Medium Screens and Larger -->
+			        <div class="col-8 col-sm-6 px-3 mx-auto">
+			            <a class="d-none d-sm-block">Profile Information</a>
+				        {{ profile_form.first_name|as_crispy_field }}
+				        {{ profile_form.last_name|as_crispy_field }}
+			        </div>
+			    </div>
+			</div>
+        <!-- End Main Profile Information -->
 
         <!-- Additional Information -->
         <div class="container">
@@ -60,13 +47,7 @@
 		        </div>
 	        </div>
         </div>
-	        <div class="col-8 col-sm-12 mx-auto"><button type="submit"
-	                                                     name="profile_form"
-	                                                     class="btn
-	                                                     btn-primary"
-	                                                     aria-label="Update
-	                                                     Profile
-">Update Profile</button></div>
+	        <div class="col-8 col-sm-12 mx-auto"><button type="submit" name="profile_form" class="btn btn-primary">Update Profile</button></div>
         </fieldset>
 	</form>
 </div>

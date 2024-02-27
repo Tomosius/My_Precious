@@ -1,40 +1,36 @@
-from django.contrib.auth import logout
-from django.contrib.auth import logout
+from django.contrib import messages
+from django.contrib.auth import (authenticate, login, logout)
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from django.contrib.auth.views import LoginView
-from django.core.checks import messages
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, render, redirect
-from django.urls import reverse_lazy
-from django.views import View
-from django.views.generic.edit import FormView
-from conversations.forms import MessageForm
-from conversations.models import Conversation, Message
-from posts.models import LostPost, FoundPost
-from .forms import LanguageForm, \
+from django.shortcuts import get_object_or_404
+from django.shortcuts import render, redirect
+
+from .forms import UserCredentialsForm, CustomPasswordChangeForm, \
+    UserProfileForm
+from .forms import UserRegisterForm, LanguageForm, \
     SocialMediaLinkForm
-from .forms import (UserCredentialsForm, CustomPasswordChangeForm,
-                    UserProfileForm, UserRegisterForm)
 from .models import Language, SocialMediaLink, UserProfile
 
 
-class UserLoginView(LoginView):
-    template_name = 'user_login.html'
-    next_page = reverse_lazy(
-        'home')  # Assuming 'home' is the name of your homepage URL
-
-
-class UserRegisterView(FormView):
-    template_name = 'user_register.html'
-    form_class = UserRegisterForm
-    success_url = reverse_lazy('users:user_login')
-
-    def form_valid(self, form):
-        form.save()
-        return super().form_valid(form)
+def user_login(request):
+    """
+    View for handling user login.
+    Authenticates user and redirects to home page on success.
+    """
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user:
+            login(request, user)
+            messages.success(request, 'You have successfully logged in.')
+            return redirect('home')
+        else:
+            messages.error(request,
+                           'Invalid login credentials. Please try again.')
+    return render(request, 'user_login.html')
 
 
 @login_required
@@ -43,30 +39,39 @@ def user_logout(request):
     Logs out the user and redirects to home page.
     """
     logout(request)
+    messages.info(request, 'You have been logged out.')
     return redirect('home')
 
 
-class UpdateProfileView(LoginRequiredMixin, View):
-    def get_object(self):
-        user = self.request.user
-        profile, created = UserProfile.objects.get_or_create(user=user)
-        return profile
+def user_register(request):
+    """
+    Handles new user registration.
+    On POST, validates form and creates a new user on success.
+    """
+    if request.method == 'POST':
+        user_form = UserRegisterForm(request.POST)
+        if user_form.is_valid():
+            user_form.save()  # UserProfile creation is handled via signal
+            messages.success(request, 'Account created successfully.')
+            return redirect('users:user_login')
+    else:
+        user_form = UserRegisterForm()
+    return render(request, 'user_register.html', {'form': user_form})
 
-    def get(self, request, *args, **kwargs):
-        form = UserProfileForm(instance=self.get_object())
-        return render(request, 'profile_update.html', {'profile_form': form})
-
-    def post(self, request, *args, **kwargs):
-        form = UserProfileForm(request.POST, request.FILES,
-                               instance=self.get_object())
+@login_required
+def update_profile(request):
+    user = request.user
+    profile, created = UserProfile.objects.get_or_create(
+        user=user)
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
             messages.success(request, "Your profile was successfully updated!")
-            return redirect('users:user_profile',
-                            username=request.user.username)
-        else:
-            return render(request, 'profile_update.html',
-                          {'profile_form': form})
+            return redirect('users:user_profile', username=user.username)
+    else:
+        form = UserProfileForm(instance=profile)
+    return render(request, 'profile_update.html', {'profile_form': form})
 
 
 @login_required
@@ -80,8 +85,7 @@ def update_credentials(request):
             user_form.save()
             messages.success(request, 'Your credentials have been updated '
                                       'successfully.')
-            return redirect('users:user_profile',
-                            username=request.user.username)
+            return redirect('users:user_profile', username=request.user.username)
     else:
         user_form = UserCredentialsForm(instance=request.user)
     return render(request, 'credentials_update.html', {'user_form': user_form})
@@ -98,8 +102,7 @@ def change_password(request):
             user = form.save()
             update_session_auth_hash(request, user)
             messages.success(request, 'Your password was successfully updated!')
-            return redirect('users:user_profile',
-                            username=request.user.username)
+            return redirect('users:user_profile', username=request.user.username)
     else:
         form = CustomPasswordChangeForm(user=request.user)
     return render(request, 'change_password.html', {'form': form})
@@ -264,58 +267,57 @@ def combined_update_user_profile(request):
     return render(request, 'profile_update.html', context)
 
 
-@login_required
-def list_users(request):
-    users = User.objects.select_related('profile').all()
-    return render(request, 'user_list.html', {'users': users})
+
+
+
+from django.contrib.auth.models import User
+from django.shortcuts import render, get_object_or_404
+
+# Assuming you have these imports based on your provided code
+from posts.models import LostPost, FoundPost
+from posts.views import paginate_queryset
 
 
 @login_required
 def user_profile(request, username):
+    """
+    Display the profile of a user, including their lost and found posts.
+
+    Args:
+    - request: HttpRequest object.
+    - user_id: The ID of the user whose profile is to be displayed.
+
+    Returns:
+    - HttpResponse with the user profile template.
+    """
+    # Retrieve the user based on the passed user_id
     user = get_object_or_404(User, username=username)
     user_profile = user.profile
-    is_owner = request.user == user
 
+    # Filter LostPost and FoundPost objects by this user
     user_lost_posts = LostPost.objects.filter(user=user)
     user_found_posts = FoundPost.objects.filter(user=user)
     posts = list(user_lost_posts) + list(user_found_posts)
 
-    conversations = Conversation.objects.none()
+    # Combine the posts into a single list if needed or keep them separate depending on your template design
+    user_posts = list(user_lost_posts) + list(user_found_posts)
 
-    # Moved inside the POST request check as it's only needed there
-    if request.method == 'POST':
-        messages_form = MessageForm(request.POST)
-        if messages_form.is_valid() and not is_owner:
-            message_text = messages_form.cleaned_data['text']
-            conversation = Conversation.objects.filter(
-                participants=user).filter(participants=request.user).first()
-            if not conversation:
-                conversation = Conversation.objects.create()
-                conversation.participants.add(user, request.user)
-            Message.objects.create(conversation=conversation,
-                                   sender=request.user, text=message_text)
-            return redirect('users:user_profile',
-                            username=username)  # Redirect back to the same
-            # profile page
-        else:
-            # Log form errors if the form is not valid
-            print(messages_form.errors)
-    else:
-        # Initialize the form without POST data for GET requests
-        messages_form = MessageForm()
-
-    if not is_owner:
-        conversations = Conversation.objects.filter(participants=user).filter(
-            participants=request.user).distinct().prefetch_related(
-            'messages').order_by('-updated_at')
+    # You might want to paginate these posts as well, depending on how many there are
 
     context = {
         'user_profile': user_profile,
         'user': user,
+        'user_posts': user_posts,  # Pass the combined list of posts to the template
+        # Or pass 'user_lost_posts' and 'user_found_posts' separately
+        'is_owner': request.user == user,
+        # Optional: To check if the logged-in user is viewing their own
         'posts': posts,
-        'is_owner': is_owner,
-        'conversations': conversations,
-        'messages_form': messages_form,  # Pass the form to the template
     }
 
     return render(request, 'user_profile.html', context)
+
+
+@login_required
+def list_users(request):
+    users = User.objects.select_related('profile').all()
+    return render(request, 'user_list.html', {'users': users})
