@@ -53,43 +53,76 @@ class SendMessageView(LoginRequiredMixin, FormView):
 
 class ConversationDetailView(LoginRequiredMixin, DetailView, FormView):
     """
-    Updated class-based view for displaying messages in a specific conversation
+    Class-based view for displaying messages in a specific conversation
     and allowing the user to send a message within this conversation.
+
+    Inherits from:
+    - LoginRequiredMixin: Ensures that the user is logged in.
+    - DetailView: Provides the details of a specific conversation.
+    - FormView: Handles the submission of the message form.
+
+    Attributes:
+    - model: Specifies the Conversation model to be used.
+    - form_class: Specifies the form for sending messages.
+    - template_name: The name of the template to use.
+    - context_object_name: The name of the context object in the template.
     """
+
     model = Conversation
-    form_class = MessageForm  # Use the existing MessageForm
+    form_class = MessageForm
     template_name = 'conversation_detail_page.html'
     context_object_name = 'conversation'
 
     def __init__(self, **kwargs):
-        super().__init__(kwargs)
-        self.object = None
+        """
+        Initializes the ConversationDetailView instance.
+
+        Args:
+        - **kwargs: Keyword arguments for initialization.
+        """
+        super().__init__(**kwargs)  # Corrected to properly unpack kwargs
+        self.object = None  # Initialize the object attribute
 
     def get_success_url(self):
         """
-        Redirects back to the same conversation detail view on successful
-        message submission.
+        Defines the URL to redirect to on successful form submission.
+
+        Returns:
+        - URL as a string to redirect back to the conversation detail view.
         """
         return reverse('conversations:conversation_detail',
                        kwargs={'pk': self.object.pk})
 
     def get_context_data(self, **kwargs):
         """
-        Adds additional context to the template, specifically the messages in
-        the conversation and the message form.
+        Adds additional context to the template.
+
+        Args:
+        - **kwargs: Keyword arguments containing context data.
+
+        Returns:
+        - The context dictionary with additional entries.
         """
         context = super().get_context_data(**kwargs)
         context['messages'] = self.object.messages.order_by('created_at')
-        if 'form' not in context:  # Add the message form to the context
-            context['form'] = self.get_form()
+        if 'form' not in context:
+            context[
+                'form'] = self.get_form()  # Adds the form to the context if not already present
         return context
 
     def post(self, request, *args, **kwargs):
         """
-        Handles POST requests, allowing users to send messages from the
-        conversation detail view.
+        Handles POST requests, processing the message form.
+
+        Args:
+        - request: The HTTP request object.
+        - *args: Positional arguments.
+        - **kwargs: Keyword arguments.
+
+        Returns:
+        - An HttpResponseRedirect on success, or the form with errors on failure.
         """
-        self.object = self.get_object()  # Get the current conversation object
+        self.object = self.get_object()
         form = self.get_form()
         if form.is_valid():
             return self.form_valid(form)
@@ -98,8 +131,13 @@ class ConversationDetailView(LoginRequiredMixin, DetailView, FormView):
 
     def form_valid(self, form):
         """
-        Processes the valid form submission, creating a new message within
-        the conversation.
+        Processes a valid form, creating a new message in the conversation.
+
+        Args:
+        - form: The validated form instance.
+
+        Returns:
+        - An HttpResponseRedirect to the success URL.
         """
         message = form.save(commit=False)
         message.sender = self.request.user

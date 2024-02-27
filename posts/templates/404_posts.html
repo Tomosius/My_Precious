@@ -1,0 +1,16 @@
+{% extends 'base_template.html' %}
+{% block title %} Post Not Found {% endblock %}
+
+{% block content %}
+<!-- Error: Post Not Found -->
+<div class="container mt-5">
+    <div class="container text-center mt-5">
+        <h1 class="display-1 fw-bold text-warning">Post Not Found</h1>
+        <p class="fs-3"> <span class="text-muted">Uh oh! This part of the galaxy is uncharted.</span></p>
+        <p class="lead">
+            The <b>POST</b> you're looking for must be cloaked in invisibility. Perhaps it was deleted, or maybe it never existed at all! Fear not, we can still plot a course back to civilization or <a href="/" class="text-decoration-none">set a course for home</a>.
+        </p>
+        <a href="/" class="btn btn-primary"> Return to Base</a>
+    </div>
+</div>
+{% endblock content %}

@@ -4,6 +4,37 @@
 
 "My Precious" is an innovative online platform designed to reconnect individuals with their lost valuables. Understanding the distress and frustration of losing personal items, My mission was to create a community-driven space where users can post about lost or found items, facilitating the joyful reunion of people with their belongings. Whether it's a key fob or a cherished heirloom, "My Precious" stands as a beacon of hope and solidarity.
 
+<!-- TOC -->
+* [My Precious](#my-precious)
+  * [Introduction](#introduction)
+  * [User Experience and Design](#user-experience-and-design)
+    * [Strategy](#strategy)
+    * [Execution](#execution)
+    * [User Stories](#user-stories)
+  * [App Structure](#app-structure)
+    * [Project was created based on Agile:](#project-was-created-based-on-agile)
+      * [Milestones](#milestones)
+      * [User Stories:](#user-stories-1)
+  * [Website / App structure](#website--app-structure)
+    * [Users:](#users)
+  * [Tools and Technologies:](#tools-and-technologies)
+    * [Services:](#services)
+  * [Navigation Menu](#navigation-menu)
+      * [Big Screen:](#big-screen)
+      * [Medium Screen:](#medium-screen)
+      * [Small screen Navigation:](#small-screen-navigation)
+  * [Testing](#testing)
+    * [Responsiveness](#responsiveness)
+    * [Validation](#validation)
+      * [HTML](#html)
+      * [CSS](#css)
+      * [Python](#python)
+  * [Manual Testing](#manual-testing)
+    * [Function Testing](#function-testing)
+    * [Automatic Testing](#automatic-testing)
+  * [Mistakes and Bugs](#mistakes-and-bugs)
+  * [Future Implementations](#future-implementations)
+<!-- TOC -->
 ## User Experience and Design
 
 ### Strategy
@@ -86,7 +117,7 @@ All Project is made out of only 3 apps:
 1. Users
 2. Posts
 3. Conversations
-![](/Users/pecukevicius/PycharmProjects/My_Precious/staticfiles/assets/images/database_structuee.png "database structure")
+4. ![database_structure.png](staticfiles%2Fassets%2Fimages%2Fdatabase_structuee.png)
 ### Users:
 1. Users App is made of 2 tables:
    * Auth User - This is Default Django model, I could, but I did not want to implement more fields to model, I left it as it is, simple and reliable Django built in Model for Authentication
@@ -100,33 +131,33 @@ All Project is made out of only 3 apps:
    * Posts - This is Polymorphic Model. Yes, I had to use it, as initially (start of project) I wanted to implement DRY coding and used standard model Post as abstract, and then create 2 models based on it:
      * Lost Post
      * Found Post
-     * Photos - Lost and Found posts have sub tables of Photos
+     * Photos - Lost and Found posts have sub tables of Photos 
      
 Smart Explanation why I had to switch from Abstract model to Polymorphic:
 
-All is because of search Field!
-
+    All is because of search Field!
 In standard model I can search Lost Posts, I can search Found posts, I can search both. But if I search 2 tables, and then I want to paginate it - it becomes complicated, this is where polymorphic model comes in.
 
 3. Conversations consists of 2 tables:
     * Conversations - This is where one conversation can have as many participants as it is needed
     * Messages - this is just simple message linked to conversation and sender
 
+
 Each app was built with intention of future re-usability, so they are pretty much independent:
 1. They have their own templates in app/templates folder
 2. They have their own urls in app/urls.py, these urls are imported to project urls.
 
 ## Tools and Technologies:
-1. Tools:
+###Tools:
 * Pycharm - as Coding IDE
-* Git - Source control
-2. Services:
+* Git - Source control 
+### Services:
 * GitHub - Source code hosting and source control
 * Heroku - Django Deployment
 * Cloudinary  Images hosting
 * Elephant SQL - Database hosting
 * Google Maps API - to show post location on maps
-3. Languages:
+###Languages:
 * HTML - Used for static HTML files and templates
 * Bootstrap5 and custom styles.css - layouts styling
 * Javascript - page interactivity and dynamic content management
@@ -134,14 +165,10 @@ Each app was built with intention of future re-usability, so they are pretty muc
 * Django - Python framework
 * Some Jquery/Ajax - some pages required some background interactions to database, so I adapted code snippets from internet for my project
 * SQL - database queries 
-    
-
-
-   
 
 
 ## Navigation Menu
-### Navigation is divided into 3 parts:
+Navigation is divided into 3 parts:
 #### Big Screen:
 * Top Navigation has fields:
   * ![big_screen_top_nav.png](staticfiles%2Fassets%2Fimages%2Fbig_screen_top_nav.png)
@@ -200,5 +227,116 @@ Each app was built with intention of future re-usability, so they are pretty muc
   ![small_screen_bottom_links_dropdown.png](staticfiles%2Fassets%2Fimages%2Fsmall_screen_bottom_links_dropdown.png)
   * Link to Source Code
   * Link to Linked In
-### 
-  
+
+## Testing
+### Responsiveness
+Website was checked for responsiveness all time during development, checking layouts for different types and sizes of screens and devices.
+
+### Validation
+#### HTML
+Website was inspected through [W3C Validator](https://validator.w3.org).
+Every page has gone through procedures:
+1. Open page on running Django project
+2. Right click on page to inspect code
+3. Copy all HTML code
+4. Paste to Validator as 'direct input'
+#### CSS
+To validate Css I have used [W3C CSS Jigsaw Validator]
+Custom styles.css file was uploaded and validated
+(https://jigsaw.w3.org/css-validator/)
+![w3c_css_validation.png](staticfiles%2Fassets%2Fimages%2Fw3c_css_validation.png)
+
+#### Python
+All Python code was inspected and no errors found on [CI Python Linter](https://pep8ci.herokuapp.com)
+
+## Manual Testing
+### Function Testing
+| Function                      | Action                                                                                                                                                                                                   | What is Expected                                                                                                                                                                                                                                                                                                                                     | Result |
+|-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------|
+| Create Account                | User creates an account using login and password (password has to be repeated) Email - optional                                                                                                          | User is being redirected to Home page to login with new credentials                                                                                                                                                                                                                                                                                  | Passed |
+| Log In                        | User uses username and password and Logs In                                                                                                                                                              | User is being redirected to Home page, all menu of navigation is active and links working. User is Authenticated                                                                                                                                                                                                                                     | Passed |                   
+| Log Out                       | User clicks link to log out                                                                                                                                                                              | User is logged out from his account, redirected to Home Page                                                                                                                                                                                                                                                                                         | Passed |
+| Navigation links are active   | After User  Is authenticated, links become active                                                                                                                                                        | User can navigate on app / website                                                                                                                                                                                                                                                                                                                   | Passed |
+| Posts                         | User can see All Posts, Lost, Found and Map in details                                                                                                                                                   | User can see all posts and their details                                                                                                                                                                                                                                                                                                             | Passed |
+| All Posts                     | User can see All posts                                                                                                                                                                                   | All posts on project are visible on selected Tab                                                                                                                                                                                                                                                                                                     | Passed |
+| Lost Posts                    | ONLY Lost posts are visible                                                                                                                                                                              | Only Lost posts are displayed                                                                                                                                                                                                                                                                                                                        | Passed |
+| Found Posts                   | ONLY Found Posts are displayed                                                                                                                                                                           | Only Found posts are displayed                                                                                                                                                                                                                                                                                                                       | Passed |
+| Map                           | All Posts are displayed on Map                                                                                                                                                                           | User Can see Posts on Map                                                                                                                                                                                                                                                                                                                            | Passed |
+| Map Markers                   | Posts on map are in 2 colors                                                                                                                                                                             | Posts are divided in 2 Colors: Green - Found, Red - Lost                                                                                                                                                                                                                                                                                             | Passed |
+| Map Markers pop ups           | Marker on Map clicked                                                                                                                                                                                    | Pop Up appears with Post title                                                                                                                                                                                                                                                                                                                       | Passed |
+| Marker Redirection            | User clicks on title on MAp Marker Pop Up                                                                                                                                                                | User is redirected to Post details page                                                                                                                                                                                                                                                                                                              | Passed |
+| Posts pagination              | Posts are paginated                                                                                                                                                                                      | Posts are paginated, user can see number of pages, and page number user is in at given point                                                                                                                                                                                                                                                         | Passed |
+| User can set pagination       | User can select posts quantity per page                                                                                                                                                                  | Posts are re-paginated per user settings                                                                                                                                                                                                                                                                                                             | Passed |   
+| Search all posts              | User is in All post tab or anywhere else and searches for word                                                                                                                                           | App searches all posts in title and description and returns results                                                                                                                                                                                                                                                                                  | Passed |
+| Search Lost Posts             | Useer is in Lost Posts section and searches                                                                                                                                                              | App searches ONLY LOST posts (title and description) and displays results                                                                                                                                                                                                                                                                            | Passed |
+| Search Found Posts            | User is in Found Posts section and searches                                                                                                                                                              | App searches only FOUND posts (title and description) and displays results                                                                                                                                                                                                                                                                           | Passed |
+| Conversations                 | User Conversations section                                                                                                                                                                               | User is displayed with all conversations with other users                                                                                                                                                                                                                                                                                            | Passed |
+| Conversations/Another User    | In Conversation section user clicks on button with other user name                                                                                                                                       | User is presented with messages history, at the bottom - form with send message feature. At beginning Each button is presented with Participants name and last 3 messages. When Drop down appears - last 3 messages are removed from button                                                                                                          | Passed |
+| Conversations Send Message    | In conversations User fills form, sends message                                                                                                                                                          | Message is sent, user is redirected to specific conversion page                                                                                                                                                                                                                                                                                     | Passed |
+| Create Post                   | User clicks Create Post                                                                                                                                                                                  | User is redirected to page for post creation                                                                                                                                                                                                                                                                                                         | Passed |
+| Post Type Selector            | User Selects Post type                                                                                                                                                                                   | After User Selects Post type, Submit Button becomes Active                                                                                                                                                                                                                                                                                           | Passed |
+| Post Photos                   | User adds Photos to Post                                                                                                                                                                                 | User can select multiple photos for Post                                                                                                                                                                                                                                                                                                             | Passed |
+| Post Location                 | User can select On map Location of Event (Lost or Found)                                                                                                                                                 | When User clicks on Map, Coordinates of event is passed through Javascript to app                                                                                                                                                                                                                                                                    | Passed |
+| Post Update                   | User Selects to update Post                                                                                                                                                                              | Only Owner of Post can Modify It. UseCan Update Post by entering Original Post, at the bottom of page clicking Update Post button. User is redirected to Update Post section                                                                                                                                                                        | Passed |
+| Post Update add Photos        | User selects more Photos to upload                                                                                                                                                                       | User can select More Photos to upload. Submitting. Photos are added to post and redirecting to original Post Details Page                                                                                                                                                                                                                           | Passed |
+| Post Update delete Photos     | User deletes Photos                                                                                                                                                                                      | After User clicks X in red circle at the top right corner of photo, photo is deleted and page is dynamically refreshed in background. Takes some time as Heroku, Cloudinary and Elephant Sql - are Free Tier, so not so fast app                                                                                                                     | Passed |
+| Post Update - change Location | User clicks on different location on map                                                                                                                                                                 | Coordinates are changes, and when submitted updated on database. User is redirected to Original Posst Page                                                                                                                                                                                                                                            | Passed |
+| Post Delete                   | User deletes Post                                                                                                                                                                                        | Only Owner of post can delete i. When user is in original Post details page, near update post button, there is DELETE BUTTON. Post Is deleted, user is redirected to Home Page                                                                                                                                                                       | Passed |
+| Post title change             | User changes Title                                                                                                                                                                                       | After user changes title, new SLUG is generated, user is redirected to Post details page                                                                                                                                                                                                                                                             | Passed |
+| Post Slug redirection         | User creates Post, Slug (url) will be generated. User shares link to friend. Later user changes post title and new slug (url) is generated based on title. Now friend tries to access post by an old URL | App Tries to identify post by slug, if post is not found, then app will try following:<br/>1.Identify Post Type from Slug. <br/>2. Retrieve Post Id from Slug.<br/>3. By given post type and ID, app retrieves original Slug (url).<br/>4. App redirects to original post with new slug. Friend can see post with new slug(url) and save link to it. | Passed |
+| User Profile                  | User clicks on Profile                                                                                                                                                                                   | User can see all personal details (if provided) and Persona Posts                                                                                                                                                                                                                                                                                    | Passed |
+| User Profile Update           | User changes Profile                                                                                                                                                                                     | User can change any profile details Field and save it                                                                                                                                                                                                                                                                                                | Passed |
+| User Credentials change       | User changes login/password on Profile Update                                                                                                                                                            | User can change credentials, after saving user is redirected to Profile page                                                                                                                                                                                                                                                                         | Passed |
+
+### Automatic Testing
+No automatic testing was done at current stage
+
+## Mistakes and Bugs
+![w3c_mistake_1.png](staticfiles%2Fassets%2Fimages%2Fw3c_mistake_1.png)
+![w3c_mistake_2.png](staticfiles%2Fassets%2Fimages%2Fw3c_mistake_2.png)
+There is following mistakes in project, but they are needed, as Profile Page is needing Buttons with href, as it is dynamic page.
+On big screen it is 2 separate columns:
+1. Left side - User Profile
+2. User Posts - if sending message, content will be replaced to messages and afterward posts will be displayed again
+On smaller screens User is given 2 tabs:
+1. User Profile
+2. Posts
+
+Buttons are needed with href, as if visiting another user profile, current (authorised) user can send a message, which will be added to existing conversation, if such does not exists, new one will be created.
+When clicking on message button, Javascript will replace Posts in html with messages from conversation. when it is closed, all messages will be hidden and post will be displayed.
+At the same time, there is second javascript, that copies HTML code from one part to another, so there is no need to create page 2 times (write code 2 times. DRY)
+
+## Future Implementations
+1. Get decent hosting service for project, database and images hosting - increase app speed
+2. PostgresSQL - install PostGIS, Django - GeoDjango API. this would enable search by location and better UX
+3. Improve Site Layout (Sorry but my creativity with layouts is minimal... I am more maths and physics person)
+4. Add Password recovery. Even I created gmail specifically for project, somehow google is not very keen to allow such easy access for project to emails...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    

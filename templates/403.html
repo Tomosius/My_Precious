@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Access Denied{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Whoops! Access Denied <i class="fa-duotone fa-ban" style="--fa-primary-color: #ff2600; --fa-secondary-color: #ff2600;"></i></h1>
+    <p>
+        It seems you've stumbled upon a secret or restricted area. Unfortunately, it's more guarded than a cookie jar on a high shelf. 
+    </p>
+    <p>
+        But don't worry! Unlike that cookie jar, accessing this area is just a matter of logging in (or sweet-talking the admin, but we recommend the former).
+    </p>
+    <p>
+        If you think you should have access, maybe it's time to:
+    </p>
+    <ul>
+        <li>🔐 <a href="{% url 'login' %}">Log in</a> with the correct credentials (no, "admin" and "password" won't work).</li>
+        <li>👤 If you don't have an account, <a href="{% url 'signup' %}">sign up</a>! It's easier than finding a needle in a haystack (and way more rewarding).</li>
+    </ul>
+    <p>
+        Still no luck? Maybe it's a sign to take a break, grab a cookie (the edible kind), and come back later. Or you can <a href="{% url 'home' %}">return to the homepage</a> and start your adventure over.
+    </p>
+</div>
+{% endblock %}

@@ -14,7 +14,6 @@ from .models import LostPost, FoundPost, LostPhoto, FoundPhoto
 from .models import Post
 
 
-
 @login_required
 def create_post(request):
     """
@@ -118,7 +117,6 @@ def view_all_posts_list(request):
     """
     search_query = request.GET.get('search_query', '')
     google_api_key = os.environ.get('GOOGLE_MAPS_API_KEY')
-
 
     # Utilize polymorphism to fetch combined posts
     all_posts = Post.objects.all().instance_of(Post).order_by(
@@ -317,7 +315,9 @@ def update_post(request, slug, post_type):
                     'found_post': updated_post})
 
             # Redirect to the updated post's detail view
-            return redirect('post_detail_url_name', slug=updated_post.slug,
+            detail_url_name = 'posts:lost_post_details' if post_type == 'lost' else 'posts:found_post_details'
+
+            return redirect(detail_url_name, slug=updated_post.slug,
                             post_type=post_type)
         else:
             # Handle form errors

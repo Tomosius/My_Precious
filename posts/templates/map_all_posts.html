@@ -1,55 +1,50 @@
 <div class="container">
-    <div id="map" style="height: 400px; width: 100%;"></div>
+	<div id="map" style="height: 400px; width: 100%;"></div>
 </div>
 
 <script>
-function initMap() {
-    var map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 5,
-        center: {lat: 52.23635026009495, lng: 0.05784246226898956}
-    });
+    function initMap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 5,
+            center: {lat: 52.23635026009495, lng: 0.05784246226898956}
+        });
 
-    {% for post in posts %}
-    (function() {
-        var postType = "{{ post.post_type }}";
-        var markerIcon;
-        if (postType === "LostPost") {
-            markerIcon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
-        } else if (postType === "FoundPost") {
-            markerIcon = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png';
-        } else {
-            markerIcon = 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';
-        }
+        {% for post in posts %}
+            (function () {
+                var postType = "{{ post.post_type }}";
+                var markerIcon;
+                if (postType === "LostPost") {
+                    markerIcon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
+                } else if (postType === "FoundPost") {
+                    markerIcon = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png';
+                } else {
+                    markerIcon = 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';
+                }
 
-        var lat = {{ post.latitude|default_if_none:"null" }};
-        var lng = {{ post.longitude|default_if_none:"null" }};
-        if (lat != null && lng != null) {
-            var marker = new google.maps.Marker({
-                position: {lat: lat, lng: lng},
-                map: map,
-                title: "{{ post.title }}",
-                icon: markerIcon
-            });
+                var lat = {{ post.latitude|default_if_none:"null" }};
+                var lng = {{ post.longitude|default_if_none:"null" }};
+                if (lat != null && lng != null) {
+                    var marker = new google.maps.Marker({
+                        position: {lat: lat, lng: lng},
+                        map: map,
+                        title: "{{ post.title }}",
+                        icon: markerIcon
+                    });
 
-            var infoWindowContent = `<a href="${"{{ post.get_absolute_url }}"}">${"{{ post.title|escapejs }}"}</a>`;
-            var infoWindow = new google.maps.InfoWindow({
-                content: infoWindowContent
-            });
+                    var infoWindowContent = `<a href="${"{{ post.get_absolute_url }}"}">${"{{ post.title|escapejs }}"}</a>`;
+                    var infoWindow = new google.maps.InfoWindow({
+                        content: infoWindowContent
+                    });
 
-            marker.addListener('click', function() {
-                infoWindow.open(map, marker);
-            });
-        }
-    })(); // This IIFE creates a new lexical scope for each iteration of the loop
-    {% endfor %}
-}
+                    marker.addListener('click', function () {
+                        infoWindow.open(map, marker);
+                    });
+                }
+            })(); // This IIFE creates a new lexical scope for each iteration of the loop
+        {% endfor %}
+    }
 </script>
 
 
-
-
-
-<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initMap"></script>
-
-
-<script async  src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initMap"></script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initMap"></script>

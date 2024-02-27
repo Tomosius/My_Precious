@@ -44,11 +44,14 @@
 				{% endfor %}
 				{% if not conversations or user.username == 'beta' %}
 					<div class="mt-4">
-						<form method="post" action="{% url 'conversations:send_message' recipient_username=user.username %}" class="p-2">
+						<form method="post"
+						      action="{% url 'conversations:send_message' recipient_username=user.username %}"
+						      class="p-2">
 							{% csrf_token %}
 							<div class="mb-3">
 								<label>
-									<textarea name="text" placeholder="Write your message here..." class="form-control"></textarea>
+									<textarea name="text" placeholder="Write your message here..."
+									          class="form-control"></textarea>
 								</label>
 							</div>
 							<button type="submit" class="btn btn-success">Send New Message</button>
