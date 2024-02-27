@@ -2,7 +2,11 @@
 	<a href="{{ post.get_absolute_url }}" style="text-decoration: none; color: inherit;">
 	<div class="row">
 		<div class="col-3 col-md-2 col-xl-1">
-			<img src="{{ post.user.profile.user_photo.url }}" alt="{{ post.user.username }}'s profile image" class="col-4 rounded-2"/>
+			{% if post.user.profile_photo %}
+			<img src="{{ post.user.profile.user_photo.url }}" alt="{{ post.user.username }}'s profile image" class="col-4 rounded-2">
+			{% else %}
+			<i class="fa-solid fa-user"></i>
+			{% endif %}
 		</div>
 		<div class="col-9 col-md-10 col-xl-11">
 			<h5>{{ post.user.username }} : </h5> <h6>{{ post.title|truncatechars:200 }}</h6><br>

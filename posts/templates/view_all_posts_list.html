@@ -38,7 +38,7 @@
 				{% include "posts_loop_list.html" %}
 			{% endif %}
 		</div>
-		<div class="tab-pane fade {% if active_tab == 'map' %}show active{% endif %}" id="all-posts">
+		<div class="tab-pane fade {% if active_tab == 'map' %}show active{% endif %}" id="map-posts">
 			<!-- Display found posts here if 'found' is the active tab -->
 			{% if active_tab == 'map' %}
 				{% include "map_all_posts.html" %}
@@ -75,10 +75,10 @@
 
 			<!-- Number selector wrapped in a column, adjusted to take the appropriate space -->
 			<div class="col-6 col-sm-5 col-md-3">
-				<form action="" method="get" class="text-center">
-					<a for="items_per_page">Posts per page:</a>
-					<label>
-						<select name="items_per_page" onchange="this.form.submit()">
+				<form method="get" class="text-center">
+					<label for="items_per_page_select">Posts per page:
+
+						<select id="items_per_page_select" name="items_per_page" onchange="this.form.submit()">
 							{% for option in items_per_page_options %}
 								<option value="{{ option }}" {% if request.GET.items_per_page|stringformat:"s" == option|stringformat:"s" or not request.GET.items_per_page and option == 10 %}selected{% endif %}>
 									{{ option }}

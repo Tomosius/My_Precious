@@ -26,7 +26,7 @@
 				<a href="{% url 'users:user_profile' username=user.username %}">
 					{% if user.profile.user_photo %}
 						<img src="{{ user.profile.user_photo.url }}" alt="{{ user.username }}'s profile image"
-						     class="col-4 rounded-2"/>
+						     class="col-4 rounded-2">
 					{% else %}
 						<i class="fas fa-user-circle fa-5x"></i>
 					{% endif %}

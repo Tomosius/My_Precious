@@ -12,7 +12,7 @@
 			    <div class="row">
 			        <!-- Column for Photo and Upload on Medium Screens and Larger -->
 			        <div class="col-8 col-sm-6 px-3 mx-auto">
-			            <legend class="d-block d-sm-none">Profile Information</legend>
+			            <h2 class="d-block d-sm-none">Profile Information</h2>
 			            <!-- Profile Photo Section -->
 			            {% if profile_form.instance.user_photo %}
 			                <!-- Responsive image that takes up the maximum height of the parent -->
@@ -57,7 +57,7 @@
 	<!-- Add and Delete Language and Social Media Links -->
 		<div class="col-8 col-sm-6 px-3 mx-auto">
 			<!-- Soccial links -->
-			<legend>Social Media Links:</legend>
+			<h3>Social Media Links:</h3>
 			{% for link in current_social_media_links %}
 			    <div class="social-network-item" id="social-network-item-{{ link.id }}">
 			        <!-- Corrected class name to match the jQuery selector and corrected data attribute name -->
@@ -84,7 +84,7 @@
 
 		<div class="col-8 col-sm-6 px-3 mx-auto">
 		<!-- Languages -->
-			<legend>Languages:</legend>
+			<h3>Languages:</h3>
 				{% for language in current_languages %}
 					<div class="language-item" id="language-item-{{ language.id }}">
 					    <!-- Updated to include an onclick event and data attribute -->
