@@ -131,6 +131,7 @@ def add_language(request):
                 'language_name': language.language
             })
         else:
+            print(form.errors)
             errors = form.errors.as_json()
             return JsonResponse({'success': False, 'errors': errors},
                                 status=400)

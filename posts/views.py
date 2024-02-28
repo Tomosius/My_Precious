@@ -96,15 +96,21 @@ def generic_search(model, search_query):
     return results
 
 
-ITEMS_PER_PAGE_OPTIONS = [5, 10, 20, 50]
+ITEMS_PER_PAGE_OPTIONS = [3, 5, 10, 20, 50]  # to see how pagination works,
+
+
+# just add 2 items per page.
 
 
 def paginate_queryset(request, queryset, items_per_page=10):
     """
     Paginate a queryset and return the page object for the current request.
     """
+
     paginator = Paginator(queryset, items_per_page)
+    print("items per page", items_per_page)
     page_number = request.GET.get('page')
+    print("page number", page_number)
     page_obj = paginator.get_page(page_number)
     return page_obj
 
@@ -117,6 +123,8 @@ def view_all_posts_list(request):
     """
     search_query = request.GET.get('search_query', '')
     google_api_key = os.environ.get('GOOGLE_MAPS_API_KEY')
+    items_per_page = request.GET.get('items_per_page',
+                                     10)  # Get items_per_page from request
 
     # Utilize polymorphism to fetch combined posts
     all_posts = Post.objects.all().instance_of(Post).order_by(
@@ -128,7 +136,7 @@ def view_all_posts_list(request):
                 description__icontains=search_query)
         )
     # Paginate the combined queryset
-    paginated_posts = paginate_queryset(request, all_posts, items_per_page=10)
+    paginated_posts = paginate_queryset(request, all_posts, items_per_page)
     search_url = reverse('posts:view_all_posts')
 
     context = {
@@ -152,7 +160,10 @@ def view_lost_posts(request):
     search_query = request.GET.get('search_query', '')
     lost_posts = generic_search(LostPost, search_query)
     # Correct the argument name to items_per_page
-    paginated_posts = paginate_queryset(request, lost_posts, items_per_page=10)
+    items_per_page = request.GET.get('items_per_page',
+                                     10)  # Get items_per_page from request
+
+    paginated_posts = paginate_queryset(request, lost_posts, items_per_page)
     search_url = reverse('posts:view_lost_posts')
 
     context = {
@@ -173,7 +184,10 @@ def view_found_posts(request):
     search_query = request.GET.get('search_query', '')
     found_posts = generic_search(FoundPost, search_query)
     # Correct the argument name to items_per_page
-    paginated_posts = paginate_queryset(request, found_posts, items_per_page=10)
+    items_per_page = request.GET.get('items_per_page',
+                                     10)  # Get items_per_page from request
+
+    paginated_posts = paginate_queryset(request, found_posts, items_per_page)
     search_url = reverse('posts:view_found_posts')
 
     context = {
@@ -315,7 +329,9 @@ def update_post(request, slug, post_type):
                     'found_post': updated_post})
 
             # Redirect to the updated post's detail view
-            detail_url_name = 'posts:lost_post_details' if post_type == 'lost' else 'posts:found_post_details'
+            detail_url_name = 'posts:lost_post_details' if (post_type ==
+                                                            'lost') else \
+                'posts:found_post_details'
 
             return redirect(detail_url_name, slug=updated_post.slug,
                             post_type=post_type)

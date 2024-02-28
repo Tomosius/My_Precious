@@ -1,268 +1,274 @@
 {% extends 'base_template.html' %}
 {% load crispy_forms_tags %}
 {% block content %}
-<div class="container">
+	<div class="container">
 
-    <!-- Profile Update Form -->
-	<form method="post" enctype="multipart/form-data" class="form">
-		{% csrf_token %}
-        <fieldset class="mt-1 mt-sm-2">
-        <!-- Main Profile Information -->
-            <div class="container">
-			    <div class="row">
-			        <!-- Column for Photo and Upload on Medium Screens and Larger -->
-			        <div class="col-8 col-sm-6 px-3 mx-auto">
-			            <h2 class="d-block d-sm-none">Profile Information</h2>
-			            <!-- Profile Photo Section -->
-			            {% if profile_form.instance.user_photo %}
-			                <!-- Responsive image that takes up the maximum height of the parent -->
-			                <img src="{{ profile_form.instance.user_photo.url }}" alt="Profile photo" class="rounded-3 img-fluid" style="max-height: 40%; width: auto;">
-			            {% else %}
-			                <!-- Fallback avatar icon -->
-			                <i class="fas fa-user-circle fa-5x"></i>
-			            {% endif %}
-				        {{ profile_form.user_photo|as_crispy_field }}
-			        </div>
-			        <!-- Column for Form Fields on Medium Screens and Larger -->
-			        <div class="col-8 col-sm-6 px-3 mx-auto">
-			            <a class="d-none d-sm-block">Profile Information</a>
-				        {{ profile_form.first_name|as_crispy_field }}
-				        {{ profile_form.last_name|as_crispy_field }}
-			        </div>
-			    </div>
+		<!-- Profile Update Form -->
+		<form method="post" enctype="multipart/form-data" class="form">
+			{% csrf_token %}
+			<fieldset class="mt-1 mt-sm-2">
+				<!-- Main Profile Information -->
+				<div class="container">
+					<div class="row">
+						<!-- Column for Photo and Upload on Medium Screens and Larger -->
+						<div class="col-8 col-sm-6 px-3 mx-auto">
+							<h2 class="d-block d-sm-none">Profile Information</h2>
+							<!-- Profile Photo Section -->
+							{% if profile_form.instance.user_photo %}
+								<!-- Responsive image that takes up the maximum height of the parent -->
+								<img src="{{ profile_form.instance.user_photo.url }}" alt="Profile photo"
+								     class="rounded-3 img-fluid" style="max-height: 40%; width: auto;">
+							{% else %}
+								<!-- Fallback avatar icon -->
+								<i class="fas fa-user-circle fa-5x"></i>
+							{% endif %}
+							{{ profile_form.user_photo|as_crispy_field }}
+						</div>
+						<!-- Column for Form Fields on Medium Screens and Larger -->
+						<div class="col-8 col-sm-6 px-3 mx-auto">
+							<a class="d-none d-sm-block">Profile Information</a>
+							{{ profile_form.first_name|as_crispy_field }}
+							{{ profile_form.last_name|as_crispy_field }}
+						</div>
+					</div>
+				</div>
+				<!-- End Main Profile Information -->
+
+				<!-- Additional Information -->
+				<div class="container">
+					<div class="row">
+						<div class="col-8 col-sm-6 px-3 mx-auto">
+							{{ profile_form.address|as_crispy_field }}
+							{{ profile_form.mobile_number|as_crispy_field }}
+							{{ profile_form.website|as_crispy_field }}
+							{{ profile_form.date_of_birth|as_crispy_field }}
+						</div>
+						<div class="col-8 col-sm-6 px-3 mx-auto">
+							{{ profile_form.biography|as_crispy_field }}
+						</div>
+					</div>
+				</div>
+				<div class="col-8 col-sm-12 mx-auto">
+					<button type="submit" name="profile_form" class="btn btn-primary">Update Profile</button>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+
+	<div class="container">
+		<div class="row">
+			<!-- Add and Delete Language and Social Media Links -->
+			<div class="col-8 col-sm-6 px-3 mx-auto">
+				<!-- Social links -->
+				<h3>Social Media Links:</h3>
+				{% for link in current_social_media_links %}
+					<div class="social-network-item" id="social-network-item-{{ link.id }}">
+						<!-- Corrected class name to match the jQuery selector and corrected data attribute name -->
+						<button class="delete-social-network-btn btn btn-danger btn-sm"
+						        data-social-network-id="{{ link.id }}">
+							<i class="fas fa-times"></i>
+						</button>
+						<a href="{{ link.url }}" target="_blank">{{ link.name }}</a>
+					</div>
+				{% endfor %}
+
+
+				<form id="add-social-media-link-form" method="post" enctype="multipart/form-data" class="form">
+					{% csrf_token %}
+					<fieldset>
+
+						<legend>Add Social Media Link</legend>
+						{{ social_media_link_form.name | as_crispy_field }}
+						{{ social_media_link_form.url | as_crispy_field }}
+						<button type="button" id="submit-social-media-link" class="btn btn-primary">Add Social Media
+							Link
+						</button>
+
+					</fieldset>
+				</form>
 			</div>
-        <!-- End Main Profile Information -->
 
-        <!-- Additional Information -->
-        <div class="container">
-	        <div class="row">
-		        <div class="col-8 col-sm-6 px-3 mx-auto">
-			        {{ profile_form.address|as_crispy_field }}
-			        {{ profile_form.mobile_number|as_crispy_field }}
-			        {{ profile_form.website|as_crispy_field }}
-			        {{ profile_form.date_of_birth|as_crispy_field }}
-		        </div>
-		        <div class="col-8 col-sm-6 px-3 mx-auto">
-			        {{ profile_form.biography|as_crispy_field }}
-		        </div>
-	        </div>
-        </div>
-	        <div class="col-8 col-sm-12 mx-auto"><button type="submit" name="profile_form" class="btn btn-primary">Update Profile</button></div>
-        </fieldset>
-	</form>
-</div>
-
-<div class="container">
-	<div class="row">
-	<!-- Add and Delete Language and Social Media Links -->
-		<div class="col-8 col-sm-6 px-3 mx-auto">
-			<!-- Social links -->
-			<h3>Social Media Links:</h3>
-			{% for link in current_social_media_links %}
-			    <div class="social-network-item" id="social-network-item-{{ link.id }}">
-			        <!-- Corrected class name to match the jQuery selector and corrected data attribute name -->
-			        <button class="delete-social-network-btn btn btn-danger btn-sm" data-social-network-id="{{ link.id }}">
-			            <i class="fas fa-times"></i>
-			        </button>
-				    <a href="{{ link.url }}" target="_blank">{{ link.name }}</a>
-			    </div>
-			{% endfor %}
-
-
-			<form id="add-social-media-link-form" method="post" enctype="multipart/form-data" class="form">
-			    {% csrf_token %}
-			    <fieldset>
-
-				    <legend>Add Social Media Link</legend>
-				    {{ social_media_link_form.name | as_crispy_field }}
-				    {{ social_media_link_form.url | as_crispy_field }}
-				    <button type="button" id="submit-social-media-link" class="btn btn-primary">Add Social Media Link</button>
-
-			    </fieldset>
-			</form>
-		</div>
-
-		<div class="col-8 col-sm-6 px-3 mx-auto">
-		<!-- Languages -->
-			<h3>Languages:</h3>
+			<div class="col-8 col-sm-6 px-3 mx-auto">
+				<!-- Languages -->
+				<h3>Languages:</h3>
 				{% for language in current_languages %}
 					<div class="language-item" id="language-item-{{ language.id }}">
-					    <!-- Updated to include an onclick event and data attribute -->
-					    <button class="delete-language-btn btn btn-danger btn-sm" data-language-id="{{ language.id }}">
-					        <i class="fas fa-times"></i>
-					    </button>
+						<!-- Updated to include an onclick event and data attribute -->
+						<button class="delete-language-btn btn btn-danger btn-sm" data-language-id="{{ language.id }}">
+							<i class="fas fa-times"></i>
+						</button>
 						<span>{{ language.language }}</span>
 					</div>
 				{% endfor %}
 
-			<!-- Add Language Form -->
-		    <form id="add-language-form" method="post" enctype="multipart/form-data" class="form">
-			    {% csrf_token %}
-			    <fieldset>
-			        {{ language_form.language | as_crispy_field }}
-			        <button type="button" id="submit-language" class="btn btn-primary">Add Language</button>
-			    </fieldset>
-			</form>
+				<!-- Add Language Form -->
+				<form id="add-language-form" method="post" enctype="multipart/form-data" class="form">
+					{% csrf_token %}
+					<fieldset>
+						{{ language_form.language | as_crispy_field }}
+						<button type="button" id="submit-language" class="btn btn-primary">Add Language</button>
+					</fieldset>
+				</form>
+			</div>
 		</div>
 	</div>
-</div>
 
-<div>
-	<!-- Credentials and Password Change -->
-    <div class="row">
-        <div class="col-8 col-sm-6 px-3 mx-auto">
-            <!-- Credentials Update Form -->
-            <form method="post">
-                {% csrf_token %}
-                <fieldset>
-                    <legend>Credentials</legend>
-                    {{ user_form.username | as_crispy_field }}
-	                {{ user_form.email | as_crispy_field }}
-                    <button type="submit" name="user_form" class="btn btn-primary">Update Credentials</button>
-                </fieldset>
-            </form>
-        </div>
-        <div class="col-8 col-sm-6 px-3 mx-auto">
-            <!-- Password Change Form -->
-            <form method="post">
-                {% csrf_token %}
-                <fieldset>
-                    <legend>Change Password</legend>
-                    {{ password_form.old_password | as_crispy_field }}
-	                {{ password_form.new_password1 | as_crispy_field }}
-	                {{ password_form.new_password2 | as_crispy_field }}
-	                <button type="submit" name="password_form" class="btn btn-primary">Change Password</button>
-                </fieldset>
-            </form>
-        </div>
-    </div>
-</div>
+	<div>
+		<!-- Credentials and Password Change -->
+		<div class="row">
+			<div class="col-8 col-sm-6 px-3 mx-auto">
+				<!-- Credentials Update Form -->
+				<form method="post">
+					{% csrf_token %}
+					<fieldset>
+						<legend>Credentials</legend>
+						{{ user_form.username | as_crispy_field }}
+						{{ user_form.email | as_crispy_field }}
+						<button type="submit" name="user_form" class="btn btn-primary">Update Credentials</button>
+					</fieldset>
+				</form>
+			</div>
+			<div class="col-8 col-sm-6 px-3 mx-auto">
+				<!-- Password Change Form -->
+				<form method="post">
+					{% csrf_token %}
+					<fieldset>
+						<legend>Change Password</legend>
+						{{ password_form.old_password | as_crispy_field }}
+						{{ password_form.new_password1 | as_crispy_field }}
+						{{ password_form.new_password2 | as_crispy_field }}
+						<button type="submit" name="password_form" class="btn btn-primary">Change Password</button>
+					</fieldset>
+				</form>
+			</div>
+		</div>
+	</div>
 
-<script>
-$(document).ready(function() {
-    $('.delete-language-btn').click(function() {
-        const languageId = $(this).data('language-id');
-        const $languageItem = $('#language-item-' + languageId);
+	<script>
+        $(document).ready(function () {
+            $('.delete-language-btn').click(function () {
+                const languageId = $(this).data('language-id');
+                const $languageItem = $('#language-item-' + languageId);
 
-        $.ajax({
-            url: `{% url 'users:delete_language' 0 %}`.replace('0', languageId),
-            type: 'POST',
-            data: {
-                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
-                'language_id': languageId
-            },
-            success: function(response) {
-                // If the server responds successfully, remove the language item from the page
-                $languageItem.remove();
-                // Optionally, display a success message
-	            alert("Language deleted successfully.");
-            },
-            error: function(xhr, errmsg, err) {
-                // Handle error
-                console.log(xhr.status + ": " + xhr.responseText);
-            }
+                $.ajax({
+                    url: `{% url 'users:delete_language' 0 %}`.replace('0', languageId),
+                    type: 'POST',
+                    data: {
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                        'language_id': languageId
+                    },
+                    success: function (response) {
+                        // If the server responds successfully, remove the language item from the page
+                        $languageItem.remove();
+                        // Optionally, display a success message
+                        alert("Language deleted successfully.");
+                    },
+                    error: function (xhr, errmsg, err) {
+                        // Handle error
+                        console.log(xhr.status + ": " + xhr.responseText);
+                    }
+                });
+            });
+
+            $('.delete-social-network-btn').click(function () {
+                const socialNetworkId = $(this).data('social-network-id');
+                const $socialNetworkItem = $('#social-network-item-' + socialNetworkId);
+
+                $.ajax({
+                    url: `{% url 'users:delete_social_media_link' 0 %}`.replace('0', socialNetworkId),
+                    type: 'POST',
+                    data: {
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                        'social_network_id': socialNetworkId
+                    },
+                    success: function (response) {
+                        // If the server responds successfully, remove the social network item from the page
+                        $socialNetworkItem.remove();
+                        // Optionally, display a success message
+                        alert("Social Network deleted successfully.");
+                    },
+                    error: function (xhr, errmsg, err) {
+                        // Handle error
+                        console.log(xhr.status + ": " + xhr.responseText); // For debugging
+                        alert("An error occurred. Please try again.");
+                    }
+                });
+            });
+
+            $('#submit-social-media-link').click(function (e) {
+                e.preventDefault();
+                let formData = new FormData($('#add-social-media-link-form')[0]);
+
+                $.ajax({
+                    url: '{% url "users:add_social_media_link" %}', // Ensure this URL matches your Django URL configuration
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        // Assuming 'response' includes 'link_id', 'link_name', and 'link_url'
+                        var newLinkHtml = '<div class="social-network-item" id="social-network-item-' + response.link_id + '">' +
+                            '<button class="delete-social-network-btn btn btn-danger btn-sm" data-social-network-id="' + response.link_id + '">' +
+                            '<i class="fas fa-times"></i></button>' +
+                            '<a href="{{ link.url }}" target="_blank">' + response.link_name + '</a>' +
+                            '</div>';
+                        // Insert the new social network item at the end of the existing list
+                        if ($('.social-network-item').length > 0) {
+                            $('.social-network-item').last().after(newLinkHtml);
+                        } else {
+                            // If there are no existing items, insert directly before the form
+                            $('#add-social-media-link-form').before(newLinkHtml);
+                        }
+
+                        // Clear the form fields
+                        $('#add-social-media-link-form')[0].reset();
+                        alert('Social media link added successfully.');
+                    },
+                    error: function (xhr, errmsg, err) {
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            });
+
+
+            $('#submit-language').click(function (e) {
+                e.preventDefault();
+                let formData = new FormData($('#add-language-form')[0]);
+
+                $.ajax({
+                    url: '{% url 'users:add_language' %}',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        // Assuming 'response' is the JSON object that includes 'language_id' and 'language_name'
+                        var newLanguageHtml = '<div class="language-item" id="language-item-' + response.language_id + '">' +
+                            '<button class="delete-language-btn btn btn-danger btn-sm" data-language-id="' + response.language_id + '">' +
+                            '<i class="fas fa-times"></i></button>' +
+                            '<span>' + response.language_name + '</span></div>';
+
+                        // Insert the new language item as previously described
+                        if ($('.language-item').length > 0) {
+                            $('.language-item').last().after(newLanguageHtml);
+                        } else {
+                            $('.languages-container').prepend(newLanguageHtml); // Adjust selector as needed
+                        }
+
+                        // Clear the form
+                        $('#add-language-form')[0].reset();
+                        // Success notification
+                        alert('Language added successfully.');
+                    },
+
+
+                    error: function (xhr, errmsg, err) {
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            });
+
         });
-    });
-
-    $('.delete-social-network-btn').click(function() {
-        const socialNetworkId = $(this).data('social-network-id');
-        const $socialNetworkItem = $('#social-network-item-' + socialNetworkId);
-
-        $.ajax({
-            url: `{% url 'users:delete_social_media_link' 0 %}`.replace('0', socialNetworkId),
-            type: 'POST',
-            data: {
-                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
-                'social_network_id': socialNetworkId
-            },
-            success: function(response) {
-                // If the server responds successfully, remove the social network item from the page
-                $socialNetworkItem.remove();
-                // Optionally, display a success message
-                alert("Social Network deleted successfully.");
-            },
-            error: function(xhr, errmsg, err) {
-                // Handle error
-                console.log(xhr.status + ": " + xhr.responseText); // For debugging
-                alert("An error occurred. Please try again.");
-            }
-        });
-    });
-
-    $('#submit-social-media-link').click(function(e) {
-	    e.preventDefault();
-	    let formData = new FormData($('#add-social-media-link-form')[0]);
-
-	    $.ajax({
-	        url: '{% url "users:add_social_media_link" %}', // Ensure this URL matches your Django URL configuration
-	        type: 'POST',
-	        data: formData,
-	        processData: false,
-	        contentType: false,
-	        success: function(response) {
-	            // Assuming 'response' includes 'link_id', 'link_name', and 'link_url'
-	            var newLinkHtml = '<div class="social-network-item" id="social-network-item-' + response.link_id + '">' +
-	                              '<button class="delete-social-network-btn btn btn-danger btn-sm" data-social-network-id="' + response.link_id + '">' +
-	                              '<i class="fas fa-times"></i></button>' +
-	                              '<a href="{{ link.url }}" target="_blank">' + response.link_name + '</a>' +
-	                              '</div>';
-	            // Insert the new social network item at the end of the existing list
-	            if ($('.social-network-item').length > 0) {
-	                $('.social-network-item').last().after(newLinkHtml);
-	            } else {
-	                // If there are no existing items, insert directly before the form
-	                $('#add-social-media-link-form').before(newLinkHtml);
-	            }
-
-	            // Clear the form fields
-	            $('#add-social-media-link-form')[0].reset();
-	            alert('Social media link added successfully.');
-	        },
-	        error: function(xhr, errmsg, err) {
-	            alert('An error occurred. Please try again.');
-	        }
-	    });
-	});
-
-
-
-    $('#submit-language').click(function(e) {
-        e.preventDefault();
-        let formData = new FormData($('#add-language-form')[0]);
-
-        $.ajax({
-            url: '{% url 'users:add_language' %}',
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-			    // Assuming 'response' is the JSON object that includes 'language_id' and 'language_name'
-			    var newLanguageHtml = '<div class="language-item" id="language-item-' + response.language_id + '">' +
-			                          '<button class="delete-language-btn btn btn-danger btn-sm" data-language-id="' + response.language_id + '">' +
-			                          '<i class="fas fa-times"></i></button>' +
-			                          '<span>' + response.language_name + '</span></div>';
-
-			    // Insert the new language item as previously described
-			    if ($('.language-item').length > 0) {
-			        $('.language-item').last().after(newLanguageHtml);
-			    } else {
-			        $('.languages-container').prepend(newLanguageHtml); // Adjust selector as needed
-			    }
-
-			    // Clear the form
-			    $('#add-language-form')[0].reset();
-			},
-
-
-
-            error: function(xhr, errmsg, err) {
-                alert('An error occurred. Please try again.');
-            }
-        });
-    });
-
-});
-</script>
+	</script>
 
 {% endblock %}
