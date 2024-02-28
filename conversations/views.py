@@ -107,7 +107,8 @@ class ConversationDetailView(LoginRequiredMixin, DetailView, FormView):
         context['messages'] = self.object.messages.order_by('created_at')
         if 'form' not in context:
             context[
-                'form'] = self.get_form()  # Adds the form to the context if not already present
+                'form'] = self.get_form()  # Adds the form to the context if
+            # not already present
         return context
 
     def post(self, request, *args, **kwargs):
