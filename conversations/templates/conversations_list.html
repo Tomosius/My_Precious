@@ -6,40 +6,40 @@
 			<div class="dropdown mx-auto col-12 col-sm-10 col-md-8 col-xl-6">
 				<!-- Main button for showing conversation participant -->
 				<button id="drop-down-3-messages-button-{{ conversation.id }}"
-				        class="w-100 text-break text-wrap btn border border-black dropdown-toggle" type="button"
-				        data-bs-toggle="dropdown" data-target="#message-preview-{{ conversation.id }}"
-				        aria-expanded="false" aria-label="Drop Down button
-				        with Username and 3 messages preview">
-					Conversation with:
-					{% for participant in conversation.participants.all %}
-						{% if participant != request.user %}{{ participant.username }}{% endif %}
-					{% endfor %}
-					<!-- Div for message preview, placed outside the button but within the dropdown -->
-					<div id="message-preview-{{ conversation.id }}" class="message-preview">
-						{% for message in conversation.last_three_messages %}
+                        class="mw-100 w-100 text-break text-wrap btn border border-black dropdown-toggle" type="button"
+                        data-bs-toggle="dropdown" data-target="#message-preview-{{ conversation.id }}"
+                        aria-expanded="false" aria-label="Drop Down button with Username and 3 messages preview">
+                    Conversation with:
+                    {% for participant in conversation.participants.all %}
+                        {% if participant != request.user %}{{ participant.username }}{% endif %}
+                    {% endfor %}<br>
+                    <span id="message-preview-{{ conversation.id }}" class="message-preview">
+                        {% for message in conversation.last_three_messages %}
+	                        {% if message.sender == request.user %}
+                            <span class="sent message-container">
+	                            <span class="message-time">
+                                    {% if message.sender == request.user %}Sent{% else %}Received{% endif %} on {{ message.created_at|date:"Y-m-d H:i" }}
+                                </span>
+                                <span class="message-text">{{ message.text }}</span>
 
-							{% if message.sender == request.user %}
-								<div class="text-end">
-									<p class="mb-0">{{ message.text }}</p>
-									<p class="mt-0 d-inline-block bg-success-subtle rounded w-auto">Sent
-										on " {{ message.created_at|date:"Y-m-d H:i" }}</p>
-								</div>
-							{% else %}
-								<div class="text-start">
-									<p class="mb-0">{{ message.text }}</p>
-									<p class="mt-0 d-inline-block bg-dark-subtle rounded w-auto">
-										<strong>{{ message.sender }} </strong>
-										on : {{ message.created_at|date:"Y-m-d H:i" }}
-									</p>
-								</div>
-							{% endif %}
-						{% endfor %}
-					</div>
-				</button>
+                            </span><br>
+	                        {% else %}
+	                        <span class="received message-container">
+		                        <span class="message-text">{{ message.text }}</span>
+                                <span class="message-time">
+                                    {% if message.sender == request.user %}Sent{% else %}Received{% endif %} on {{ message.created_at|date:"Y-m-d H:i" }}
+                                </span>
+
+
+                            </span><br>
+	                        {% endif %}
+                        {% endfor %}
+                    </span>
+                </button>
 
 				<!-- Dropdown to display all messages -->
-				<ul class="dropdown-menu mx-auto col-12 col-sm-10 col-md-8 col-xl-6">
-					<li class="w-100 overflow-y-scroll inline d-inline-block" style="max-height: 70vh;">
+				<ul class="dropdown-menu mx-auto mw-100 w-100">
+					<li class="mw-100 w-100 mx-auto overflow-y-scroll inline d-inline-block" style="max-height: 70vh;">
 						{% for message in conversation.messages.all %}
 
 							{% if message.sender == request.user %}
@@ -66,7 +66,7 @@
 								<div class="mb-3">
 									<label>
 										<textarea name="text" placeholder="Write your message here..."
-										          class="form-control"></textarea>
+										          class="form-control w-100 "></textarea>
 									</label>
 								</div>
 								<button type="submit" class="btn btn-primary"

@@ -1,19 +1,6 @@
 {% extends 'base_template.html' %}  <!-- Adjust this to your base template -->
 
 {% block content %}
-	<style>
-        .modal-body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 80vh; /* Adjust based on your needs */
-        }
-
-        .modal-img {
-            max-height: 75vh; /* Adjust based on your preference */
-            max-width: 100%; /* Ensures image does not overflow the modal */
-        }
-	</style>
 
 
 	<div class="container mt-4">
@@ -65,7 +52,7 @@
 	<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered modal-xl">
 			<div class="modal-content">
-				<div class="modal-body p-0">
+				<div class="modal-body-post-details p-0">
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					<!-- Image will be injected here -->
 				</div>
@@ -134,7 +121,7 @@
 
         function updateModalImage() {
             const imgElement = '<img src="' + photos[currentPhotoIndex] + '" class="img-fluid modal-img" alt="Dynamic Image">';
-            document.querySelector('#imageModal .modal-body').innerHTML = imgElement;
+            document.querySelector('#imageModal .modal-body-post-details').innerHTML = imgElement;
         }
 	</script>
 

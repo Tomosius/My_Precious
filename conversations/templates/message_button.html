@@ -1,71 +1,74 @@
 <div>
-	<button id="message-button-big-screen" type=button class=" d-none d-sm-block btn btn-primary">
-		<i class="fa-regular fa-envelope"></i>
-	</button>
-	<button id="" type="button" class="btn btn-primary d-block d-sm-none"
-	        data-bs-toggle="modal" data-bs-target="#message-modal">
-		<i class="fa-regular fa-envelope"></i>
-	</button>
-
+    <button id="message-button-big-screen" type="button" class="btn btn-primary d-none d-sm-block">
+        <i class="fa-regular fa-envelope"></i>
+    </button>
+    <button id="message-button-small-screen" type="button" class="btn btn-primary d-block d-sm-none"
+            data-bs-toggle="modal" data-bs-target="#message-modal">
+        <i class="fa-regular fa-envelope"></i>
+    </button>
 </div>
 
-
-<div class="modal fade d-sm-none" id="message-modal" tabindex="-1" aria-labelledby="exampleModalLabel"
+<div class="modal fade d-sm-none" id="message-modal" tabindex="-1" aria-labelledby="message-modal-title"
      aria-hidden="true">
-	<!-- Modal content -->
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div id="content-to-load">
-				<button id="message-button-big-screen-restore" type="button" class="btn btn-dark d-none d-sm-block">
-					Close Chat
-				</button>
-				<!-- Messages display -->
-				{% for conversation in conversations %}
-					<div id="conversation-{{ conversation.id }}" class="mb-4">
-						<h3 class="bg-secondary text-white p-2">Conversation with {{ conversation.id }}</h3>
-						<div class="p-2">
-							{% for message in conversation.messages.all %}
-								<div class="mb-2">
-									<strong>{{ message.sender.username }}:</strong>
-									<span>{{ message.text }}</span>
-									<em class="text-muted" style="font-size: small;">{{ message.created_at }}</em>
-								</div>
-							{% endfor %}
-						</div>
-						<!-- Adjusted form to include conversationId dynamically and Bootstrap classes -->
-						<form method="post" class="p-2">
-							{% csrf_token %}
-							<div class="mb-3">
-								{{ messages_form.text }}
-							</div>
-							<button type="submit" class="btn btn-primary">Send</button>
-						</form>
-					</div>
-				{% endfor %}
-				{% if not conversations or user.username == 'beta' %}
-					<div class="mt-4">
-						<form method="post"
-						      action="{% url 'conversations:send_message' recipient_username=user.username %}"
-						      class="p-2">
-							{% csrf_token %}
-							<div class="mb-3">
-								<label>
-									<textarea name="text" placeholder="Write your message here..."
-									          class="form-control"></textarea>
-								</label>
-							</div>
-							<button type="submit" class="btn btn-success">Send New Message</button>
-						</form>
-					</div>
-				{% endif %}
-				<button id="message-button-big-screen-restore" type="button" class="btn btn-dark d-none">
-					Close Chat
-				</button>
-			</div>
-		</div>
-	</div>
+    <!-- Modal content -->
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="message-modal-title">Message Details</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="content-to-load">
+                <button id="message-button-big-screen-restore1" type="button" class="btn btn-dark d-none d-sm-block">
+                    Close Chat
+                </button>
+                <!-- Messages display -->
+                {% for conversation in conversations %}
+                    <div id="conversation-{{ conversation.id }}" class="mb-4">
+                        <h3 class="bg-secondary text-white p-2">Conversation with {{ conversation.id }}</h3>
+                        <div class="p-2">
+                            {% for message in conversation.messages.all %}
+                                <div class="mb-2">
+                                    <strong>{{ message.sender.username }}:</strong>
+                                    <span>{{ message.text }}</span>
+                                    <em class="text-muted" style="font-size: small;">{{ message.created_at }}</em>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <!-- Adjusted form to include conversationId dynamically and Bootstrap classes -->
+                        <form method="post" class="p-2">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                {{ messages_form.text }}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Send</button>
+                        </form>
+                    </div>
+                {% endfor %}
+                {% if not conversations or user.username == 'beta' %}
+                    <div class="mt-4">
+                        <form method="post"
+                              action="{% url 'conversations:send_message' recipient_username=user.username %}"
+                              class="p-2">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label>
+                                    <textarea name="text" placeholder="Write your message here..."
+                                              class="form-control"></textarea>
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-success">Send New Message</button>
+                        </form>
+                    </div>
+                {% endif %}
+                <button id="message-button-big-screen-restore2" type="button" class="btn btn-dark d-none">
+                    Close Chat
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
-
 
 <script>
     // Initialize a variable to store the original content
@@ -79,7 +82,7 @@
     });
 
     // Use event delegation for the restore button
-    $(document).on('click', '#message-button-big-screen-restore', function () {
+    $(document).on('click', '#message-button-big-screen-restore1, #message-button-big-screen-restore2', function () {
         // Check if original content is stored
         if (originalContent) {
             // Restore the original content from the variable

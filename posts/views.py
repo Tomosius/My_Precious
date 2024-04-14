@@ -96,7 +96,7 @@ def generic_search(model, search_query):
     return results
 
 
-ITEMS_PER_PAGE_OPTIONS = [3, 5, 10, 20, 50]  # to see how pagination works,
+ITEMS_PER_PAGE_OPTIONS = [5, 10, 20, 50]  # to see how pagination works,
 
 
 # just add 2 items per page.
