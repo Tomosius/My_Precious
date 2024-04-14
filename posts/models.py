@@ -63,6 +63,8 @@ class Post(PolymorphicModel):
         default='0',
         help_text="Select how much the actual event date could differ."
     )
+    resolved = models.BooleanField(default=False)
+
 
     def __str__(self):
         """Return the title of the post for display."""
@@ -193,3 +195,7 @@ class FoundPhoto(models.Model):
             destroy(self.image.public_id)  # Deletes the image from Cloudinary
         super().delete(*args,
                        **kwargs)  # Proceeds with the default deletion process
+
+
+
+

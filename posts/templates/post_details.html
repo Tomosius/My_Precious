@@ -10,14 +10,16 @@
 				<p>{{ post.description }}</p>
 			</div>
 			<div class="col-12 col-sm-6 col-md-8">
-				<a href="{% url 'users:user_profile' username=user.username %}">
-					{% if user.profile.user_photo %}
-						<img src="{{ user.profile.user_photo.url }}" alt="{{ user.username }}'s profile image"
+				<a href="{% url 'users:user_profile' username=post.user.username %}">
+					{% if post.user.profile.user_photo %}
+						<img src="{{ post.user.profile.user_photo.url }}" alt="{{ post.user.username }}'s profile image"
 						     class="col-4 rounded-2">
+
 					{% else %}
 						<i class="fas fa-user-circle fa-5x"></i>
+
 					{% endif %}
-					<p>{{ user.username }}</p>
+					<p>{{ post.user.username }}</p>
 				</a>
 			</div>
 
@@ -46,9 +48,18 @@
 		<p><strong>Location:</strong></p>
 		<div id="map" style="height: 400px; width: 100%;"></div>
 
-	</div>
+		<br>
+		{% if is_owner %}
 
-	<!-- Image Modal -->
+			<a href="{% url 'posts:update_post' slug=post.slug post_type=post_type %}" class="btn btn-primary">Update
+				Post</a>
+			<a href="{% url 'posts:delete_post' slug=post.slug %}" class="btn btn-danger"
+			   onclick="return confirm('Are you sure you want to delete this post?');">Delete Post</a>
+
+
+		{% endif %}
+	</div>
+<!-- Image Modal -->
 	<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered modal-xl">
 			<div class="modal-content">
@@ -59,24 +70,16 @@
 				<div class="modal-footer justify-content-between" style="position: absolute; width: 100%;">
 					<button aria-label="Previous page" type="button" class="btn
 					btn-outline-secondary"
-					         onclick="changePhoto(-1)">← Previous
+					        onclick="changePhoto(-1)">← Previous
 					</button>
 					<button aria-label="next page" type="button" class="btn
 					btn-outline-secondary"
-					         onclick="changePhoto(1)">Next →</button>
+					        onclick="changePhoto(1)">Next →
+					</button>
 				</div>
 			</div>
 		</div>
 	</div>
-	{% if is_owner %}
-		<a href="{% url 'posts:update_post' slug=post.slug post_type=post_type %}" class="btn btn-primary">Update
-			Post</a>
-		<a href="{% url 'posts:delete_post' slug=post.slug %}" class="btn btn-danger"
-		   onclick="return confirm('Are you sure you want to delete this post?');">Delete Post</a>
-
-
-	{% endif %}
-
 
 
 

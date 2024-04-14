@@ -9,7 +9,7 @@ from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 
-from .forms import LostPostForm, FoundPostForm, FileFieldForm
+from .forms import LostPostForm, FoundPostForm, FileFieldForm, ResolvedForm
 from .models import LostPost, FoundPost, LostPhoto, FoundPhoto
 from .models import Post
 
@@ -313,41 +313,41 @@ def update_post(request, slug, post_type):
         **{'lost_post': post_instance} if post_type == 'lost' else {
             'found_post': post_instance})
 
+    form = form_class(request.POST or None, instance=post_instance)
+    image_form = FileFieldForm(request.POST or None, request.FILES or None)
+    resolved_form = ResolvedForm(request.POST or None, instance=post_instance)
+
     if request.method == 'POST':
-        form = form_class(request.POST, request.FILES, instance=post_instance)
-        image_form = FileFieldForm(request.POST, request.FILES)
-
-        if form.is_valid() and image_form.is_valid():
-            updated_post = form.save()
-
-            # Save uploaded images
+        if 'toggle_resolved' in request.POST:
+            if resolved_form.is_valid():
+                resolved_form.save()
+                messages.success(request, "Post status updated successfully.")
+                return redirect(post_instance.get_absolute_url())
+        elif form.is_valid() and image_form.is_valid():
+            form.save()
             for file in request.FILES.getlist('file_field'):
                 photo_model_class.objects.create(image=file, **{
-                    'lost_post': updated_post} if post_type == 'lost' else {
-                    'found_post': updated_post})
-
-            # Redirect to the updated post's detail view
-            detail_url_name = 'posts:lost_post_details' if (post_type ==
-                                                            'lost') else \
-                'posts:found_post_details'
-
-            return redirect(detail_url_name, slug=updated_post.slug,
-                            post_type=post_type)
+                    'lost_post': post_instance} if post_type == 'lost' else {
+                    'found_post': post_instance})
+            messages.success(request, "Post updated successfully.")
+            return redirect(post_instance.get_absolute_url())
         else:
-            # Handle form errors
-            print(form.errors)
-    else:
-        # Initialize forms for GET request
-        form = form_class(instance=post_instance)
-        image_form = FileFieldForm()
+            messages.error(request, "Error updating post.")
 
-    return render(request, 'update_post.html', {
+    context = {
         'form': form,
         'image_form': image_form,
+        'resolved_form': resolved_form,
         'photos': photos,
         'post_type': post_type,
+        'post': post_instance,
         'GOOGLE_MAPS_API_KEY': google_api_key
-    })
+
+    }
+
+    return render(request, 'update_post.html', context)
+
+
 
 
 def delete_photo(request, photo_id, post_type):

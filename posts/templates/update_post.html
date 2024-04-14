@@ -7,11 +7,25 @@
 			<div class="row mt-md-4 justify-content-center align-items-center">
 				<div class="col">
 					<div class="d-flex align-items-center h-100 text-md-start">
-						<a class="form-label mb-0">Post tomas Type: {{ post_type|capfirst }}</a>
+						<a href="{{ post.get_absolute_url }}" class="form-label mb-0">Post Type: {{ post_type|capfirst }}</a>
 					</div>
 				</div>
+				<div class="col">
+					<div class="d-flex align-items-center h-100 text-md-end">
+						<form method="post" enctype="multipart/form-data">
+						{% csrf_token %}
+						<button type="submit" name="toggle_resolved"
+						        class="btn {{ post.resolved|yesno:"btn-warning,btn-success" }}"> Mark post as
+							{{ post.resolved|yesno:"Unresolved,Resolved" }}
+						</button>
+					</form>
+					</div>
+
+				</div>
 			</div>
+
 		</div>
+
 
 		<div class="row justify-content-center mt-1">
 			<form method="post" enctype="multipart/form-data">
@@ -30,10 +44,10 @@
 						{{ form.date_uncertainty_days|as_crispy_field }}
 					</div>
 				</div>
-				<span class="d-none"> <!-- Hidden fields for latitude and longitude -->
+				<div class="d-none"> <!-- Hidden fields for latitude and longitude -->
                 {{ form.longitude|as_crispy_field }}
                 {{ form.latitude|as_crispy_field }}
-            </span>
+            </div>
 				<div class="form-group">
 					{{ image_form.file_field|as_crispy_field }}
 				</div>
@@ -66,7 +80,9 @@
 					<div class="col mx-auto order-0">
 						<button type="submit" class="btn btn-primary mb-5"
 						        aria-label="Update Post"
-						>Update Post</button>
+						>Update Post
+						</button>
+
 
 					</div>
 

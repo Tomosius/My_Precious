@@ -1,7 +1,7 @@
 from django import forms
 from django.forms.widgets import ClearableFileInput
 
-from .models import LostPost, FoundPost
+from .models import LostPost, FoundPost, Post
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
@@ -64,6 +64,7 @@ class BasePostForm(forms.ModelForm):
     description = forms.CharField(label="Description", widget=forms.Textarea(
         attrs={'rows': 4, 'cols': 15}))
 
+
     class Meta:
         abstract = True
         fields = ['title', 'description', 'latitude', 'longitude', 'event_date',
@@ -81,6 +82,19 @@ class BasePostForm(forms.ModelForm):
         if event_date and event_date > timezone.now().date():
             raise ValidationError("The event date cannot be in the future.")
         return event_date
+
+class ResolvedForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['resolved']
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.resolved = not instance.resolved  # Toggle the resolved status
+        if commit:
+            instance.save()
+        return instance
+
 
 
 class FoundPostForm(BasePostForm):
