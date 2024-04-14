@@ -2,6 +2,8 @@ from django import forms
 from django.forms.widgets import ClearableFileInput
 
 from .models import LostPost, FoundPost
+from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 
 class MultipleFileInput(ClearableFileInput):
@@ -59,16 +61,26 @@ class BasePostForm(forms.ModelForm):
         help_text="Select the date of the event."
     )
     title = forms.CharField(label="Title", max_length=255)
-    description = forms.CharField(label="Description", widget=forms.Textarea)
+    description = forms.CharField(label="Description", widget=forms.Textarea(
+        attrs={'rows': 4, 'cols': 15}))
 
     class Meta:
         abstract = True
         fields = ['title', 'description', 'latitude', 'longitude', 'event_date',
                   'date_uncertainty_days']
         widgets = {
-            'description': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
             'event_date': forms.DateInput(attrs={'type': 'date'}),
         }
+
+    def clean_event_date(self):
+        """
+        Validates that the event_date is not later than the current date.
+        Raises ValidationError if the date is in the future.
+        """
+        event_date = self.cleaned_data.get('event_date')
+        if event_date and event_date > timezone.now().date():
+            raise ValidationError("The event date cannot be in the future.")
+        return event_date
 
 
 class FoundPostForm(BasePostForm):
