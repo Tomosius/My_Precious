@@ -1,24 +1,35 @@
-{% for post in posts %}
-	<a href="{{ post.get_absolute_url }}" style="text-decoration: none; color: inherit;">
-	<div class="row">
-		<div class="col-3 col-md-2 col-xl-1">
-			{% if post.user.profile_photo %}
-			<img src="{{ post.user.profile.user_photo.url }}" alt="{{ post.user.username }}'s profile image" class="col-4 rounded-2">
-			{% else %}
-			<i class="fa-solid fa-user"></i>
-			{% endif %}
-		</div>
-		<div class="col-9 col-md-10 col-xl-11">
-			<h5>{{ post.user.username }} : </h5> <h6>{{ post.title|truncatechars:200 }}</h6><br>
-			{{ post.description|truncatechars:200 }}
-		</div>
-	</div>
+<div class="container">
+    <div class="row row-cols-1 row-cols-md-2 g-4">  <!-- Ensures gutter spacing and responsive columns -->
+        {% for post in posts %}
+        <div class="col">
+            <a href="{{ post.get_absolute_url }}" class="text-decoration-none text-dark">
+                <div class="card h-100 shadow-sm"> <!-- 'h-100' makes cards in the same row of equal height -->
+                    <div class="card-body">
+                        <div class="row g-0">
+                            <div class="col-3">
+                                {% if post.user.profile.user_photo %}
+						<img src="{{ post.user.profile.user_photo.url }}" alt="{{ post.user.username }}'s profile image"
+						     class="col-4 rounded-2">
 
-	</a>
-	<script>
-        console.log("title: {{ post.title }}, post_type: {{ post.post_type }}, lat: {{ post.latitude }}, lng: {{ post.longitude }}");
+					{% else %}
+						<i class="fas fa-user-circle fa-2x"></i>
 
-	</script>
-{% empty %}
-	<p>No Posts to display.</p>
-{% endfor %}
+					{% endif %}
+                            </div>
+                            <div class="col-9">
+                                <h5 class="card-title">{{ post.user.username }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ post.title|truncatechars:200 }}</h6>
+                                <p class="card-text">{{ post.description|truncatechars:200 }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <p>No Posts to display.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
