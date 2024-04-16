@@ -65,7 +65,6 @@ class Post(PolymorphicModel):
     )
     resolved = models.BooleanField(default=False)
 
-
     def __str__(self):
         """Return the title of the post for display."""
         return self.title
@@ -195,7 +194,3 @@ class FoundPhoto(models.Model):
             destroy(self.image.public_id)  # Deletes the image from Cloudinary
         super().delete(*args,
                        **kwargs)  # Proceeds with the default deletion process
-
-
-
-

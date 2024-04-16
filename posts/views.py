@@ -348,8 +348,6 @@ def update_post(request, slug, post_type):
     return render(request, 'update_post.html', context)
 
 
-
-
 def delete_photo(request, photo_id, post_type):
     """
     Deletes a photo based on its ID and associated post type ('lost' or

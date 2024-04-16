@@ -121,7 +121,8 @@ class ConversationDetailView(LoginRequiredMixin, DetailView, FormView):
         - **kwargs: Keyword arguments.
 
         Returns:
-        - An HttpResponseRedirect on success, or the form with errors on failure.
+        - An HttpResponseRedirect on success, or the form with errors on
+        failure.
         """
         self.object = self.get_object()
         form = self.get_form()

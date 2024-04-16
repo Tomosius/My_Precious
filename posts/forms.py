@@ -64,7 +64,6 @@ class BasePostForm(forms.ModelForm):
     description = forms.CharField(label="Description", widget=forms.Textarea(
         attrs={'rows': 4, 'cols': 15}))
 
-
     class Meta:
         abstract = True
         fields = ['title', 'description', 'latitude', 'longitude', 'event_date',
@@ -83,6 +82,7 @@ class BasePostForm(forms.ModelForm):
             raise ValidationError("The event date cannot be in the future.")
         return event_date
 
+
 class ResolvedForm(forms.ModelForm):
     class Meta:
         model = Post
@@ -94,7 +94,6 @@ class ResolvedForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance
-
 
 
 class FoundPostForm(BasePostForm):

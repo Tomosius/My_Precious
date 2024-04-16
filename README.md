@@ -31,6 +31,13 @@
       * [HTML](#html)
       * [CSS](#css)
       * [Python](#python)
+  * [Project Deployment Guide](#project-deployment-guide)
+    * [Introduction](#introduction-1)
+    * [How to Run This Project Within a Local IDE:](#how-to-run-this-project-within-a-local-ide)
+    * [Preparing the Environment and `settings.py` File](#preparing-the-environment-and-settingspy-file)
+      * [Configuration Guide](#configuration-guide)
+    * [Deploying on Heroku](#deploying-on-heroku)
+    * [Forking the Repository](#forking-the-repository)
   * [Manual Testing](#manual-testing)
     * [Function Testing](#function-testing)
     * [Automatic Testing](#automatic-testing)
@@ -342,6 +349,90 @@ Custom styles.css file was uploaded and validated
 
 #### Python
 All Python code was inspected and no errors found on [CI Python Linter](https://pep8ci.herokuapp.com)
+
+
+
+## Project Deployment Guide
+
+### Introduction
+
+This project was developed using [PyCharm](https://www.jetbrains.com/pycharm/). The code was committed and pushed to [GitHub](https://github.com/) using the terminal.
+
+### How to Run This Project Within a Local IDE:
+
+1. Log into [GitHub](https://github.com/login) or [create an account](https://github.com/join).
+2. Locate the [GitHub Repository](https://github.com/Tomosius/My_Precious).
+3. Under the repository name, click "Clone or download".
+4. In the Clone with HTTPs section, copy the clone URL for the repository.
+5. In your local IDE open the terminal.
+6. Change the current working directory to the location where you want the cloned directory to be made.
+7. Type 'git clone', and then paste the URL you copied:
+   ```bash
+   git clone https://github.com/Tomosius/My_Precious
+   ```
+8. Press Enter. Your local clone will be created.
+
+For further reading and troubleshooting on cloning a repository from GitHub, see [GitHub Docs on Cloning a Repository](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository).
+
+### Preparing the Environment and `settings.py` File
+
+Before running the application, ensure that your environment and Django settings are correctly configured:
+
+#### Configuration Guide
+
+1. `DATABASE_URL` (Recommended: PostgreSQL)
+   - **Heroku Configuration:**
+     - In the Settings tab of your Heroku dashboard, click on 'Reveal Config Vars'.
+     - Copy the URL next to `DATABASE_URL`.
+   - **Local Setup:**
+     - In your workspace, create an `env.py` file in the main directory.
+     - Add the `DATABASE_URL` value to this file.
+
+2. `SECRET_KEY`
+   - Add the `SECRET_KEY` value to the Config Vars in Heroku.
+   - Ensure this key is also stored securely in your `env.py` file for local development.
+
+3. `CLOUDINARY` for Image Storage
+   - **Configuration Variables:**
+     - `CLOUDINARY_CLOUD_NAME`
+     - `CLOUDINARY_API_KEY`
+     - `CLOUDINARY_API_SECRET`
+   - **Updating Config Vars:**
+     - Update the Config Vars on Heroku with the Cloudinary variables.
+     - Ensure these are also correctly referenced in your `env.py`.
+
+4. `GOOGLE_MAPS_API_KEY`
+   - Store and reference your Google Maps API key as needed for location-based features in both Heroku and your `env.py`.
+
+### Deploying on Heroku
+
+1. Create the Heroku App:
+   - Select "Create new app" in Heroku.
+   - Choose a name for your app and select the location.
+
+2. Store Static and Media files in Cloudinary and Deploy to Heroku:
+   - Create three directories in the main directory; media, storage, and templates.
+   - Create a file named "Procfile" in the main directory and add the following:
+     ```
+     web: gunicorn project-name.wsgi
+     ```
+   - Go to the Deploy tab on Heroku, connect to the GitHub, then to the required repository.
+   - Click on "Deploy Branch" and wait for the build to load. When the build is complete, the app can be opened through Heroku.
+
+### Forking the Repository
+
+By forking the GitHub Repository we make a copy of the original repository on our GitHub account to view and/or make changes without affecting the original repository by using the following steps:
+
+1. Log into [GitHub](https://github.com/login) or [create an account](https://github.com/join).
+2. Locate the [GitHub Repository](https://github.com/Tomosius/My_Precious).
+3. At the top of the repository, on the right side of the page, select "Fork".
+4. You should now have a copy of the original repository in your GitHub account.
+
+
+
+
+
+
 
 ## Manual Testing
 ### Function Testing
